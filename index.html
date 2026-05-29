@@ -731,6 +731,7 @@ function logout(){S.user=null;LS.del('currentUser');toast('Abgemeldet');showView
 function renderFeed(){
   const chips=[{id:'foryou',l:'Für dich'},{id:'problem',l:'Problemlöser'},{id:'under25',l:'Unter 25€'},{id:'smarthome',l:'Smart Home'},{id:'reise',l:'Reisen'},{id:'geschenk',l:'Geschenke'},{id:'tech',l:'Technik'},{id:'ai',l:'🤖 KI'}];
   const s=settings();
+  const name=s.app_name||'AIshopr';
   const symbol=s.logo_symbol?`<img src="${s.logo_symbol}" alt="AIshopr">`:'AI';
   const symbolHtml = s.logo_symbol ? `<img src="${s.logo_symbol}" alt="${esc(s.app_name||'AI')}">` : `<span class="feed-symbol-txt">${esc((s.app_name||'AI').slice(0,2).toUpperCase())}</span>`;
   return `<div class="feed-head"><div class="feed-symbol" onclick="showView('home')">${symbolHtml}</div><div class="feed-top">${chips.map(c=>`<button class="chip ${c.id===S.feedMode?'active':''}" onclick="setMode('${c.id}')">${c.l}</button>`).join('')}</div></div>
@@ -1050,10 +1051,25 @@ function buildAffiliateLink(product){
   const map={partner_id:p.partner_id||p.id||'',tracking_id:p.tracking_id||p.id||'',asin:product.asin||'',ean:product.ean||'',sku:product.sku||'',encoded_title:encodeURIComponent(product.title||''),url:encodeURIComponent(product.url||'')};
   return p.link_template.replace(/\{(partner_id|tracking_id|asin|ean|sku|encoded_title|url)\}/g,(m,k)=>map[k]||'');
 }
+function recordAffiliateClick(product, url){
+  if(!product)return;
+  const event={pid:product.id,url:url||'',cat:product.cat||'',merchant:product.merchant_name||product.merchant||'',ts:Date.now(),type:'buy'};
+  const clicks=LS.get('buyClicks',[]);
+  if(Array.isArray(clicks)){
+    clicks.push(event);
+    LS.set('buyClicks',clicks);
+  } else {
+    const legacy=clicks||{};
+    legacy[product.id]=(legacy[product.id]||0)+1;
+    LS.set('buyClicks',legacy);
+  }
+  LS.set('swipeLog',[...LS.get('swipeLog',[]),event]);
+}
+
 function openAffiliateProduct(product){
   const url=buildAffiliateLink(product)||('https://example.com/'+product.id);
   if(!isSafeUrl(url)){toast('Unsichere URL blockiert');return;}
-  const clicks=LS.get('buyClicks',{});clicks[product.id]=(clicks[product.id]||0)+1;LS.set('buyClicks',clicks);
+  recordAffiliateClick(product,url);
   window.open(url,'_blank','noopener');
 }
 
@@ -1583,7 +1599,10 @@ function adminInfo(){
   const sponsored=all.filter(p=>p.sponsored).length;
   const withAff=all.filter(p=>p.affiliate).length;
   const log=LS.get('swipeLog',[]);
-  const clicks=log.filter(l=>l.type==='buy'||l.type==='click').length;
+  const storedClicks=LS.get('buyClicks',[]);
+  const clicks=(Array.isArray(storedClicks)
+    ? storedClicks.length
+    : Object.values(storedClicks||{}).reduce((a,b)=>a+(Number(b)||0),0)) || log.filter(l=>l.type==='buy'||l.type==='click').length;
   const users=LS.get('users',[]).length;
 
   return `
@@ -1828,7 +1847,10 @@ function adminAffiliate(){
   const all=ideas();
   const withAff=all.filter(p=>p.affiliate);
   const log=LS.get('swipeLog',[]);
-  const clicks=log.filter(l=>l.type==='buy');
+  const storedClicks=LS.get('buyClicks',[]);
+  const clicks=Array.isArray(storedClicks)
+    ? storedClicks
+    : Object.entries(storedClicks||{}).flatMap(([pid,count])=>Array(Number(count)||0).fill({pid,type:'buy'}));
   
   // Common Affiliate Providers
   const providers = [
@@ -2470,7 +2492,10 @@ const InterestEngine = {
     decayFactor: 0.97,
     priceSensitivity: 0.6,
     categoryDiversityBonus: 0.3,
-    recencyBoost: 1.5
+    recencyBoost: 1.5,
+    categoryWeight: 5,
+    merchantWeight: 2,
+    sponsoredPenalty: 10
   },
 
   getConfig(){
@@ -2520,8 +2545,8 @@ const InterestEngine = {
   },
 
   recordSwipe(productId, action){
-    const ideas = LS.get('ideas',[]);
-    const product = ideas.find(p=>p.id===productId);
+    const productPool = (typeof ideas==='function') ? ideas() : LS.get('ideas',[]);
+    const product = productPool.find(p=>p.id===productId);
     if(!product) return;
     const profile = this.getProfile();
     const cfg = this.getConfig();
@@ -2582,7 +2607,7 @@ const InterestEngine = {
 
     // 1. Kategorie-Match (stärkster Faktor)
     const catScore = profile.categoryScores[product.cat] || 0;
-    score += catScore * 5;
+    score += catScore * (cfg.categoryWeight ?? 5);
 
     // 2. Preis-Match
     const priceMatch = (product.price||'').match(/(\d+)/);
@@ -2601,7 +2626,7 @@ const InterestEngine = {
 
     // 3. Marken-Match
     if(product.merchant_name && profile.brandAffinity[product.merchant_name]){
-      score += profile.brandAffinity[product.merchant_name] * 2;
+      score += profile.brandAffinity[product.merchant_name] * (cfg.merchantWeight ?? 2);
     }
 
     // 4. Recency-Boost (neue Produkte bevorzugt)
@@ -2615,14 +2640,14 @@ const InterestEngine = {
 
     // 6. Negative Filter
     if((profile.categoryScores[product.cat]||0) < -5) score -= 20;
-    if(product.sponsored && !getConsent().marketing) score -= 10;
+    if(product.sponsored && !getConsent().marketing) score -= (cfg.sponsoredPenalty ?? 10);
 
     return Math.max(0, Math.min(100, score));
   },
 
   getFeedRecommendations(){
-    const ideas = LS.get('ideas',[]);
-    return ideas
+    const productPool = (typeof ideas==='function') ? ideas() : LS.get('ideas',[]);
+    return productPool
       .filter(p=>p.status !== 'inactive')
       .map(p => ({...p, computedScore: this.computeProductScore(p)}))
       .sort((a,b) => b.computedScore - a.computedScore);
