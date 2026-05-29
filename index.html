@@ -1,0 +1,2689 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title id="appTitle">AIshopr — Swipen statt suchen.</title>
+<meta name="theme-color" content="#FFF5F0">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+--bg:#FFF9F6;--bg-card:#FFF;--bg-soft:#FFF1EB;--ink:#1A1A1A;--ink-2:#5A5A66;--ink-3:#9A9AA8;
+--primary:#FF6B5A;--primary-2:#FF8A5C;--accent:#7B61FF;--mint:#00C9A7;--sun:#FFC145;--rose:#FF5D8F;
+--border:rgba(0,0,0,.06);--shadow-sm:0 2px 8px rgba(26,26,26,.06);--shadow-md:0 8px 24px rgba(26,26,26,.08);
+--shadow-lg:0 16px 40px rgba(26,26,26,.12);--radius:20px;--radius-lg:28px;
+--safe-top:env(safe-area-inset-top,0px);--safe-bottom:env(safe-area-inset-bottom,0px);
+--font:'Inter',-apple-system,BlinkMacSystemFont,'SF Pro',system-ui,sans-serif;
+}
+/* DARK MODE */
+.dark{
+--bg:#111118;--bg-card:#1C1C24;--bg-soft:#24242E;--ink:#EAEAF0;--ink-2:#A0A0B0;--ink-3:#6A6A7A;
+--border:rgba(255,255,255,.08);--shadow-sm:0 2px 8px rgba(0,0,0,.2);--shadow-md:0 8px 24px rgba(0,0,0,.3);
+--shadow-lg:0 16px 40px rgba(0,0,0,.4);
+}
+.dark .card-hero{background:var(--bg-soft)!important}
+.dark .social-btn{background:var(--bg-soft)}
+.dark input,.dark textarea,.dark select{background:var(--bg-soft);color:var(--ink);border-color:var(--border)}
+.dark .admin-sidebar{background:var(--bg-card)}
+.dark .admin-nav-item:hover{background:var(--bg-soft)}
+.dark .btn-ghost{background:var(--bg-soft);color:var(--ink)}
+.dark .btn-primary{background:var(--primary);color:#fff}
+.dark .btn-danger{background:rgba(200,0,0,.15);color:#FF6B6B;border-color:rgba(200,0,0,.3)}
+.dark .badge-green{background:rgba(0,107,77,.2);color:#4ADE80}
+.dark .badge-orange{background:rgba(154,103,0,.2);color:#FFC145}
+.dark .badge-red{background:rgba(200,0,0,.15);color:#FF6B6B}
+.dark .chip{background:var(--bg-card);color:var(--ink-2);border-color:var(--border)}
+.dark .chip.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.dark .tag{background:var(--bg-soft);color:var(--ink-2);border-color:var(--border)}
+.dark .tag.mint{background:rgba(0,201,167,.15);color:#4ADE80}
+.dark .tag.sun{background:rgba(255,193,69,.12);color:#FFC145}
+.dark .tag.rose{background:rgba(255,93,143,.12);color:#FF6B8A}
+.dark .kpi{background:var(--bg-card);border-color:var(--border)}
+.dark .item{background:var(--bg-card);border-color:var(--border)}
+.dark .ql-chip{background:var(--bg-soft);color:var(--ink-2);border-color:var(--border)}
+.dark .ql-chip.on{background:var(--primary);color:#fff;border-color:var(--primary)}
+.dark .toggle{background:var(--bg-soft)}
+.dark .tbl th{background:var(--bg-soft)}
+.dark .cookie-banner{background:var(--bg-card);border-color:var(--border)}
+.dark .tour-card{background:var(--bg-card)}
+.dark .sheet-card{background:var(--bg-card)}
+.dark .home-badge{background:var(--bg-card)}
+.dark .cta-primary{color:#fff}
+.dark .preview-card{background:var(--bg-card);border-color:var(--border)}
+@media(prefers-color-scheme:dark){.auto-dark{
+--bg:#111118;--bg-card:#1C1C24;--bg-soft:#24242E;--ink:#EAEAF0;--ink-2:#A0A0B0;--ink-3:#6A6A7A;
+--border:rgba(255,255,255,.08);--shadow-sm:0 2px 8px rgba(0,0,0,.2);--shadow-md:0 8px 24px rgba(0,0,0,.3);
+--shadow-lg:0 16px 40px rgba(0,0,0,.4);
+}
+.auto-dark .card-hero{background:var(--bg-soft)!important}
+.auto-dark .social-btn{background:var(--bg-soft)}
+.auto-dark input,.auto-dark textarea,.auto-dark select{background:var(--bg-soft);color:var(--ink);border-color:var(--border)}
+.auto-dark .admin-sidebar{background:var(--bg-card)}
+.auto-dark .admin-nav-item:hover{background:var(--bg-soft)}
+.auto-dark .btn-ghost{background:var(--bg-soft);color:var(--ink)}
+.auto-dark .btn-primary{background:var(--primary);color:#fff}
+.auto-dark .btn-danger{background:rgba(200,0,0,.15);color:#FF6B6B;border-color:rgba(200,0,0,.3)}
+.auto-dark .badge-green{background:rgba(0,107,77,.2);color:#4ADE80}
+.auto-dark .badge-orange{background:rgba(154,103,0,.2);color:#FFC145}
+.auto-dark .badge-red{background:rgba(200,0,0,.15);color:#FF6B6B}
+.auto-dark .chip{background:var(--bg-card);color:var(--ink-2);border-color:var(--border)}
+.auto-dark .chip.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.auto-dark .tag{background:var(--bg-soft);color:var(--ink-2);border-color:var(--border)}
+.auto-dark .tag.mint{background:rgba(0,201,167,.15);color:#4ADE80}
+.auto-dark .tag.sun{background:rgba(255,193,69,.12);color:#FFC145}
+.auto-dark .tag.rose{background:rgba(255,93,143,.12);color:#FF6B8A}
+.auto-dark .kpi{background:var(--bg-card);border-color:var(--border)}
+.auto-dark .item{background:var(--bg-card);border-color:var(--border)}
+.auto-dark .ql-chip{background:var(--bg-soft);color:var(--ink-2);border-color:var(--border)}
+.auto-dark .ql-chip.on{background:var(--primary);color:#fff;border-color:var(--primary)}
+.auto-dark .toggle{background:var(--bg-soft)}
+.auto-dark .tbl th{background:var(--bg-soft)}
+.auto-dark .cookie-banner{background:var(--bg-card);border-color:var(--border)}
+.auto-dark .tour-card{background:var(--bg-card)}
+.auto-dark .sheet-card{background:var(--bg-card)}
+.auto-dark .home-badge{background:var(--bg-card)}
+.auto-dark .cta-primary{color:#fff}
+.auto-dark .preview-card{background:var(--bg-card);border-color:var(--border)}
+}
+html,body{height:100%;overflow:hidden;position:fixed;width:100%;overscroll-behavior:none}
+body{font-family:var(--font);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;width:100%;height:100%}
+
+/* DESKTOP SPLASH */
+.ds-content{display:none}.desktop-splash{width:100%;height:100%;overflow:hidden}
+.ds-mockup,.ds-phone,.ds-phone-screen{width:100%;height:100%;position:relative;overflow:hidden}
+#app{height:100%;display:flex;flex-direction:column;position:relative}
+a{color:var(--primary);text-decoration:none}
+input,textarea,select{font:inherit;padding:10px 14px;border:1px solid var(--border);border-radius:12px;background:var(--bg-card);width:100%;color:var(--ink);outline:none}
+input:focus,textarea:focus,select:focus{border-color:var(--primary)}
+textarea{resize:vertical;min-height:60px}
+label{font-size:13px;font-weight:600;color:var(--ink-2);display:block;margin-bottom:4px}
+.header{padding:calc(var(--safe-top)+14px) 24px 12px 20px;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(180deg,var(--bg) 70%,transparent);position:sticky;top:0;z-index:100;flex-shrink:0}
+.logo{font-weight:900;font-size:22px;letter-spacing:-.5px;background:linear-gradient(90deg,var(--primary),var(--rose));-webkit-background-clip:text;background-clip:text;color:transparent;cursor:pointer;padding-left:16px}
+.header-actions{display:flex;gap:8px;align-items:center}
+.avatar-btn{width:36px;height:36px;border-radius:50%;border:2px solid var(--border);background:var(--bg-soft);display:grid;place-items:center;font-size:16px;cursor:pointer;overflow:hidden}
+.avatar-btn img{width:100%;height:100%;object-fit:cover}
+.view{display:none;flex:1;overflow:hidden;flex-direction:column}.view.active{display:flex}
+
+/* HOME */
+.home{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:0 20px 10px;text-align:center;position:relative;overflow:hidden;width:100%}
+.home-bg{position:absolute;inset:-20%;z-index:0;background:radial-gradient(600px 400px at 20% 10%,rgba(255,107,90,.12),transparent 60%),radial-gradient(500px 500px at 80% 20%,rgba(123,97,255,.10),transparent 60%),radial-gradient(400px 300px at 50% 90%,rgba(0,201,167,.10),transparent 60%);filter:blur(20px);pointer-events:none}
+.home-content{position:relative;z-index:1;max-width:420px;width:100%;padding-top:10px;padding-bottom:20px;display:flex;flex-direction:column;align-items:center;flex:1}
+.home-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:var(--bg-card);border:1px solid var(--border);font-size:10px;font-weight:700;color:var(--primary);box-shadow:var(--shadow-sm);margin-bottom:10px}
+.home-title{font-size:clamp(28px,9vw,42px);font-weight:900;line-height:1.05;letter-spacing:-0.5px;margin-bottom:8px}
+.home-title span{background:linear-gradient(90deg,var(--primary),var(--accent));-webkit-background-clip:text;background-clip:text;color:transparent}
+.home-subtitle{font-size:clamp(14px,4vw,16px);color:var(--ink-2);margin-bottom:6px;font-weight:600}
+.home-desc{font-size:13px;color:var(--ink-3);line-height:1.4;margin-bottom:20px;padding:0 4px}
+.cta-primary{width:100%;max-width:320px;height:52px;border:none;border-radius:16px;background:linear-gradient(90deg,var(--primary),var(--primary-2));color:#fff;font-size:16px;font-weight:700;cursor:pointer;box-shadow:0 8px 20px rgba(255,107,90,.3);transition:transform .15s,box-shadow .15s;margin-top:auto}
+.cta-primary:active{transform:translateY(1px) scale(.98);box-shadow:0 2px 8px rgba(255,107,90,.25)}
+.home-meta{margin-top:12px;font-size:10px;color:var(--ink-3);line-height:1.4}
+.preview-stack{position:relative;height:160px;margin:20px 0 10px}
+.preview-card{position:absolute;width:130px;height:160px;border-radius:16px;background:var(--bg-card);box-shadow:var(--shadow-md);border:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.preview-card:nth-child(1){left:50%;transform:translateX(-50%) rotate(-8deg);z-index:3}
+.preview-card:nth-child(2){left:50%;transform:translateX(-85%) rotate(-16deg) translateY(6px);z-index:2;opacity:.9}
+.preview-card:nth-child(3){left:50%;transform:translateX(-15%) rotate(12deg) translateY(10px);z-index:1;opacity:.85}
+.preview-card .pc-img{height:60px;display:flex;align-items:center;justify-content:center;font-size:28px}
+.preview-card .pc-body{padding:6px;flex:1}
+.preview-card .pc-title{font-size:10px;font-weight:700;line-height:1.2}
+.preview-card .pc-sub{font-size:9px;color:var(--ink-3);margin-top:1px}
+
+/* FEED */
+/* FEED HEAD — Tab-Bar Style (like screenshot) */
+.feed-head{display:flex;align-items:center;gap:0;padding:0 56px 0 0;background:var(--bg);border-bottom:1px solid var(--border);flex-shrink:0;touch-action:none}
+.feed-symbol{width:42px;height:42px;display:flex;align-items:center;justify-content:center;flex:0 0 42px;overflow:hidden;cursor:pointer;margin-right:2px}
+.feed-symbol img{width:30px;height:30px;object-fit:contain;border-radius:8px}
+.feed-symbol-txt{font-weight:900;font-size:15px;color:var(--primary)}
+.feed-top{display:flex;gap:0;overflow-x:auto;scrollbar-width:none;flex:1;min-width:0}
+.feed-top::-webkit-scrollbar{display:none}
+.chip{
+  flex-shrink:0;padding:12px 16px 10px;border-radius:0;font-size:14px;font-weight:600;
+  background:transparent;border:none;border-bottom:2.5px solid transparent;
+  color:var(--ink-3);cursor:pointer;transition:all .2s;white-space:nowrap;
+}
+.chip.active{color:var(--ink);border-bottom-color:var(--ink);font-weight:700}
+.chip:hover{color:var(--ink-2)}
+.feed-stage{flex:1;position:relative;display:flex;align-items:center;justify-content:center;padding:10px 12px 30px 12px;overflow:hidden;touch-action:none}
+
+.affiliate-disclaimer{position:absolute;bottom:8px;left:0;right:0;text-align:center;font-size:9px;color:var(--ink-3);padding:0 20px;line-height:1.2;z-index:5}
+
+.swipe-card{
+  position:absolute;
+  left:0;right:0;margin:0 auto;
+  width:calc(100% - 56px);
+  max-width:360px;
+  height:calc(100% - 40px);
+  max-height:600px;
+  background:var(--bg-card);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-lg);
+  border:1px solid var(--border);
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  touch-action:none;
+  user-select:none;
+  cursor:grab;
+  transition:transform .25s cubic-bezier(.2,.8,.2,1),opacity .25s;
+  z-index:10;
+}
+.swipe-card:active{cursor:grabbing}.swipe-card.dragging{transition:none}
+.card-hero{height:45%;min-height:180px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:#fff}
+.card-hero .emoji{font-size:72px;filter:drop-shadow(0 4px 12px rgba(0,0,0,.1));position:relative;z-index:1}
+.card-hero .grad{position:absolute;inset:0;opacity:.9}
+.card-hero img{width:100%;height:100%;object-fit:cover;background:#fff}
+.grad-1{background:linear-gradient(135deg,#FFE8E4,#FFD6CC)}.grad-2{background:linear-gradient(135deg,#E8E4FF,#D6CCFF)}.grad-3{background:linear-gradient(135deg,#E4FFF8,#CCFFEF)}
+.grad-4{background:linear-gradient(135deg,#FFF4E4,#FFEACC)}.grad-5{background:linear-gradient(135deg,#FFE4F0,#FFCCDF)}.grad-6{background:linear-gradient(135deg,#E4F0FF,#CCE0FF)}
+.card-ribbon{position:absolute;top:12px;right:12px;padding:4px 10px;border-radius:999px;font-size:10px;font-weight:700;background:rgba(0,0,0,.7);color:#fff;backdrop-filter:blur(6px);z-index:2}
+.card-body{flex:1;padding:14px 16px 10px;display:flex;flex-direction:column;gap:8px;overflow-y:auto}
+.card-hook{font-size:18px;font-weight:800;line-height:1.22;letter-spacing:-.3px}
+.card-title{font-size:13px;color:var(--ink-2);font-weight:500}
+.card-problem{font-size:13px;color:var(--ink-3);line-height:1.4}
+.card-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
+.tag{font-size:11px;padding:4px 9px;border-radius:999px;font-weight:600;background:var(--bg-soft);color:var(--ink-2);border:1px solid var(--border)}
+.tag.mint{background:rgba(0,201,167,.12);color:#007A66;border-color:rgba(0,201,167,.2)}
+.tag.sun{background:rgba(255,193,69,.15);color:#9A6700;border-color:rgba(255,193,69,.25)}
+.tag.rose{background:rgba(255,93,143,.12);color:#B7004D;border-color:rgba(255,93,143,.2)}
+.card-foot{padding:10px 16px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:8px;flex-shrink:0}
+.fit{display:flex;align-items:center;gap:8px}
+.fit-ring{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:800;background:conic-gradient(var(--mint) calc(var(--p)*1%),var(--bg-soft) 0);position:relative}
+.fit-ring::after{content:'';position:absolute;inset:4px;background:var(--bg-card);border-radius:50%}
+.fit-ring span{position:relative;z-index:1;color:var(--ink)}
+.fit-label{font-size:11px;color:var(--ink-3);font-weight:600}
+.price{font-size:14px;font-weight:700;color:var(--ink)}
+
+/* SWIPE HINTS — flat SVG icon pills, no text */
+.swipe-hint{position:absolute;opacity:0;transition:opacity .18s;pointer-events:none;z-index:5;display:grid;place-items:center;width:52px;height:52px;border-radius:50%;backdrop-filter:blur(6px)}
+.swipe-hint svg{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.swipe-hint.left{left:18px;top:50%;transform:translateY(-50%);background:rgba(252,211,77,.22);color:var(--sun);box-shadow:0 0 0 2px rgba(252,211,77,.45)}
+.swipe-hint.right{right:18px;top:50%;transform:translateY(-50%);background:rgba(0,201,167,.22);color:var(--mint);box-shadow:0 0 0 2px rgba(0,201,167,.45)}
+.swipe-hint.down{bottom:60px;left:50%;transform:translateX(-50%);background:rgba(255,93,143,.22);color:var(--rose);box-shadow:0 0 0 2px rgba(255,93,143,.45)}
+.swipe-hint.show{opacity:1}
+
+.card-watermark{display:none}
+.page-watermark{
+  position:absolute;inset:0;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;
+  pointer-events:none;z-index:0;user-select:none;overflow:hidden;
+}
+.page-watermark span{
+  font-weight:900;font-size:90px;letter-spacing:8px;color:var(--ink);
+  opacity:.055;transform:rotate(-8deg);white-space:nowrap;
+}
+
+/* COOKIE BANNER — compact GDPR compliant */
+.cookie-banner{position:fixed;bottom:0;left:0;right:0;background:var(--bg-card);border-top:1px solid var(--border);box-shadow:0 -8px 24px rgba(0,0,0,.12);padding:14px 16px calc(12px + var(--safe-bottom));z-index:300;animation:up .3s ease}
+.cookie-banner p{font-size:11px;color:var(--ink-2);line-height:1.4;margin-bottom:8px}
+.cookie-banner a{color:var(--primary);text-decoration:underline;font-size:11px}
+.cookie-actions{display:flex;gap:6px}
+
+/* SWIPE OVERLAYS — farbiger Rand + zentriertes Icon, kein Text */
+.swipe-card-overlay{position:absolute;inset:0;opacity:0;transition:opacity .08s;pointer-events:none;z-index:2;border-radius:inherit;display:flex;align-items:center;justify-content:center}
+.swipe-card-overlay::after{display:none}
+.swipe-card-overlay .ov-icon{width:72px;height:72px;border-radius:50%;display:grid;place-items:center;backdrop-filter:blur(4px)}
+.swipe-card-overlay .ov-icon svg{width:38px;height:38px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.swipe-card-overlay.yellow{background:rgba(252,211,77,0.12);box-shadow:inset 0 0 120px rgba(252,211,77,0.28);border:4px solid rgba(252,211,77,.7)}
+.swipe-card-overlay.yellow .ov-icon{background:rgba(252,211,77,.22);color:#9A6700}
+.swipe-card-overlay.red{background:rgba(255,93,143,0.12);box-shadow:inset 0 0 120px rgba(255,93,143,0.28);border:4px solid rgba(255,93,143,.7)}
+.swipe-card-overlay.red .ov-icon{background:rgba(255,93,143,.22);color:var(--rose)}
+.swipe-card-overlay.green{background:rgba(0,201,167,0.12);box-shadow:inset 0 0 120px rgba(0,201,167,0.28);border:4px solid rgba(0,201,167,.7)}
+.swipe-card-overlay.green .ov-icon{background:rgba(0,201,167,.22);color:var(--mint)}
+.swipe-card-overlay.save{background:rgba(123,97,255,.12);box-shadow:inset 0 0 120px rgba(123,97,255,.28);border:4px solid rgba(123,97,255,.7)}
+.swipe-card-overlay.save .ov-icon{background:rgba(123,97,255,.22);color:var(--accent)}
+
+.save-burst{position:absolute;left:50%;top:50%;z-index:82;transform:translate(-50%,-50%);pointer-events:none;color:var(--accent);animation:saveBurst .8s cubic-bezier(.16,1,.3,1) forwards}
+.save-burst svg{width:96px;height:96px;fill:currentColor;stroke:currentColor;filter:drop-shadow(0 16px 24px rgba(123,97,255,.28))}
+@keyframes saveBurst{0%{opacity:0;transform:translate(-50%,-35%) scale(.35)}35%{opacity:1;transform:translate(-50%,-58%) scale(1.05)}100%{opacity:0;transform:translate(-50%,-104%) scale(1.55)}}
+.bookmark-fly{position:fixed;z-index:220;pointer-events:none;color:var(--accent);filter:drop-shadow(0 14px 24px rgba(123,97,255,.35));transition:transform .72s cubic-bezier(.16,1,.3,1),opacity .72s ease}
+.bookmark-fly svg{width:46px;height:46px;fill:currentColor;stroke:currentColor}
+
+/* CHATBOT */
+.chat-fab{position:fixed;bottom:66px;right:28px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:#fff;border:none;box-shadow:0 3px 12px rgba(123,97,255,0.35);display:grid;place-items:center;cursor:pointer;z-index:45;transition:transform .2s}
+.chat-fab:active{transform:scale(0.92)}
+.chat-fab svg{width:20px;height:20px}
+.chat-window{position:fixed;bottom:118px;right:28px;width:calc(100% - 56px);max-width:290px;height:280px;max-height:60vh;background:var(--bg-card);border-radius:14px;box-shadow:0 8px 32px rgba(0,0,0,0.15);border:1px solid var(--border);display:none;flex-direction:column;z-index:55;overflow:hidden;transform-origin:bottom right}
+.chat-window.open{display:flex;animation:chatPop .18s ease-out}
+@keyframes chatPop{from{opacity:0;transform:scale(0.92)}to{opacity:1;transform:scale(1)}}
+
+/* TOUR STYLES */
+.tour-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:200;display:flex;align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(4px)}
+.tour-card{background:var(--bg-card);border-radius:24px;padding:32px;max-width:340px;text-align:center;box-shadow:var(--shadow-lg);animation:up 0.4s ease}
+.tour-icon{font-size:48px;margin-bottom:20px;display:block}
+.tour-title{font-size:20px;font-weight:900;margin-bottom:12px}
+.tour-text{font-size:14px;color:var(--ink-2);line-height:1.5;margin-bottom:24px}
+.tour-dots{display:flex;justify-content:center;gap:8px;margin-bottom:24px}
+.tour-dot{width:8px;height:8px;border-radius:50%;background:var(--border)}
+.tour-dot.active{background:var(--primary);width:20px;border-radius:4px}
+.chat-header{padding:10px 14px;background:var(--accent);color:#fff;font-weight:700;font-size:13px;display:flex;justify-content:space-between;align-items:center}
+.chat-header button{background:none;border:none;color:#fff;cursor:pointer;font-size:18px;padding:0;line-height:1}
+.chat-messages{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px;background:var(--bg-soft)}
+.chat-msg{max-width:88%;padding:9px 12px;border-radius:14px;font-size:13px;line-height:1.35;word-wrap:break-word}
+.chat-msg.bot{background:var(--bg-card);border:1px solid var(--border);align-self:flex-start;border-bottom-left-radius:4px}
+.chat-msg.user{background:var(--accent);color:#fff;align-self:flex-end;border-bottom-right-radius:4px}
+.chat-input-area{padding:10px;background:var(--bg-card);border-top:1px solid var(--border);display:flex;gap:8px;align-items:center}
+.chat-input-area input{flex:1;border:1px solid var(--border);border-radius:99px;padding:8px 12px;font-size:16px;outline:none;-webkit-appearance:none;appearance:none;background:#fff;min-height:32px}
+.chat-input-area button{background:var(--accent);color:#fff;border:none;border-radius:50%;width:34px;height:34px;flex-shrink:0;display:grid;place-items:center;cursor:pointer}
+.chat-input-area button svg{width:16px;height:16px}
+
+.action-bar{display:none!important}
+.actions{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;width:100%;max-width:420px}
+.act{width:100%;height:34px;border-radius:10px;border:none;cursor:pointer;display:grid;place-items:center;transition:transform .1s;background:var(--bg-soft)}
+.act svg{width:18px;height:18px}
+.act:active{transform:scale(.94)}
+.act.no{color:#6B7280}.act.save{color:var(--accent);background:var(--bg-soft)}.act.save.is-saved{background:var(--bg-soft)}.act.save.is-saved svg{fill:var(--accent);stroke:var(--accent)}.act.info{color:var(--sun)}.act.yes{color:var(--primary)}.act.buy{color:var(--mint)}
+
+.tiktok-nav{
+  position:fixed;right:8px;top:66%;transform:translateY(-50%);z-index:30;
+  display:flex;flex-direction:column;align-items:center;gap:14px;
+}
+.tk-btn{
+  width:44px;height:44px;border-radius:50%;border:none;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  background:rgba(0,0,0,0.06);backdrop-filter:blur(10px);
+  color:var(--ink-2);font-size:9px;font-weight:700;transition:all .18s;box-shadow:0 2px 8px rgba(0,0,0,0.06);
+}
+.tk-btn svg{width:20px;height:20px;flex-shrink:0}
+.tk-btn:active{transform:scale(0.9)}
+.tk-btn.active{background:var(--primary);color:#fff;box-shadow:0 4px 16px rgba(255,107,90,0.3)}
+.tk-btn.icon-active{background:rgba(0,0,0,0.06);color:var(--accent)}
+.tk-btn.icon-active svg{fill:var(--accent);stroke:var(--accent)}
+.tk-btn.accent{background:var(--accent);color:#fff}
+.tk-label{font-size:8px;margin-top:1px;white-space:nowrap}
+.tk-avatar{
+  width:40px;height:40px;border-radius:50%;border:2px solid var(--primary);
+  background:var(--bg-soft);display:grid;place-items:center;font-size:14px;font-weight:800;
+  cursor:pointer;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.1);
+}
+.tk-avatar img{width:100%;height:100%;object-fit:cover}
+.nav{display:none}.nav-btn{display:none}
+
+/* SHEETS */
+@keyframes up{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+.sheet{position:fixed;inset:0;z-index:60;display:none;background:rgba(0,0,0,.4);backdrop-filter:blur(4px);align-items:flex-end;justify-content:center}
+.sheet.show{display:flex}
+.sheet-card{width:100%;max-width:560px;max-height:88vh;overflow-y:auto;background:var(--bg-card);border-radius:24px 24px 0 0;box-shadow:var(--shadow-lg);padding:0 0 calc(16px + var(--safe-bottom));animation:up .28s ease}
+.sheet-head{position:sticky;top:0;background:var(--bg-card);padding:12px 16px 8px;border-bottom:1px solid var(--border);z-index:1;display:flex;align-items:center;justify-content:space-between}
+.sheet-handle{width:36px;height:4px;border-radius:2px;background:#E5E5EA;margin:0 auto 8px;cursor:pointer}
+.sheet-title{font-size:18px;font-weight:800;flex:1}
+.sheet-close{background:none;border:none;font-size:20px;cursor:pointer;color:var(--ink-3);padding:4px 8px}
+.sheet-body{padding:14px 16px;display:grid;gap:14px}
+.sheet-sec h4{font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--ink-3);margin-bottom:6px}
+.sheet-sec p,.sheet-sec li{font-size:14px;line-height:1.5;color:var(--ink)}
+.sheet-sec ul{padding-left:18px}
+.sheet-cta{display:flex;gap:8px;padding:0 16px}
+
+/* LIST */
+.list{flex:1;overflow-y:auto;padding:12px 16px calc(80px + var(--safe-bottom))}
+.list-title{font-size:22px;font-weight:800;margin-bottom:12px}
+.empty{text-align:center;padding:60px 20px;color:var(--ink-3)}
+.empty .big{font-size:44px;margin-bottom:8px}
+.item{display:flex;gap:12px;padding:12px;background:var(--bg-card);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow-sm);margin-bottom:10px;cursor:pointer}
+.item-emoji{width:48px;height:48px;border-radius:12px;display:grid;place-items:center;font-size:24px;background:var(--bg-soft);flex-shrink:0}
+.item-body{flex:1;min-width:0}
+.item-title{font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item-sub{font-size:12px;color:var(--ink-3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item-meta{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
+.item-action{background:none;border:none;font-size:18px;cursor:pointer;padding:4px}
+
+/* BUTTONS */
+.btn{height:44px;border-radius:12px;border:none;font-weight:700;cursor:pointer;padding:0 16px;font-size:14px;transition:transform .1s}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:var(--ink);color:#fff}
+.btn-danger{background:#FEE;color:#C00;border:1px solid #FCC}
+.btn-ghost{background:var(--bg-soft);color:var(--ink-2)}
+.btn-accent{background:var(--primary);color:#fff}
+.btn-full{width:100%;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-sm{height:34px;padding:0 12px;font-size:13px;border-radius:10px}
+
+/* AUTH */
+.auth-card{max-width:400px;width:100%;margin:0 auto;padding:24px;text-align:center}
+.auth-title{font-size:26px;font-weight:800;margin-bottom:6px}
+.auth-sub{font-size:14px;color:var(--ink-2);margin-bottom:20px}
+.auth-social{display:grid;gap:10px;margin-bottom:20px}
+.social-btn{height:48px;border-radius:14px;border:1px solid var(--border);background:var(--bg-card);display:flex;align-items:center;justify-content:center;gap:10px;font-weight:600;font-size:14px;cursor:pointer;transition:border-color .2s}
+.social-btn:hover{border-color:var(--ink-3)}
+.social-btn svg{width:20px;height:20px}
+.divider{display:flex;align-items:center;gap:12px;margin:16px 0;font-size:12px;color:var(--ink-3)}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.auth-form{display:grid;gap:10px}
+.auth-link{font-size:13px;color:var(--ink-3);margin-top:12px}
+
+/* ADMIN */
+.admin-layout{display:flex;height:100vh;background:var(--bg-soft)}
+.admin-sidebar{width:240px;background:var(--bg-card);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:24px 16px;flex-shrink:0;z-index:50}
+.admin-sidebar-header{font-size:20px;font-weight:900;margin-bottom:32px;padding-left:12px;color:var(--ink);display:flex;align-items:center;gap:8px}
+.admin-sidebar-header span{color:var(--primary)}
+.admin-nav-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;font-size:13px;font-weight:600;color:var(--ink-2);cursor:pointer;transition:all .2s;margin-bottom:4px}
+.admin-nav-item:hover{background:var(--bg-soft);color:var(--ink)}
+.admin-nav-item.active{background:var(--primary);color:#fff;box-shadow:0 4px 12px rgba(255,107,90,0.2)}
+.admin-nav-item svg{width:18px;height:18px;flex-shrink:0}
+.admin-main{flex:1;overflow-y:auto;padding:32px}
+.admin-header-mobile{display:none}
+@media(max-width:768px){
+  .admin-sidebar{position:fixed;left:-260px;height:100%;transition:left .3s;box-shadow:10px 0 30px rgba(0,0,0,0.1)}
+  .admin-sidebar.open{left:0}
+  .admin-main{padding:20px;padding-top:80px}
+  .admin-header-mobile{display:flex;position:fixed;top:0;left:0;right:0;height:60px;background:var(--bg-card);border-bottom:1px solid var(--border);align-items:center;padding:0 20px;z-index:40;justify-content:space-between}
+}
+.admin-wrap{flex:1;overflow-y:auto;padding:0 0 calc(20px + var(--safe-bottom))}
+.admin-tabs{display:none}
+.admin-content{padding:0}
+.admin-section{margin-bottom:24px}
+.admin-section-title{font-size:16px;font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.kpi{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:14px;text-align:center}
+.kpi-val{font-size:24px;font-weight:800}
+.kpi-label{font-size:11px;color:var(--ink-3);font-weight:600;margin-top:2px}
+.form-grid{display:grid;gap:10px}
+.form-row{display:grid;gap:10px}
+.form-actions{display:flex;gap:8px;margin-top:8px}
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{text-align:left;padding:8px 10px;background:var(--bg-soft);font-weight:700;font-size:11px;text-transform:uppercase;color:var(--ink-3);border-bottom:1px solid var(--border)}
+.tbl td{padding:8px 10px;border-bottom:1px solid var(--border);vertical-align:top}
+.tbl tr:hover td{background:var(--bg-soft)}
+.badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:700}
+.badge-green{background:#E5FCF5;color:#006B4D}.badge-orange{background:#FFF7E5;color:#9A6700}.badge-red{background:#FEE;color:#C00}
+.toggle{position:relative;width:44px;height:24px;background:#E5E5EA;border-radius:999px;border:none;cursor:pointer;transition:background .2s}
+.toggle.on{background:var(--mint)}
+.toggle::after{content:'';position:absolute;top:3px;left:3px;width:18px;height:18px;background:#fff;border-radius:50%;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.toggle.on::after{transform:translateX(20px)}
+
+/* AI */
+.ai-box{background:linear-gradient(135deg,#F5F0FF,#FFF0F5);border:1px solid rgba(123,97,255,.2);border-radius:16px;padding:16px}
+.ai-box h4{color:var(--accent);font-size:14px;font-weight:700;margin-bottom:6px}
+.ai-box p{font-size:13px;color:var(--ink-2);line-height:1.5}
+.ai-result{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:12px;margin-top:10px;font-size:13px;line-height:1.5;white-space:pre-wrap}
+.ai-loading{display:inline-block;animation:spin 1s linear infinite}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+
+/* FOOTER */
+.app-footer{padding:12px 16px;background:var(--bg-card);border-top:1px solid var(--border);font-size:11px;color:var(--ink-3);text-align:center;line-height:1.5;flex-shrink:0;z-index:10}
+.app-footer a{color:var(--ink-2)}
+
+/* QUICK LEARN */
+.quick-learn{position:fixed;inset:0;z-index:50;display:none;background:rgba(255,249,246,.9);backdrop-filter:blur(10px);align-items:flex-end;justify-content:center}
+.quick-learn.show{display:flex}
+.ql-sheet{width:100%;max-width:520px;background:var(--bg-card);border-radius:24px 24px 0 0;box-shadow:var(--shadow-lg);border:1px solid var(--border);padding:20px 20px calc(20px + var(--safe-bottom));animation:up .3s ease}
+.ql-handle{width:36px;height:4px;border-radius:2px;background:#E5E5EA;margin:0 auto 12px}.ql-title{font-size:18px;font-weight:800;margin-bottom:6px}.ql-sub{font-size:13px;color:var(--ink-2);margin-bottom:14px}
+.ql-grid{display:flex;flex-wrap:wrap;gap:8px}
+.ql-chip{padding:10px 14px;border-radius:999px;border:1px solid var(--border);background:var(--bg-soft);font-size:13px;font-weight:600;cursor:pointer}
+.ql-chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.ql-actions{display:flex;gap:8px;margin-top:16px}
+
+/* TOAST */
+.toast{position:fixed;left:50%;bottom:calc(100px + var(--safe-bottom));transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:12px;font-size:13px;font-weight:600;box-shadow:var(--shadow-md);z-index:100;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;white-space:nowrap;max-width:90vw}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(-4px)}
+@media(min-width:640px){.form-row{grid-template-columns:1fr 1fr}}
+
+.swipe-counter{font-size:10px;font-weight:800;color:var(--primary);background:rgba(255,255,255,.88);padding:3px 10px;border-radius:99px;border:1.5px solid var(--primary);transition:all .2s cubic-bezier(.16,1,.3,1);backdrop-filter:blur(6px)}
+.swipe-counter.bump{transform:scale(1.15);background:var(--primary);color:#fff;box-shadow:0 4px 12px rgba(255,107,90,0.3)}
+.card-counter{position:absolute;top:10px;right:10px;z-index:3}
+</style>
+</head>
+<body>
+<div class="desktop-splash">
+  <div class="ds-content">
+    <div class="ds-badge">🚀 Next-Gen Shopping Inspiration</div>
+    <h1 class="ds-title">Nicht suchen.<br><span class="ds-gradient">Swipen.</span><br>Smarter kaufen.</h1>
+    <p class="ds-desc">AIshopr kombiniert das Feeling von Tinder und TikTok mit KI-gestützter Shopping-Inspiration.</p>
+    <div class="ds-stores">
+      <div class="ds-store-title">Mobile App bald verfügbar:</div>
+      <div class="ds-store-badges">
+        <div class="ds-store-badge">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C4.24 16.7 4.84 10.5 8.5 10.3c1.2.06 2.04.7 2.75.72.96-.2 1.88-.76 2.92-.69 1.24.1 2.17.58 2.78 1.48-2.56 1.53-1.95 4.89.6 5.82-.47 1.22-.7 1.76-1.5 2.65zM12.1 10.22c-.14-2.22 1.74-4.15 3.82-4.32.3 2.45-2.2 4.5-3.82 4.32z"/></svg>
+          <div><div class="dsb-sub">Download on the</div><div class="dsb-main">App Store</div></div>
+          <div class="dsb-soon">Coming soon</div>
+        </div>
+        <div class="ds-store-badge">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 20.5v-17c0-.83.67-1.5 1.5-1.5h15c.83 0 1.5.67 1.5 1.5v17c0 .83-.67 1.5-1.5 1.5h-15c-.83 0-1.5-.67-1.5-1.5zM10 15l5-3-5-3v6z"/></svg>
+          <div><div class="dsb-sub">Get it on</div><div class="dsb-main">Google Play</div></div>
+          <div class="dsb-soon">Coming soon</div>
+        </div>
+      </div>
+    </div>
+    <div class="ds-features">
+      <div class="ds-feat">✨ <strong>KI-gestützt</strong><br>Lernt aus deinen Swipes</div>
+      <div class="ds-feat">💡 <strong>Nutzen & Nachteile</strong><br>Ehrliche Fit-Scores</div>
+      <div class="ds-feat">🔒 <strong>100% Transparent</strong><br>Kein verstecktes Sponsoring</div>
+    </div>
+    <div class="ds-admin-hint">
+      Du bist Administrator oder möchtest die Web-App am Desktop testen?<br>
+      <a href="#" onclick="document.body.classList.toggle('force-desktop');return false;">🖥️ Smartphone-Ansicht / Vollbild umschalten</a>
+    </div>
+  </div>
+  <div class="ds-mockup">
+    <div class="ds-phone">
+      <div class="ds-phone-notch"></div>
+      <div class="ds-phone-screen">
+        <div id="app"></div>
+        <div class="quick-learn" id="quickLearn"><div class="ql-sheet"><div class="ql-handle"></div><div class="ql-title">Wir lernen schon! 🎯</div><div class="ql-sub">Wähle 2–3 Themen — dein Feed wird passender.</div><div class="ql-grid" id="qlGrid"></div><div class="ql-actions"><button class="btn btn-ghost" style="flex:1" onclick="closeQuickLearn()">Später</button><button class="btn btn-primary" style="flex:1" onclick="saveQuickLearn()">Übernehmen</button></div></div></div>
+        <div class="sheet" id="detailSheet"><div class="sheet-card"><div class="sheet-head"><div class="sheet-title" id="detailTitle">Details</div><button class="sheet-close" onclick="closeSheet()">✕</button></div><div class="sheet-body" id="detailBody"></div><div class="sheet-cta" id="detailCTA"></div></div></div>
+        <div class="sheet" id="infoSheet"><div class="sheet-card"><div class="sheet-head"><div class="sheet-title" id="infoTitle">Info</div><button class="sheet-close" onclick="closeInfoSheet()">✕</button></div><div class="sheet-body" id="infoBody"></div></div></div>
+        <div class="toast" id="toast"></div>
+        <button class="chat-fab" onclick="toggleChat()" title="AIshopr Support"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></button>
+        <div class="chat-window" id="chatWindow">
+          <div class="chat-header">
+            <span>AIshopr Support 🤖</span>
+            <button onclick="toggleChat()">✕</button>
+          </div>
+          <div class="chat-messages" id="chatMessages">
+            <div class="chat-msg bot">Hallo! Ich bin der AIshopr Bot. Frag mich alles über die App, das Swipen oder unsere Funktionen!</div>
+          </div>
+          <div class="chat-input-area">
+            <input type="text" id="chatInput" placeholder="Frage eingeben..." onkeypress="if(event.key==='Enter')sendChat()">
+            <button onclick="sendChat()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- COOKIE BANNER — compact GDPR -->
+<div class="cookie-banner" id="cookieBanner" style="display:none">
+  <p>Wir nutzen Cookies für Personalisierung und Affiliate-Tracking. <a href="#" onclick="event.preventDefault();openSheet('privacy')">Datenschutz</a></p>
+  <div class="cookie-actions">
+    <button class="btn btn-ghost btn-sm" style="flex:1" onclick="saveConsent({necessary:true,functional:false,analytics:false,marketing:false})">Ablehnen</button>
+    <button class="btn btn-primary btn-sm" style="flex:1" onclick="saveConsent({necessary:true,functional:true,analytics:true,marketing:true})">Akzeptieren</button>
+  </div>
+</div>
+
+<script>
+const APP_VERSION='0.9.0';
+const BUILD_DATE='2026-05-29';
+const DATA_SCHEMA_VERSION=1;
+
+// ============ STORAGE ============
+const LS={
+  get(k,d=null){try{return JSON.parse(localStorage.getItem('as_'+k))??d}catch{return d}},
+  set(k,v){localStorage.setItem('as_'+k,JSON.stringify(v))},
+  del(k){localStorage.removeItem('as_'+k)}
+};
+
+// ============ CATEGORIES ============
+const CATS_DEFAULT=[
+  {id:'smarthome',name:'Smart Home',icon:'🏠'},{id:'homeoffice',name:'Homeoffice',icon:'💼'},
+  {id:'reise',name:'Reise',icon:'✈️'},{id:'auto',name:'Auto',icon:'🚗'},
+  {id:'ordnung',name:'Ordnung',icon:'📦'},{id:'energie',name:'Energie',icon:'⚡'},
+  {id:'fitness',name:'Fitness',icon:'💪'},{id:'diy',name:'DIY',icon:'🔧'},
+  {id:'familie',name:'Familie',icon:'👨‍👩‍👧'},{id:'geschenk',name:'Geschenke',icon:'🎁'},
+  {id:'haushalt',name:'Haushalt',icon:'🧹'},{id:'tech',name:'Technik',icon:'📱'},
+];
+let CATS = (function(){ const stored = LS.get('categories'); return (stored && stored.length) ? stored : [...CATS_DEFAULT]; })();
+function saveCategories(){ LS.set('categories', CATS); }
+
+// ============ STATE ============
+const S={
+  view:'home',feedMode:'foryou',feedQueue:[],feedIdx:0,currentCard:null,
+  swipes:LS.get('swipesCount',0),saved:LS.get('saved',[]),likes:LS.get('likes',[]),
+  rejects:LS.get('rejects',[]),interests:LS.get('interests',[]),
+  user:LS.get('currentUser',null),adminLogged:LS.get('adminLogged',false),
+  adminTab:'dashboard',aiResult:''
+};
+
+function ideas(){return LS.get('ideas',IDEAS_DEFAULT)}
+function settings(){
+  const saved=LS.get('settings',{})||{};
+  return {
+    ...DEFAULT_SETTINGS,
+    ...saved,
+    legal:{...DEFAULT_SETTINGS.legal,...(saved.legal||{})},
+    socials:{...DEFAULT_SETTINGS.socials,...(saved.socials||{})},
+    smtp:{...DEFAULT_SETTINGS.smtp,...(saved.smtp||{})},
+    db_config:{...DEFAULT_SETTINGS.db_config,...(saved.db_config||{})},
+    aff_providers:{...DEFAULT_SETTINGS.aff_providers,...(saved.aff_providers||{})}
+  };
+}
+function catName(id){return CATS.find(c=>c.id===id)?.name||id}
+function catIcon(id){return CATS.find(c=>c.id===id)?.icon||'📦'}
+function esc(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\"/g,'&quot;')}
+
+function updateAppBranding(){
+  const s = settings();
+  const name = s.app_name || 'AIshopr';
+  const tagline = s.app_tagline || '';
+  document.title = name + ' — ' + (tagline || 'Swipen statt suchen');
+}
+
+// ============ RENDER ENGINE ============
+function render(){
+  updateAppBranding();
+  const app=document.getElementById('app');
+  app.innerHTML='';
+  
+  // Hide/Show Chat FAB based on view
+  const chatFab=document.querySelector('.chat-fab');
+  if(chatFab) chatFab.style.display=(S.view==='home')?'grid':'none';
+
+  // Show/hide Info button in TikTok nav for admin
+  const infoBtn=document.getElementById('tkInfoBtn');
+  if(infoBtn) infoBtn.style.display=(S.view==='admin')?'flex':'none';
+
+  // Remove any existing tiktok nav to avoid duplicates
+  document.querySelectorAll('.tiktok-nav').forEach(n=>n.remove());
+
+  if(S.view==='home') app.innerHTML=renderHome();
+  else if(S.view==='feed') app.innerHTML=renderFeed();
+  else if(S.view==='saved') app.innerHTML=renderSaved();
+  else if(S.view==='profile') app.innerHTML=renderProfile();
+  else if(S.view==='login') app.innerHTML=renderLogin();
+  else if(S.view==='register') app.innerHTML=renderRegister();
+  else if(S.view==='admin-login') app.innerHTML=renderAdminLogin();
+  else if(S.view==='admin') app.innerHTML=renderAdmin();
+  
+  if(S.view==='feed'){loadFeed(true);bindFeedEvents();}
+  if(S.view==='admin') bindAdminEvents();
+
+  // Show TikTok nav on feed/saved/profile views
+  if(['feed','saved','profile'].includes(S.view)){
+    if(S.view!=='feed'){
+      const container=app.parentElement||document.body;
+      const existing=container.querySelector('.tiktok-nav');
+      if(!existing){
+        const div=document.createElement('div');
+        div.innerHTML=tiktokNav();
+        const navEl=div.firstElementChild;
+        if(navEl) container.appendChild(navEl);
+      }
+    }
+  }
+}
+
+// ============ TIKTOK NAV ============
+function tiktokNav(){
+  const u=S.user;
+  return `<div class="tiktok-nav" id="tkNav">
+    <div class="tk-avatar" onclick="showView('${u?'profile':'login'}')" title="${u?esc(u.name):'Anmelden'}">${u?(u.photo?`<img src="${esc(u.photo)}">`:(u.name||'U')[0].toUpperCase()):'👤'}</div>
+    <button class="tk-btn ${S.view==='feed'?'active':''}" onclick="showView('feed')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l2-2 7-7 7 7 2 2"/><path d="M5 10v10a1 1 0 001 1h3a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1h3a1 1 0 001-1V10"/></svg><span class="tk-label">Feed</span></button>
+    <button class="tk-btn ${S.view==='saved'?'icon-active':''}" id="sideBookmarkBtn" onclick="handleSavedNav()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg><span class="tk-label">Gemerkt</span></button>
+    <button class="tk-btn" onclick="toggleChat()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><span class="tk-label">Chat</span></button>
+    <button class="tk-btn" onclick="startTour()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3M12 17h.01"/></svg><span class="tk-label">Guide</span></button>
+    <button class="tk-btn" onclick="showView('admin-login')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg><span class="tk-label">Admin</span></button>
+    <button class="tk-btn" id="tkInfoBtn" style="display:none" onclick="showInfoSheet()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg><span class="tk-label">Info</span></button>
+  </div>`;
+}
+function nav(active){ return ''; }
+
+// ============ HEADER & FOOTER ============
+function getLogoHtml(isAdmin=false){
+  const s=settings();
+  const name = s.app_name || 'AIshopr';
+  let logo;
+  if(s.logo) logo = `<img src="${s.logo}" style="height:28px;object-fit:contain;cursor:pointer;padding-left:16px" onclick="showView('home')">`;
+  else logo = `<div class="logo" onclick="showView('home')">${esc(name)}</div>`;
+  
+  if(isAdmin) return `<div style="display:flex;align-items:center;gap:8px">${logo}<span style="font-weight:700;font-size:14px;color:var(--ink-3)">Admin</span></div>`;
+  return logo;
+}
+function header(extra=''){
+  const u=S.user;
+  // Avatar removed from header as requested (available in tiktok-nav)
+  return `<div class="header">${getLogoHtml()}<div class="header-actions">${extra}</div></div>`;
+}
+function footer(){
+  const s=settings();
+  if(!s.footer_show) return '';
+  const appName = s.app_name || 'AIshopr';
+  let linksRaw=s.footer_links||DEFAULT_SETTINGS.footer_links;
+  if(typeof linksRaw==='string'){
+    linksRaw=linksRaw.split(',').map(x=>{const [label,url]=x.split('|');return {label:(label||'').trim(),url:(url||'#').trim(),type:(label||'').toLowerCase().includes('datenschutz')?'privacy':((label||'').toLowerCase().includes('impressum')?'imprint':'link')};}).filter(x=>x.label);
+  }
+  const footerLinks = linksRaw.map(l => `<a href="#" onclick="event.preventDefault();openSheet('${l.type||'imprint'}')">${esc(l.label)}</a>`).join(' · ');
+
+  const socials = s.socials || {};
+  const socialIcons = {instagram:'📷',tiktok:'🎵',x:'𝕏',facebook:'👥',linkedin:'💼',youtube:'📺'};
+  const socialLinks = Object.entries(socials).filter(([k,v])=>v).map(([k,v])=>
+    `<a href="${esc(v)}" target="_blank" rel="noopener" style="margin:0 4px">${socialIcons[k]||'🔗'}</a>`
+  ).join('');
+
+  return `<div class="app-footer"><div>© ${new Date().getFullYear()} ${esc(appName)} — ${esc(s.app_tagline||'')}</div>${footerLinks?'<div>'+footerLinks+'</div>':''}${socialLinks?'<div class="footer-social">'+socialLinks+'</div>':''}</div>`;
+}
+
+// ============ HOME ============
+function renderHome(){
+  const s = settings();
+  const name = s.app_name || 'AIshopr';
+  const tagline = s.app_tagline || 'Smarter einkaufen durch Swipen.';
+  return `<div class="home"><div class="home-bg"></div><div class="home-content">
+    <div style="width:100%;display:flex;justify-content:center;margin-bottom:8px">${getLogoHtml(false)}</div>
+    <div class="home-badge">✨ KI-gestützter Swipe-Feed</div>
+    <h1 class="home-title">Nicht suchen.<br><span>Swipen.</span><br>Smarter kaufen.</h1>
+    <div class="home-subtitle">${esc(tagline)}</div>
+    <p class="home-desc">${esc(name)} zeigt dir Produktideen als personalisierten Swipe-Feed mit ehrlicher Bewertung: Nutzen, Nachteile, Fit-Score. Die KI lernt aus deinen Swipes.</p>
+    <div class="preview-stack">
+      <div class="preview-card"><div class="pc-img" style="background:linear-gradient(135deg,#FFE8E4,#FFD6CC)">🔌</div><div class="pc-body"><div class="pc-title">Kabelmanagement</div><div class="pc-sub">Weniger Chaos</div></div></div>
+      <div class="preview-card"><div class="pc-img" style="background:linear-gradient(135deg,#E8E4FF,#D6CCFF)">🏠</div><div class="pc-body"><div class="pc-title">Smarte Steckdose</div><div class="pc-sub">Strom sparen</div></div></div>
+      <div class="preview-card"><div class="pc-img" style="background:linear-gradient(135deg,#E4FFF8,#CCFFEF)">✈️</div><div class="pc-body"><div class="pc-title">Kabeltasche</div><div class="pc-sub">Ordnung</div></div></div>
+    </div>
+    <div style="margin-top:auto;width:100%;display:flex;flex-direction:column;align-items:center;gap:8px;">
+      <button class="cta-primary" onclick="showView('feed')">Jetzt entdecken →</button>
+      <div class="home-meta">Ohne Anmeldung losswipen · Registriere dich um Ideen dauerhaft zu speichern</div>
+    </div>
+  </div></div>${footer()}`;
+}
+
+// ============ AUTH ============
+function renderLogin(){
+  return `${header()}
+  <div class="list" style="display:flex;align-items:center;justify-content:center"><div class="auth-card">
+    <div class="auth-title">Willkommen zurück</div>
+    <div class="auth-sub">Melde dich an, um deine Ideen geräteübergreifend zu speichern.</div>
+    <div class="auth-social">
+      <button class="social-btn" onclick="socialLogin('google')"><svg viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>Weiter mit Google</button>
+      <button class="social-btn" onclick="socialLogin('apple')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C4.24 16.7 4.84 10.5 8.5 10.3c1.2.06 2.04.7 2.75.72.96-.2 1.88-.76 2.92-.69 1.24.1 2.17.58 2.78 1.48-2.56 1.53-1.95 4.89.6 5.82-.47 1.22-.7 1.76-1.5 2.65zM12.1 10.22c-.14-2.22 1.74-4.15 3.82-4.32.3 2.45-2.2 4.5-3.82 4.32z"/></svg>Weiter mit Apple</button>
+    </div>
+    <div class="divider">oder mit E-Mail</div>
+    <div class="auth-form">
+      <input id="loginEmail" type="email" placeholder="E-Mail-Adresse">
+      <input id="loginPass" type="password" placeholder="Passwort">
+      <button class="btn btn-primary btn-full" onclick="emailLogin()">Anmelden</button>
+    </div>
+    <div class="auth-link" style="margin-top:16px"><a href="#" onclick="showView('register');return false">Noch kein Konto? Registrieren</a></div>
+    <div style="margin-top:24px;width:100%"><button class="btn btn-ghost btn-full" onclick="showView('feed')">← Zurück zum Feed</button></div>
+  </div></div>${nav('profile')}`;
+}
+function renderRegister(){
+  return `${header()}
+  <div class="list" style="display:flex;align-items:center;justify-content:center"><div class="auth-card">
+    <div class="auth-title">Konto erstellen</div>
+    <div class="auth-sub">Speichere Ideen dauerhaft und bekomme personalisierte Vorschläge.</div>
+    <div class="auth-social">
+      <button class="social-btn" onclick="socialLogin('google')"><svg viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>Weiter mit Google</button>
+      <button class="social-btn" onclick="socialLogin('apple')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C4.24 16.7 4.84 10.5 8.5 10.3c1.2.06 2.04.7 2.75.72.96-.2 1.88-.76 2.92-.69 1.24.1 2.17.58 2.78 1.48-2.56 1.53-1.95 4.89.6 5.82-.47 1.22-.7 1.76-1.5 2.65zM12.1 10.22c-.14-2.22 1.74-4.15 3.82-4.32.3 2.45-2.2 4.5-3.82 4.32z"/></svg>Weiter mit Apple</button>
+    </div>
+    <div class="divider">oder mit E-Mail</div>
+    <div class="auth-form">
+      <input id="regName" placeholder="Dein Name">
+      <input id="regEmail" type="email" placeholder="E-Mail-Adresse">
+      <input id="regPass" type="password" placeholder="Passwort wählen">
+      <button class="btn btn-primary btn-full" onclick="emailRegister()">Konto erstellen</button>
+    </div>
+    <div class="auth-link" style="margin-top:16px"><a href="#" onclick="showView('login');return false">Schon ein Konto? Anmelden</a></div>
+    <div style="margin-top:24px;width:100%"><button class="btn btn-ghost btn-full" onclick="showView('feed')">← Zurück zum Feed</button></div>
+  </div></div>${nav('profile')}`;
+}
+
+function socialLogin(provider){
+  const name=provider==='google'?'Google-Nutzer':'Apple-Nutzer';
+  const user={id:'u_'+Date.now(),name,email:name.toLowerCase().replace(/\s/g,'')+'@'+provider+'.demo',provider,photo:'',created:new Date().toISOString()};
+  loginUser(user);
+}
+function emailLogin(){
+  const email=document.getElementById('loginEmail')?.value;
+  const pass=document.getElementById('loginPass')?.value;
+  if(!email||!pass){toast('Bitte ausfüllen');return;}
+  const users=LS.get('users',[]);
+  const u=users.find(u=>u.email===email&&u.pass===pass);
+  if(!u){toast('Login fehlgeschlagen');return;}
+  loginUser(u);
+}
+function emailRegister(){
+  const name=document.getElementById('regName')?.value||'Nutzer';
+  const email=document.getElementById('regEmail')?.value;
+  const pass=document.getElementById('regPass')?.value;
+  if(!email||!pass){toast('Bitte ausfüllen');return;}
+  const users=LS.get('users',[]);
+  if(users.find(u=>u.email===email)){toast('E-Mail bereits registriert');return;}
+  const u={id:'u_'+Date.now(),name,email,pass,provider:'email',photo:'',created:new Date().toISOString()};
+  users.push(u);LS.set('users',users);loginUser(u);
+}
+function loginUser(u){S.user=u;LS.set('currentUser',u);toast('Willkommen, '+u.name+'!');showView('feed');}
+function logout(){S.user=null;LS.del('currentUser');toast('Abgemeldet');showView('home');}
+
+// ============ FEED ============
+function renderFeed(){
+  const chips=[{id:'foryou',l:'Für dich'},{id:'problem',l:'Problemlöser'},{id:'under25',l:'Unter 25€'},{id:'smarthome',l:'Smart Home'},{id:'reise',l:'Reisen'},{id:'geschenk',l:'Geschenke'},{id:'tech',l:'Technik'},{id:'ai',l:'🤖 KI'}];
+  const s=settings();
+  const symbol=s.logo_symbol?`<img src="${s.logo_symbol}" alt="AIshopr">`:'AI';
+  const symbolHtml = s.logo_symbol ? `<img src="${s.logo_symbol}" alt="${esc(s.app_name||'AI')}">` : `<span class="feed-symbol-txt">${esc((s.app_name||'AI').slice(0,2).toUpperCase())}</span>`;
+  return `<div class="feed-head"><div class="feed-symbol" onclick="showView('home')">${symbolHtml}</div><div class="feed-top">${chips.map(c=>`<button class="chip ${c.id===S.feedMode?'active':''}" onclick="setMode('${c.id}')">${c.l}</button>`).join('')}</div></div>
+  <div class="feed-stage" id="feedStage">
+    <div class="page-watermark">${Array(6).fill(`<span>${esc(name.toUpperCase())}</span>`).join('')}</div>
+    <div class="swipe-hint left" id="hintLeft"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+    <div class="swipe-hint right" id="hintRight"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div>
+    <div class="swipe-hint down" id="hintDown"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="8" y1="8" x2="16" y2="16"/><line x1="16" y1="8" x2="8" y2="16"/></svg></div>
+    <div class="affiliate-disclaimer">${esc(settings().affiliate_notice)}</div>
+  </div>
+  ${tiktokNav()}`;
+}
+function setMode(m){S.feedMode=m;if(m==='ai'){generateAIIdeas();return;}loadFeed(true);}
+function loadFeed(reset){
+  if(reset){S.feedQueue=[];S.feedIdx=0;}
+  let pool=[...ideas()];const s=settings();
+  if(S.feedMode==='under25')pool=pool.filter(p=>parseInt(p.price)<=25);
+  if(S.feedMode==='problem')pool=pool.filter(p=>p.fit>=85);
+  if(S.feedMode==='smarthome')pool=pool.filter(p=>p.cat==='smarthome'||p.cat==='energie');
+  if(S.feedMode==='reise')pool=pool.filter(p=>p.cat==='reise');
+  if(S.feedMode==='geschenk')pool=pool.filter(p=>p.cat==='geschenk');
+  if(S.feedMode==='tech')pool=pool.filter(p=>p.cat==='tech'||p.cat==='homeoffice');
+
+  // Interest-Engine-basierte Personalisierung (nur im foryou-Modus)
+  if(S.feedMode==='foryou' && getConsent().functional){
+    try {
+      const profile = InterestEngine.getProfile();
+      if((profile.totalSwipes||0) > 0){
+        // Compute score für jedes Produkt
+        pool = pool.map(p => ({...p, computedScore: InterestEngine.computeProductScore(p)}));
+        pool.sort((a,b) => (b.computedScore||0) - (a.computedScore||0));
+      } else {
+        // Fallback auf alte Interessen-Logik
+        if(S.interests.length){
+          pool.sort((a,b)=>(S.interests.includes(b.cat)?1:0)-(S.interests.includes(a.cat)?1:0));
+        }
+      }
+    } catch(e){}
+  } else if(S.interests.length){
+    pool.sort((a,b)=>(S.interests.includes(b.cat)?1:0)-(S.interests.includes(a.cat)?1:0));
+  }
+
+  // Limit sponsored
+  const maxSp=Number(s.max_sponsored_pct||15)/100;
+  let spCount=0;
+  pool=pool.filter((p,i)=>{if(!p.sponsored)return true;if(spCount/(i+1)>maxSp)return false;spCount++;return true;});
+
+  // Shuffle innerhalb ähnlicher Scores (±10 Punkte)
+  for(let i=pool.length-1;i>0;i--){
+    const j=Math.max(0, i-Math.floor(Math.random()*5));
+    [pool[i],pool[j]]=[pool[j],pool[i]];
+  }
+  S.feedQueue=pool;renderCard();
+}
+function renderCard(){
+  const stage=document.getElementById('feedStage');if(!stage)return;
+  stage.querySelectorAll('.swipe-card').forEach(c=>c.remove());
+  stage.querySelectorAll('div[style]').forEach(c=>{if(!c.classList.contains('swipe-hint'))c.remove();});
+  if(S.feedIdx>=S.feedQueue.length){stage.insertAdjacentHTML('beforeend','<div style="text-align:center;color:var(--ink-3);padding:40px">Alle Ideen gesehen! Wechsle den Filter. 🎯</div>');return;}
+  const p=S.feedQueue[S.feedIdx];S.currentCard=p;
+  recordImpression(p.id);
+  const card=document.createElement('div');card.className='swipe-card';
+  const heroContent = p.image 
+    ? `<img src="${p.image}" alt="${esc(p.title)}">` 
+    : `<div class="grad ${p.grad}"></div><div class="emoji">${p.emoji}</div>`;
+  const name = settings().app_name || 'AIshopr';
+  card.innerHTML=`
+  <div class="swipe-card-overlay yellow" id="overlayLeft"><div class="ov-icon"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div></div>
+  <div class="swipe-card-overlay green" id="overlayRight"><div class="ov-icon"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div></div>
+  <div class="swipe-card-overlay save" id="overlaySave"><div class="ov-icon"><svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg></div></div>
+  <div class="swipe-card-overlay red" id="overlayReject"><div class="ov-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="8" y1="8" x2="16" y2="16"/><line x1="16" y1="8" x2="8" y2="16"/></svg></div></div>
+  <div class="card-hero">${heroContent}${p.sponsored?'<div class="card-ribbon">Gesponsert</div>':''}<span class="swipe-counter card-counter" id="swipeCounter">${S.swipes} Swipes</span></div>
+  <div class="card-body"><div class="card-hook">${esc(p.hook)}</div><div class="card-title">${esc(p.title)}</div><div class="card-problem">${esc(p.problem)}</div>
+  <div class="card-tags"><span class="tag mint">${esc(p.price)}</span><span class="tag">${catIcon(p.cat)} ${catName(p.cat)}</span><span class="tag sun">Fit ${p.fit}%</span>${p.sponsored?'<span class="tag rose">Gesponsert</span>':''}</div></div>
+  <div class="card-foot"><div class="fit"><div class="fit-ring" style="--p:${p.fit}"><span>${p.fit}</span></div><div class="fit-label">Fit-Score</div></div><div class="price">${esc(p.price)}</div></div>`;
+  stage.appendChild(card);updateActionStates();enableDrag(card);
+}
+function bindFeedEvents(){renderCard();}
+
+function updateActionStates(){
+  const p=S.currentCard;if(!p)return;
+  document.getElementById('saveActionBtn')?.classList.toggle('is-saved',S.saved.includes(p.id));
+  document.getElementById('likeActionBtn')?.classList.toggle('is-liked',S.likes.includes(p.id));
+}
+
+function updateSwipeCounter(){
+  const el=document.getElementById('swipeCounter');
+  if(!el)return;
+  el.textContent=`${S.swipes} Swipes`;
+  el.classList.remove('bump');
+  void el.offsetWidth;
+  el.classList.add('bump');
+  setTimeout(()=>el.classList.remove('bump'),260);
+}
+
+function showHeartBurst(card){
+  if(!card)return;
+  const burst=document.createElement('div');
+  burst.className='heart-burst';
+  burst.innerHTML='<svg viewBox="0 0 24 24" style="width:96px;height:96px;fill:currentColor;stroke:currentColor;filter:drop-shadow(0 16px 24px rgba(239,68,68,.28))"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>';
+  burst.style.cssText='position:absolute;left:50%;top:50%;z-index:80;transform:translate(-50%,-50%);pointer-events:none;color:#ef4444;animation:heartBurst .72s cubic-bezier(.16,1,.3,1) forwards';
+  card.appendChild(burst);
+  setTimeout(()=>burst.remove(),780);
+}
+
+function showSaveBurst(card){
+  if(!card)return;
+  const target=document.getElementById('sideBookmarkBtn');
+  const cardRect=card.getBoundingClientRect();
+  const startX=cardRect.left+cardRect.width/2;
+  const startY=cardRect.top+cardRect.height/2;
+
+  if(target){
+    const targetRect=target.getBoundingClientRect();
+    const endX=targetRect.left+targetRect.width/2;
+    const endY=targetRect.top+targetRect.height/2;
+    const fly=document.createElement('div');
+    fly.className='bookmark-fly';
+    fly.innerHTML='<svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>';
+    fly.style.left=(startX-23)+'px';
+    fly.style.top=(startY-23)+'px';
+    document.body.appendChild(fly);
+    requestAnimationFrame(()=>{
+      fly.style.transform=`translate(${endX-startX}px,${endY-startY}px) scale(.45) rotate(12deg)`;
+      fly.style.opacity='0';
+    });
+    target.classList.add('icon-active');
+    setTimeout(()=>fly.remove(),760);
+    return;
+  }
+
+  const burst=document.createElement('div');
+  burst.className='save-burst';
+  burst.innerHTML='<svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>';
+  card.appendChild(burst);
+  setTimeout(()=>burst.remove(),850);
+}
+
+function enableDrag(card){
+  let sx=0,sy=0,dx=0,dy=0,drag=false,lockAxis=null;
+  const hL=document.getElementById('hintLeft'),hR=document.getElementById('hintRight'),hD=document.getElementById('hintDown');
+  const overL=card.querySelector('#overlayLeft'), overR=card.querySelector('#overlayRight'), overSave=card.querySelector('#overlaySave'), overReject=card.querySelector('#overlayReject');
+  
+  const start=e=>{
+    drag=true;lockAxis=null;
+    card.classList.add('dragging');
+    const t=e.touches?e.touches[0]:e;
+    sx=t.clientX;sy=t.clientY;
+  };
+  
+  const move=e=>{
+    if(!drag)return;
+    if(e.cancelable)e.preventDefault();
+    const t=e.touches?e.touches[0]:e;
+    dx=t.clientX-sx;dy=t.clientY-sy;
+    const absDx=Math.abs(dx),absDy=Math.abs(dy);
+    
+    // 4-directional axis lock: right=Like, left=Weiter, up=Merken, down=Kein Interesse
+    if(lockAxis===null){
+      if(absDx>10||absDy>10){
+        if(absDx>absDy) lockAxis=dx>0?'right':'left';
+        else lockAxis=dy<0?'up':'down';
+      }
+    }
+    
+    // Horizontal: Weiter (links, gelb) / Like (rechts, grün)
+    if(lockAxis==='left'){
+      card.style.transform=`translate(${dx}px,0) rotate(${dx*.08}deg)`;
+      card.style.opacity='1';
+      const intensity=Math.min(1,absDx/80);
+      if(overL) overL.style.opacity=intensity;
+      if(overR) overR.style.opacity=0;if(overSave) overSave.style.opacity=0;if(overReject) overReject.style.opacity=0;
+      if(absDx>25){card.style.borderColor='var(--sun)';card.style.boxShadow=`0 0 0 ${4+absDx/20}px rgba(252,211,77,${0.15+intensity*0.25}), 0 8px 30px rgba(252,211,77,${intensity*0.2})`;}
+      hL?.classList.toggle('show',absDx>30);
+      hR?.classList.remove('show');hD?.classList.remove('show');
+      return;
+    }
+    if(lockAxis==='right'){
+      card.style.transform=`translate(${dx}px,0) rotate(${dx*.08}deg)`;
+      card.style.opacity='1';
+      const intensity=Math.min(1,absDx/80);
+      if(overR) overR.style.opacity=intensity;
+      if(overL) overL.style.opacity=0;if(overSave) overSave.style.opacity=0;if(overReject) overReject.style.opacity=0;
+      if(absDx>25){card.style.borderColor='var(--mint)';card.style.boxShadow=`0 0 0 ${4+absDx/20}px rgba(0,201,167,${0.15+intensity*0.25}), 0 8px 30px rgba(0,201,167,${intensity*0.2})`;}
+      hR?.classList.toggle('show',absDx>30);
+      hL?.classList.remove('show');hD?.classList.remove('show');
+      return;
+    }
+    
+    // Vertical: Merken (hoch, violett) / Kein Interesse (runter, rot)
+    if(lockAxis==='up'){
+      const up=Math.min(0,dy);
+      const absUp=Math.abs(up);
+      card.style.transform=`translate(0,${Math.max(up,-96)}px) scale(${1-Math.min(absUp,120)/900})`;
+      card.style.opacity='1';
+      const intensity=Math.min(1,absUp/72);
+      if(overSave) overSave.style.opacity=intensity;
+      if(overL) overL.style.opacity=0;if(overR) overR.style.opacity=0;if(overReject) overReject.style.opacity=0;
+      hL?.classList.remove('show');hR?.classList.remove('show');hD?.classList.remove('show');
+      return;
+    }
+    if(lockAxis==='down'){
+      const down=Math.max(0,dy);
+      const absDown=Math.min(down,96);
+      card.style.transform=`translate(0,${absDown}px) scale(${1-absDown/300})`;
+      card.style.opacity='1';
+      const intensity=Math.min(1,absDown/72);
+      if(overReject) overReject.style.opacity=intensity;
+      if(overL) overL.style.opacity=0;if(overR) overR.style.opacity=0;if(overSave) overSave.style.opacity=0;
+      if(absDown>25){card.style.borderColor='var(--rose)';card.style.boxShadow=`0 0 0 ${4+absDown/20}px rgba(255,93,143,${0.15+intensity*0.25}), 0 8px 30px rgba(255,93,143,${intensity*0.2})`;}
+      hD?.classList.toggle('show',absDown>30);
+      hL?.classList.remove('show');hR?.classList.remove('show');
+      return;
+    }
+  };
+  
+  const end=()=>{
+    if(!drag)return;
+    drag=false;card.classList.remove('dragging');
+    card.style.borderColor='var(--border)';card.style.boxShadow='var(--shadow-lg)';
+    if(overL) overL.style.opacity=0;if(overR) overR.style.opacity=0;if(overSave) overSave.style.opacity=0;if(overReject) overReject.style.opacity=0;
+    hL?.classList.remove('show');hR?.classList.remove('show');hD?.classList.remove('show');
+    
+    if(lockAxis==='right' && dx>82){likeAndSlide(card);}
+    else if(lockAxis==='left' && dx<-82){nextCard('skip');}
+    else if(lockAxis==='up' && dy<-82){card.style.transform='';card.style.opacity='1';saveCurrentCard(true);}
+    else if(lockAxis==='down' && dy>82){card.style.transform='';card.style.opacity='1';recordSwipe('notInterested');nextCard('reject');}
+    else if(lockAxis===null && Math.abs(dx)<8 && Math.abs(dy)<8){
+      // Tap auf Karte = zum Anbieter-Link
+      card.style.transform='';card.style.opacity='1';
+      if(S.currentCard){recordSwipe('buy');openAffiliateProduct(S.currentCard);}
+    }
+    else{card.style.transform='';card.style.opacity='1';}
+    dx=dy=0;
+  };
+  
+  card.addEventListener('touchstart',start,{passive:true});
+  card.addEventListener('touchmove',move,{passive:false});
+  card.addEventListener('touchend',end);
+  card.addEventListener('mousedown',start);
+  window.addEventListener('mousemove',move);
+  window.addEventListener('mouseup',end);
+}
+
+function nextCard(type='skip'){
+  const card=document.querySelector('.swipe-card');
+  if(!card)return;
+  card.dataset.leaving='1';
+  card.style.transition='transform .3s cubic-bezier(.16,1,.3,1), opacity .3s ease';
+  if(type==='reject'){
+    card.style.transform='translate(0,220px) scale(0.9) rotate(4deg)';
+  } else if(type==='skip'){
+    card.style.transform='translate(-220px,0) scale(0.92) rotate(-8deg)';
+  } else {
+    card.style.transform='translate(0,200px) scale(0.92)';
+  }
+  card.style.opacity='0';
+  setTimeout(()=>{card.remove();S.feedIdx++;renderCard();},300);
+}
+
+function animOut(card,dX=0,dY=0,opts={}){
+  if(!card || (card.dataset.leaving === '1')) return false;
+  card.dataset.leaving='1';
+  const duration=opts.duration||300;
+  card.style.transition=`transform ${duration}ms cubic-bezier(.16,1,.3,1), opacity ${duration}ms ease, filter ${duration}ms ease`;
+  card.style.transform=`translate(${dX*500}px,${dY*400+dX*-40}px) rotate(${opts.rotate??dX*20}deg) scale(${opts.scale||.95})`;
+  card.style.opacity='0';
+  card.style.filter=opts.filter||'none';
+  setTimeout(()=>{card.remove();S.feedIdx++;renderCard();},duration);
+  return true;
+}
+
+function likeAndSlide(card){
+  if(!S.currentCard||!card||card.dataset.leaving)return;
+  card.dataset.leaving='pending-love';
+  const likeBtn=document.getElementById('likeActionBtn');
+  likeBtn?.classList.add('is-liked');
+  card?.classList.add('love-pop');
+  showHeartBurst(card);
+  recordSwipe('yes');
+  setTimeout(()=>{card.dataset.leaving='';animOut(card,1,0,{duration:520,rotate:22,scale:1.04,filter:'drop-shadow(0 24px 42px rgba(239,68,68,.24))'});},260);
+}
+
+function saveCurrentCard(animate=false){
+  if(!S.currentCard)return;
+  if(!S.user){showRegisterPrompt();return false;}
+  saveIdea(S.currentCard.id);
+  updateActionStates();
+  const card=document.querySelector('.swipe-card');
+  if(animate&&card){
+    card.classList.remove('save-pulse');
+    void card.offsetWidth;
+    card.classList.add('save-pulse');
+    showSaveBurst(card);
+  }
+  return true;
+}
+
+function doAction(a){
+  if(!S.currentCard)return;
+  if(a==='yes'){const c=document.querySelector('.swipe-card');if(c)likeAndSlide(c);}
+  else if(a==='no'){const c=document.querySelector('.swipe-card');if(c&&!c.dataset.leaving){recordSwipe('no');animOut(c,-1);}}
+  else if(a==='save'){saveCurrentCard(true);}
+  else if(a==='info'){openDetails(S.currentCard);}
+  else if(a==='buy'){recordSwipe('buy');openAffiliateProduct(S.currentCard);}
+}
+
+function recordImpression(productId){
+  const im=LS.get('impressions',{}); im[productId]=(im[productId]||0)+1; LS.set('impressions',im);
+}
+
+function isSafeUrl(url){try{const u=new URL(url,location.href);return ['http:','https:'].includes(u.protocol);}catch{return false;}}
+function buildAffiliateLink(product){
+  if(product.affiliate && isSafeUrl(product.affiliate)) return product.affiliate;
+  const s=settings(); const providers=s.aff_providers||{}; const p=providers[product.affiliate_provider];
+  if(!p||!p.active||!p.link_template) return '';
+  const map={partner_id:p.partner_id||p.id||'',tracking_id:p.tracking_id||p.id||'',asin:product.asin||'',ean:product.ean||'',sku:product.sku||'',encoded_title:encodeURIComponent(product.title||''),url:encodeURIComponent(product.url||'')};
+  return p.link_template.replace(/\{(partner_id|tracking_id|asin|ean|sku|encoded_title|url)\}/g,(m,k)=>map[k]||'');
+}
+function openAffiliateProduct(product){
+  const url=buildAffiliateLink(product)||('https://example.com/'+product.id);
+  if(!isSafeUrl(url)){toast('Unsichere URL blockiert');return;}
+  const clicks=LS.get('buyClicks',{});clicks[product.id]=(clicks[product.id]||0)+1;LS.set('buyClicks',clicks);
+  window.open(url,'_blank','noopener');
+}
+
+function recordSwipe(type){
+  const p=S.currentCard;if(!p)return;
+  S.swipes++;LS.set('swipesCount',S.swipes);
+  updateSwipeCounter();
+  if(type==='yes'){if(!S.likes.includes(p.id)){S.likes.push(p.id);LS.set('likes',S.likes);}toast('Interessiert 👍');}
+  if(type==='no'||type==='notInterested'){if(!S.rejects.includes(p.id)){S.rejects.push(p.id);LS.set('rejects',S.rejects);}}
+  if(type==='save'){saveIdea(p.id);}
+  if(type==='buy'){toast('Weiter zum Anbieter ↗');}
+
+  // Interest Engine lernt aus jeder Swipe-Aktion
+  try {
+    LS.set('lastSwipedId', p.id);
+    LS.set('lastSwipeAction', type);
+    InterestEngine.recordSwipe(p.id, type);
+  } catch(e){}
+
+  LS.set('swipeLog',[...LS.get('swipeLog',[]),{pid:p.id,cat:p.cat,type,ts:Date.now()}]);
+  if(S.swipes===5&&!S.interests.length&&!LS.get('ql_dismissed'))setTimeout(showQuickLearn,600);
+}
+
+function saveIdea(id){
+  if(!S.user){
+    showRegisterPrompt();
+  } else {
+    if(!S.saved.includes(id)){S.saved.push(id);LS.set('saved',S.saved);toast('Gespeichert! 🔖');}
+  }
+}
+
+function handleSavedNav(){
+  if(!S.user){showRegisterPrompt();return;}
+  showView('saved');
+}
+
+function showRegisterPrompt(){
+  document.getElementById('infoTitle').textContent='Erst kostenlos registrieren';
+  document.getElementById('infoBody').innerHTML=`
+    <div class="sheet-sec"><p>Um Ideen dauerhaft zu speichern, brauchst du ein kostenloses AIshopr-Konto.</p></div>
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <button class="btn btn-primary" style="flex:1" onclick="closeInfoSheet();showView('register')">Kostenlos registrieren</button>
+      <button class="btn btn-ghost" style="flex:1" onclick="closeInfoSheet()">Später</button>
+    </div>`;
+  document.getElementById('infoSheet').classList.add('show');
+}
+
+function buildProfile(){
+  // Wird jetzt vollständig von InterestEngine.recordSwipe() übernommen
+  const profile = InterestEngine.getProfile();
+  const sorted = Object.entries(profile.categoryScores||{}).sort((a,b)=>b[1]-a[1]).map(([c])=>c);
+  S.interests = sorted.slice(0,5);
+  LS.set('interests', S.interests);
+}
+
+// ============ SAVED ============
+function renderSaved(){
+  const items=S.saved.map(id=>ideas().find(p=>p.id===id)).filter(Boolean);
+  let content='';
+  if(!items.length) content=`<div class="empty"><div class="big">🔖</div><div>Noch nichts gemerkt</div><div style="font-size:13px;margin-top:6px">Wische nach unten oder tippe </div>${!S.user?'<div style="margin-top:12px"><button class="btn btn-primary" onclick="showView(\'login\')">Anmelden zum dauerhaften Speichern</button></div>':''}</div>`;
+  else content=`<div class="list-title">Gespeicherte Ideen (${items.length})</div>`+items.map(p=>`<div class="item" onclick='openDetailsById("${p.id}")'><div class="item-emoji" style="background:linear-gradient(135deg,#FFF1EB,#FFE4D6)">${p.emoji}</div><div class="item-body"><div class="item-title">${esc(p.title)}</div><div class="item-sub">${esc(p.hook)}</div><div class="item-meta"><span class="tag mint">${esc(p.price)}</span><span class="tag sun">Fit ${p.fit}%</span></div></div><button class="item-action" onclick="event.stopPropagation();removeSaved('${p.id}')">✕</button></div>`).join('');
+  return `${header()}
+  <div class="list" style="padding-right:64px">${content}</div>`;
+}
+function openDetailsById(id){const p=ideas().find(x=>x.id===id);if(p)openDetails(p);}
+function removeSaved(id){S.saved=S.saved.filter(x=>x!==id);LS.set('saved',S.saved);toast('Entfernt');render();}
+function exportSaved(){const data=S.saved.map(id=>ideas().find(p=>p.id===id)).filter(Boolean);const json=JSON.stringify(data,null,2);navigator.clipboard?.writeText(json).then(()=>toast('JSON kopiert ')).catch(()=>toast('Export fehlgeschlagen'));}
+
+// ============ PROFILE ============
+function renderProfile(){
+  const u=S.user;
+  return `${header()}
+  <div class="list" style="padding-right:64px">
+    <div class="list-title">Dein Profil</div>
+    
+    ${u?`
+    <div class="item" style="flex-direction:column;gap:12px;cursor:default">
+      <div style="display:flex;align-items:center;gap:12px;width:100%">
+        <div class="item-emoji" style="background:linear-gradient(135deg,#E8E4FF,#D6CCFF)">${u.photo?`<img src="${esc(u.photo)}" style="width:100%;height:100%;object-fit:cover;border-radius:12px">`:(u.name||'U')[0]}</div>
+        <div class="item-body"><div class="item-title">${esc(u.name)}</div><div class="item-sub">${esc(u.email)}</div></div>
+      </div>
+      <div style="width:100%;padding-top:8px;border-top:1px solid var(--border)">
+        <label style="font-size:11px">E-Mail ändern</label>
+        <input id="updEmail" value="${esc(u.email)}" style="margin-bottom:8px;font-size:13px;padding:6px 10px">
+        <label style="font-size:11px">Neues Passwort (optional)</label>
+        <input id="updPass" type="password" placeholder="Passwort leer lassen = kein Change" style="margin-bottom:8px;font-size:13px;padding:6px 10px">
+        <button class="btn btn-primary btn-sm btn-full" onclick="updateUserSettings()">Daten aktualisieren</button>
+      </div>
+      <div style="width:100%;padding-top:10px;border-top:1px solid var(--border)">
+        <label style="font-size:11px;margin-bottom:6px">Design-Modus</label>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-sm ${getTheme()==='auto'?'btn-primary':'btn-ghost'}" style="flex:1" onclick="setTheme('auto');render()">System</button>
+          <button class="btn btn-sm ${getTheme()==='light'?'btn-primary':'btn-ghost'}" style="flex:1" onclick="setTheme('light');render()">Hell</button>
+          <button class="btn btn-sm ${getTheme()==='dark'?'btn-primary':'btn-ghost'}" style="flex:1" onclick="setTheme('dark');render()">Dunkel</button>
+        </div>
+      </div>
+    </div>`
+    :`<div class="item"><div class="item-body"><div class="item-title">Gast-Modus</div><div class="item-sub" style="white-space:normal">Registriere dich, um Ideen dauerhaft zu speichern.</div><div style="margin-top:8px"><button class="btn btn-primary" onclick="showView('login')">Anmelden</button></div></div></div>`}
+    
+    ${u?`<div style="display:flex;gap:8px;margin-top:12px"><button class="btn btn-danger" style="flex:1" onclick="logout()">Abmelden</button></div>`:''}
+  </div>`;
+}
+
+function updateUserSettings(){
+  const newEmail = document.getElementById('updEmail').value.trim();
+  const newPass = document.getElementById('updPass').value.trim();
+  if(!newEmail){toast('E-Mail darf nicht leer sein'); return;}
+  
+  const users = LS.get('users',[]);
+  const uIdx = users.findIndex(u=>u.id === S.user.id);
+  if(uIdx>=0){
+    users[uIdx].email = newEmail;
+    if(newPass) users[uIdx].pass = newPass;
+    LS.set('users', users);
+    S.user = users[uIdx];
+    LS.set('currentUser', S.user);
+    toast('Deine Daten wurden aktualisiert');
+    render();
+  }
+}
+function buildProfileDisplay(){
+  if(!S.interests.length) return '<span class="tag">Noch zu wenig Daten — swipe weiter!</span>';
+  return S.interests.map(i=>`<span class="tag">${catIcon(i)} ${catName(i)}</span>`).join('');
+}
+
+// ============ SHEETS ============
+function openDetails(p){
+  document.getElementById('detailTitle').textContent=p.title;
+  document.getElementById('detailBody').innerHTML=`
+    <div class="sheet-sec"><h4>Hook</h4><p>${esc(p.hook)}</p></div>
+    <div class="sheet-sec"><h4>Problem</h4><p>${esc(p.problem)}</p></div>
+    <div class="sheet-sec"><h4>Lösung</h4><p>${esc(p.solution)}</p></div>
+    <div class="sheet-sec"><h4>Vorteile</h4><ul>${(p.pros||[]).map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>
+    <div class="sheet-sec"><h4>Nachteile</h4><ul>${(p.cons||[]).map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>
+    <div class="sheet-sec"><h4>Nicht kaufen, wenn…</h4><ul>${(p.notfor||[]).map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>
+    <div class="sheet-sec"><h4>Achte auf</h4><ul>${(p.watch||[]).map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>
+    ${p.sponsored?`<div class="sheet-sec"><p style="color:var(--ink-3);font-size:12px">📢 Diese Karte ist gesponsert.</p></div>`:''}
+    <div class="sheet-sec"><h4>Transparenz</h4><p>${esc(settings().affiliate_notice)} ${esc(settings().sponsor_notice)}</p></div>
+  `;
+  document.getElementById('detailCTA').innerHTML=`<button class="btn btn-primary" style="flex:1" onclick="openAffiliateProduct(ideas().find(x=>x.id==='${p.id}'))">Zum Anbieter ↗</button><button class="btn btn-ghost" style="flex:1" onclick="saveIdea('${p.id}');closeSheet()">🔖 Merken</button>`;
+  document.getElementById('detailSheet').classList.add('show');
+}
+function closeSheet(){document.getElementById('detailSheet').classList.remove('show');}
+function openSheet(type){
+  const s = settings();
+  const appName = s.app_name || 'AIshopr';
+  let title = 'Info', content = '';
+
+  if(type === 'imprint' || type === 'impressum'){
+    title = 'Impressum';
+    content = `<div class="sheet-sec"><pre style="white-space:pre-wrap;font-family:inherit;font-size:13px;line-height:1.6">${esc(s.legal.impressum)}</pre></div>`;
+  } else if(type === 'privacy' || type === 'datenschutz'){
+    title = 'Datenschutzerklärung';
+    content = `<div class="sheet-sec"><pre style="white-space:pre-wrap;font-family:inherit;font-size:13px;line-height:1.6">${esc(s.legal.datenschutz)}</pre></div>`;
+  } else if(type === 'terms' || type === 'agb'){
+    title = 'AGB';
+    content = `<div class="sheet-sec"><pre style="white-space:pre-wrap;font-family:inherit;font-size:13px;line-height:1.6">${esc(s.legal.agb)}</pre></div>`;
+  } else if(type === 'contact' || type === 'kontakt'){
+    title = 'Kontakt';
+    content = `<div class="sheet-sec"><pre style="white-space:pre-wrap;font-family:inherit;font-size:13px;line-height:1.6">${esc(s.legal.kontakt)}</pre></div>`;
+  } else if(type === 'about'){
+    title = 'Über ' + appName;
+    content = `<div class="sheet-sec"><p><b>${appName}</b> — ${esc(s.app_tagline||'')}</p><p style="margin-top:8px">${appName} zeigt dir Produktideen als personalisierten Swipe-Feed mit ehrlicher Bewertung: Nutzen, Nachteile, Fit-Score. Die KI lernt aus deinen Swipes.</p></div>`;
+  } else {
+    title = 'Info';
+    content = `<div class="sheet-sec"><p>${appName} — ${esc(s.app_tagline||'')}</p></div>`;
+  }
+
+  document.getElementById('infoTitle').textContent = title;
+  document.getElementById('infoBody').innerHTML = content;
+  document.getElementById('infoSheet').classList.add('show');
+}
+function closeInfoSheet(){document.getElementById('infoSheet').classList.remove('show');}
+
+// ============ QUICK LEARN ============
+function showQuickLearn(){
+  const grid=document.getElementById('qlGrid');
+  grid.innerHTML=CATS.map(c=>`<button class="ql-chip ${S.interests.includes(c.id)?'on':''}" data-id="${c.id}" onclick="this.classList.toggle('on')">${c.icon} ${c.name}</button>`).join('');
+  document.getElementById('quickLearn').classList.add('show');
+}
+function closeQuickLearn(){document.getElementById('quickLearn').classList.remove('show');LS.set('ql_dismissed',true);}
+function saveQuickLearn(){
+  const chosen=[...document.querySelectorAll('#qlGrid .ql-chip.on')].map(b=>b.dataset.id);
+  S.interests=chosen.slice(0,5);LS.set('interests',S.interests);
+  closeQuickLearn();toast('Danke! Feed wird passender 🎯');loadFeed(true);
+}
+
+// ============ TOAST ============
+let toastTimer;
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),1800);
+}
+
+// ============ NAVIGATION ============
+function showView(name){S.view=name;render();}
+
+// ============ CHATBOT ============
+let chatHistory = [{role:'system', content:'Du bist der AIshopr Support-Bot. Beantworte NUR Fragen rund um AIshopr, das Swipen von Produkten, die App-Funktionen, Affiliate-Links und den Einkauf. Wenn jemand nach etwas anderem fragt (z.B. Pizza-Rezepte, Wetter, Politik, Mathe), antworte freundlich aber bestimmt: "Sorry, ich bin nur der AIshopr-Bot und kenne mich nur mit unserer App aus. Frag mich gerne etwas über Swipen oder Produkte!"'}];
+
+function toggleChat(){
+  const w=document.getElementById('chatWindow');
+  const header = w.querySelector('.chat-header span');
+  const firstMsg = w.querySelector('.chat-msg.bot');
+  const name = (settings().app_name || 'AIshopr');
+  if(header) header.textContent = name + ' Support 🤖';
+  if(firstMsg) firstMsg.textContent = `Hallo! Ich bin der ${name}-Bot. Frag mich alles über die App, das Swipen oder unsere Funktionen!`;
+  w.classList.toggle('open');
+  // No auto-focus - user must click input actively
+}
+
+async function sendChat(){
+  const input=document.getElementById('chatInput');
+  const msg=input.value.trim();
+  if(!msg) return;
+  
+  const messagesDiv=document.getElementById('chatMessages');
+  messagesDiv.innerHTML+=`<div class="chat-msg user">${esc(msg)}</div>`;
+  input.value='';
+  messagesDiv.scrollTop=messagesDiv.scrollHeight;
+  
+  chatHistory.push({role:'user',content:msg});
+  
+  const s=settings();
+  if(!s.openai_enabled||!s.openai_key){
+    setTimeout(()=>{
+      const reply="Bitte aktiviere die KI-Funktion im Admin-Bereich und trage einen OpenAI API-Key ein, damit ich antworten kann.";
+      messagesDiv.innerHTML+=`<div class="chat-msg bot">${reply}</div>`;
+      messagesDiv.scrollTop=messagesDiv.scrollHeight;
+      chatHistory.push({role:'assistant',content:reply});
+    },500);
+    return;
+  }
+  
+  try{
+    const res=await fetch('https://api.openai.com/v1/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+s.openai_key},
+      body:JSON.stringify({model:s.openai_model||'gpt-4o-mini',messages:chatHistory.slice(-6),temperature:0.7})
+    });
+    const data=await res.json();
+    const reply=data.choices?.[0]?.message?.content||"Entschuldigung, ich konnte keine Antwort generieren.";
+    messagesDiv.innerHTML+=`<div class="chat-msg bot">${esc(reply)}</div>`;
+    messagesDiv.scrollTop=messagesDiv.scrollHeight;
+    chatHistory.push({role:'assistant',content:reply});
+  }catch(e){
+    messagesDiv.innerHTML+=`<div class="chat-msg bot">Fehler bei der Verbindung zur KI.</div>`;
+    messagesDiv.scrollTop=messagesDiv.scrollHeight;
+  }
+}
+
+// ============ LOGO UPLOAD ============
+function handleLogoUpload(event){
+  const file=event.target.files[0];
+  if(!file)return;
+  if(file.size>500000){toast('Bild zu groß (Max 500KB)');return;}
+  const reader=new FileReader();
+  reader.onload=(e)=>{
+    const s=settings();
+    s.logo=e.target.result;
+    LS.set('settings',s);
+    toast('Logo gespeichert');
+    render();
+  };
+  reader.readAsDataURL(file);
+}
+
+function handleLogoSymbolUpload(event){
+  const file=event.target.files[0];
+  if(!file)return;
+  if(file.size>500000){toast('Bild zu groß (Max 500KB)');return;}
+  const reader=new FileReader();
+  reader.onload=(e)=>{
+    const s=settings();
+    s.logo_symbol=e.target.result;
+    LS.set('settings',s);
+    toast('Logo-Symbol gespeichert');
+    render();
+  };
+  reader.readAsDataURL(file);
+}
+
+// ============ RESET ============
+function resetAll(){if(!confirm('Alles zurücksetzen?'))return;LS.del('swipesCount');LS.del('saved');LS.del('likes');LS.del('rejects');LS.del('interests');LS.del('currentUser');LS.del('ql_dismissed');S.swipes=0;S.saved=[];S.likes=[];S.rejects=[];S.interests=[];S.user=null;toast('Zurückgesetzt');render();}
+
+// ============ DEFAULT SETTINGS ============
+const DEFAULT_SETTINGS={
+  admin_email:'admin@aishopr.local',admin_pass:'admin123',
+  footer_text:'© 2025 AIshopr — Nicht suchen. Swipen. Smarter kaufen.',
+  footer_links:'Datenschutz|#, Impressum|#, Kontakt|#',
+  footer_show:true,
+  affiliate_notice:'Enthält Affiliate-Links.',
+  sponsor_notice:'Gesponsert = klar markiert.',
+  max_sponsored_pct:15,
+  openai_enabled:false,openai_key:'',openai_model:'gpt-4o-mini',
+  google_client_id:'',apple_client_id:'',
+  logo:'',logo_symbol:'',
+  affiliate_default_tag:'',
+  app_name:'AIshopr',
+  app_tagline:'Nicht suchen. Swipen. Smarter kaufen.',
+  aff_providers:{amazon:{active:false,id:''},ebay:{active:false,id:''},digitec:{active:false,id:''},otto:{active:false,id:''},mediamarkt:{active:false,id:''},awin:{active:false,id:''}},
+  db_mode:'json',
+  db_config:{host:'localhost',user:'root',pass:'',name:'aishopr'},
+  smtp:{host:'smtp.example.com',port:587,user:'',pass:'',from_email:'noreply@aishopr.local',from_name:'AIshopr',tls:true},
+  footer_links:[
+    {label:'Datenschutz',url:'#',type:'privacy'},
+    {label:'Impressum',url:'#',type:'imprint'},
+    {label:'AGB',url:'#',type:'terms'},
+    {label:'Kontakt',url:'#',type:'contact'}
+  ],
+  socials:{instagram:'',tiktok:'',x:'',facebook:'',linkedin:'',youtube:''},
+  legal:{
+    impressum:`AIshopr GmbH
+Musterstraße 1
+12345 Musterstadt
+Deutschland
+
+Vertretungsberechtigter Geschäftsführer:
+Max Mustermann
+
+Kontakt:
+Telefon: +49 (0) 123 456789
+E-Mail: kontakt@aishopr.com
+
+Registereintrag:
+Amtsgericht Musterstadt
+HRB 12345
+
+Umsatzsteuer-ID:
+DE123456789
+
+Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV:
+Max Mustermann
+Musterstraße 1
+12345 Musterstadt`,
+    datenschutz:`Datenschutzerklärung (DSGVO)
+
+1. Verantwortlicher
+Verantwortlich für die Datenverarbeitung auf dieser Website ist:
+AIshopr GmbH, Musterstraße 1, 12345 Musterstadt, kontakt@aishopr.com.
+
+2. Erhebung und Verarbeitung personenbezogener Daten
+Bei der Nutzung unserer Web-App werden folgende Daten verarbeitet:
+- Nutzungsdaten (Swipes, gespeicherte Produkte, Interessen) zur Personalisierung des Feeds
+- Kontaktdaten (E-Mail, Name) bei Registrierung
+- Technische Daten (IP-Adresse, Browser-Typ) zur Sicherstellung des Betriebs
+
+3. Rechtsgrundlage
+Die Verarbeitung erfolgt auf Grundlage von Art. 6 Abs. 1 lit. b DSGVO (Vertragserfüllung) sowie Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an der Verbesserung unseres Angebots).
+
+4. Cookies und LocalStorage
+Die App nutzt ausschließlich LocalStorage für technische Zwecke (Session-Verwaltung, Sprache, persönliche Einstellungen). Es werden keine Tracking-Cookies eingesetzt.
+
+5. Ihre Rechte nach DSGVO
+- Recht auf Auskunft (Art. 15)
+- Recht auf Berichtigung (Art. 16)
+- Recht auf Löschung (Art. 17)
+- Recht auf Einschränkung der Verarbeitung (Art. 18)
+- Recht auf Datenübertragbarkeit (Art. 20)
+- Widerspruchsrecht (Art. 21)
+- Beschwerderecht bei der zuständigen Aufsichtsbehörde
+
+6. Kontakt
+Bei Fragen zum Datenschutz: datenschutz@aishopr.com
+
+Stand: 01.01.2026`,
+    agb:`Allgemeine Geschäftsbedingungen der AIshopr GmbH
+
+§1 Geltungsbereich
+Diese AGB gelten für alle Nutzer der AIshopr-Web-App.
+
+§2 Vertragsgegenstand
+AIshopr stellt einen personalisierten Swipe-Feed für Produktideen zur Verfügung.
+
+§3 Registrierung
+Für die Nutzung der Kernfunktionen ist keine Registrierung erforderlich. Für die Speicherung von Ideen ist ein kostenloser Account nötig.
+
+§4 Haftung
+AIshopr haftet nur bei Vorsatz und grober Fahrlässigkeit.
+
+§5 Schlussbestimmungen
+Es gilt das Recht der Bundesrepublik Deutschland.`,
+    kontakt:`Bei Fragen und Anliegen erreichen Sie uns unter:
+
+E-Mail: kontakt@aishopr.com
+Support: support@aishopr.com
+Datenschutz: datenschutz@aishopr.com
+
+Telefon: +49 (0) 123 456789
+Mo-Fr: 9:00 - 17:00 Uhr`
+  }
+};
+
+// ============ 45 PRODUCT IDEAS ============
+const IDEAS_DEFAULT=[
+{id:'p_ad_1',title:'Premium Noise-Cancelling Kopfhörer',hook:'Endlich Ruhe im Großraumbüro?',cat:'tech',price:'199–249 €',fit:95,emoji:'',grad:'grad-2',problem:'Lärm stresst und kostet Konzentration.',solution:'Aktive Geräuschunterdrückung blockt 95% ab.',pros:['Bis 30h Akku','Multipoint Bluetooth','Faltbar'],cons:['Teurer','Etui nötig'],notfor:['Sport (schwitzen)'],watch:['ANC-Qualität','Tragekomfort'],affiliate:'https://amazon.de/dp/B08XYZ',sponsored:true,image:'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=500&q=80'},
+{id:'p1',title:'Smarte Steckdose mit Verbrauchsmessung',hook:'Weißt du, wie viel Strom deine Geräte wirklich ziehen?',cat:'smarthome',price:'15–35 €',fit:88,emoji:'',grad:'grad-2',problem:'Heimliche Stromfresser kosten Geld.',solution:'Steckdose zeigt Verbrauch live in der App.',pros:['Stromkosten senken','App-Steuerung','Zeitschaltuhr'],cons:['Braucht WLAN','App nötig'],notfor:['Ohne WLAN','Wenig Geräte'],watch:['Max. Last','App-Qualität'],affiliate:'',sponsored:false,image:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=500&q=80'},
+{id:'p2',title:'Magnetisches Kabelmanagement',hook:'Dein Schreibtisch = Kabelkrieg?',cat:'ordnung',price:'12–25 €',fit:92,emoji:'',grad:'grad-1',problem:'Kabelsalat kostet Zeit und Nerven.',solution:'Magnet-Clips halten Kabel griffbereit.',pros:['Sofort Ordnung','Wiederverwendbar'],cons:['Braucht Klebefläche'],notfor:['Kaum Kabel'],watch:['Klebestärke'],affiliate:'',sponsored:false,image:'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=500&q=80'},
+{id:'p3',title:'GaN USB-C Ladestation 100W',hook:'Ein Netzteil für alles?',cat:'tech',price:'40–80 €',fit:85,emoji:'',grad:'grad-3',problem:'Viele Netzteile = Chaos.',solution:'Kompakte GaN-Station lädt alles.',pros:['Ersetzt viele Netzteile','Kompakt'],cons:['Teurer'],notfor:['Nur 1 Gerät'],watch:['Leistung pro Port'],affiliate:'',sponsored:false,image:'https://images.unsplash.com/photo-1622436433554-2a53b9842367?auto=format&fit=crop&w=500&q=80'},
+{id:'p4',title:'Reise-Kabeltasche',hook:'Kabelchaos im Rucksack?',cat:'reise',price:'15–30 €',fit:86,emoji:'',grad:'grad-4',problem:'Kabel verheddern sich.',solution:'Fächer für alles griffbereit.',pros:['Ordnung','Schneller Zugriff'],cons:['Extra Täschchen'],notfor:['Nur 1 Kabel'],watch:['Fächer'],affiliate:'',sponsored:false,image:'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=500&q=80'},
+{id:'p5',title:'Auto-Sonnenschutz UV',hook:'Auto wird zur Sauna?',cat:'auto',price:'18–35 €',fit:78,emoji:'',grad:'grad-5',problem:'Hitze im Innenraum.',solution:'Reflektiert Wärme, schützt Armaturen.',pros:['Kühler','Schnell montiert'],cons:['Muss jedes Mal angebracht werden'],notfor:['Tiefgarage'],watch:['Passform'],affiliate:'',sponsored:false,image:'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=500&q=80'},
+{id:'p6',title:'Digitaler Reifendruckprüfer',hook:'Falscher Druck = teurer Sprit?',cat:'auto',price:'15–30 €',fit:82,emoji:'',grad:'grad-6',problem:'Zu wenig Druck erhöht Verbrauch.',solution:'Präzise Messung per App.',pros:['Spart Sprit','Sicherer'],cons:['Batterie'],notfor:['Werkstatt-Fans'],watch:['Genauigkeit'],affiliate:'',sponsored:false,image:'https://images.unsplash.com/photo-1615906655593-ad0386982a0f?auto=format&fit=crop&w=500&q=80'},
+{id:'p7',title:'Mini-Akkuschrauber Stift',hook:'Eine Schraube locker?',cat:'diy',price:'20–40 €',fit:87,emoji:'',grad:'grad-1',problem:'Großer Schrauber zu sperrig.',solution:'Klein, USB-C, stark.',pros:['Griffbereit','USB-C'],cons:['Weniger Drehmoment'],notfor:['Baustelle'],watch:['Bits, Akku'],affiliate:'',sponsored:false,image:'https://images.unsplash.com/photo-1572981779307-38b8cabb2407?auto=format&fit=crop&w=500&q=80'},
+{id:'p8',title:'Faltbare Einkaufskiste',hook:'Schluss mit Plastiktüten?',cat:'haushalt',price:'25–50 €',fit:80,emoji:'',grad:'grad-2',problem:'Tüten reißen.',solution:'Faltbar, rollbar, stabil.',pros:['Platzsparend','Umweltfreundlich'],cons:['Etwas schwer'],notfor:['Fußgänger'],watch:['Rollen'],affiliate:'',sponsored:false,image:'https://images.unsplash.com/photo-1584568694244-14fbdf83bd30?auto=format&fit=crop&w=500&q=80'},
+{id:'p9',title:'LED-Bewegungslicht',hook:'Nachts geblendet?',cat:'smarthome',price:'12–25 €',fit:91,emoji:'',grad:'grad-3',problem:'Licht an = alle wach.',solution:'Sanftes Licht bei Bewegung.',pros:['Blendfrei','Energiesparend'],cons:['Kein Hauptlicht'],notfor:['Große Räume'],watch:['Sensorreichweite'],affiliate:'',sponsored:false,image:'https://images.unsplash.com/photo-1565814638946-0c2e4a4a5b3e?auto=format&fit=crop&w=500&q=80'},
+{id:'p10',title:'Bluetooth Schlüsselfinder',hook:'Schlüssel weg?',cat:'tech',price:'18–30 €',fit:84,emoji:'',grad:'grad-4',problem:'Suchen kostet Zeit.',solution:'Piepen per App.',pros:['Schnell finden','Klein'],cons:['Reichweite begrenzt'],notfor:['GPS nötig'],watch:['Batterie'],affiliate:'',sponsored:false,image:'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?auto=format&fit=crop&w=500&q=80'},
+{id:'p11',title:'Laptop-Erhöhung Alu',hook:'Nacken zu?',cat:'homeoffice',price:'25–50 €',fit:89,emoji:'',grad:'grad-5',problem:'Bildschirm zu niedrig.',solution:'Auf Augenhöhe, belüftet.',pros:['Ergonomisch','Kompakt'],cons:['Ext. Tastatur sinnvoll'],notfor:['Nur Monitor'],watch:['Stabilität'],affiliate:'',sponsored:false,image:'https://images.unsplash.com/photo-1593642702821-c8da6771f0c6?auto=format&fit=crop&w=500&q=80'},
+{id:'p12',title:'Handstaubsauger Auto',hook:'Krümel im Auto?',cat:'auto',price:'25–45 €',fit:83,emoji:'',grad:'grad-6',problem:'Großer Sauger zuhause.',solution:'Klein, kabellos, stark.',pros:['Immer dabei','USB-C'],cons:['Kurze Laufzeit'],notfor:['Großreinigung'],watch:['Filter'],affiliate:'',sponsored:false,image:'https://images.unsplash.com/photo-1558317374-067fb5f30001?auto=format&fit=crop&w=500&q=80'},
+{id:'p13',title:'Wasserleck-Sensor',hook:'Rohrbruch? Früh merken.',cat:'smarthome',price:'20–40 €',fit:76,emoji:'',grad:'grad-1',problem:'Wasserschaden = teuer.',solution:'Alarm + App-Push.',pros:['Frühwarnung'],cons:['Kein Ventil-Stopp'],notfor:['Ohne WLAN'],watch:['Batterie'],affiliate:'',sponsored:false,image:'https://images.unsplash.com/photo-1585771724684-38269d6639fd?auto=format&fit=crop&w=500&q=80'},
+{id:'p14',title:'CO₂-Messgerät',hook:'Müde trotz Schlaf?',cat:'smarthome',price:'30–70 €',fit:88,emoji:'',grad:'grad-2',problem:'Schlechte Luft = müde.',solution:'Zeigt, wann Lüften nötig.',pros:['Besser konzentriert'],cons:['Kalibrieren'],notfor:['Dauerlüfter'],watch:['Sensor-Qualität'],affiliate:'',sponsored:false,image:'https://images.unsplash.com/photo-1585771724684-38269d6639fd?auto=format&fit=crop&w=500&q=80'},
+{id:'p15',title:'Smartes Thermostat',hook:'Heizt du ins Leere?',cat:'energie',price:'40–90 €',fit:86,emoji:'',grad:'grad-3',problem:'Falsch heizen kostet.',solution:'Lernt Routine, spart Energie.',pros:['Bis 30% sparen'],cons:['Installation'],notfor:['Miete ohne Erlaubnis'],watch:['Kompatibilität'],affiliate:'',sponsored:false,image:'https://images.unsplash.com/photo-1585771724684-38269d6639fd?auto=format&fit=crop&w=500&q=80'},
+{id:'p16',title:'Koffer-Organizer Kompression',hook:'Mehr Platz im Koffer?',cat:'reise',price:'18–35 €',fit:84,emoji:'',grad:'grad-4',problem:'Unordnung frisst Platz.',solution:'Kompression = mehr Platz.',pros:['Bis 40% mehr','Ordnung'],cons:['Extra Gewicht'],notfor:['Rucksack-only'],watch:['Reißverschluss'],affiliate:'',sponsored:false,image:'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=500&q=80'},
+{id:'p17',title:'Vakuumbeutel wiederverwendbar',hook:'Schrank platzt?',cat:'haushalt',price:'10–20 €',fit:81,emoji:'',grad:'grad-5',problem:'Zu wenig Stauraum.',solution:'Volumen reduzieren.',pros:['Bis 80% Platz'],cons:['Nicht für empf. Stoffe'],notfor:['Nur Hängen'],watch:['Dichtigkeit'],affiliate:'',sponsored:false,image:'https://images.unsplash.com/photo-1584568694244-14fbdf83bd30?auto=format&fit=crop&w=500&q=80'},
+{id:'p18',title:'Magnetische Werkzeugleiste',hook:'Werkzeugchaos?',cat:'diy',price:'15–30 €',fit:85,emoji:'',grad:'grad-6',problem:'Suchen dauert.',solution:'Alles sichtbar an der Wand.',pros:['Griffbereit'],cons:['Nur magnetisch'],notfor:['Ohne Bohren'],watch:['Tragkraft'],affiliate:'',sponsored:false,image:'https://images.unsplash.com/photo-1572981779307-38b8cabb2407?auto=format&fit=crop&w=500&q=80'},
+{id:'p19',title:'Solar-Powerbank 20.000',hook:'Kein Strom unterwegs?',cat:'reise',price:'30–55 €',fit:79,emoji:'',grad:'grad-1',problem:'Handy leer.',solution:'Großer Akku + Solar.',pros:['Unabhängig'],cons:['Schwer'],notfor:['Tagesausflug'],watch:['Solar-Leistung'],affiliate:'',sponsored:false,image:'https://images.unsplash.com/photo-1622436433554-2a53b9842367?auto=format&fit=crop&w=500&q=80'},
+{id:'p20',title:'Kaffee-Geschenkbox',hook:'Geschenkidee fehlt?',cat:'geschenk',price:'25–45 €',fit:87,emoji:'',grad:'grad-2',problem:'Was schenken?',solution:'Kuratierte Röstungen.',pros:['Besonders','Hochwertig'],cons:['Nur für Kaffee-Fans'],notfor:['Tee-Trinker'],watch:['Mahlgrad'],affiliate:'',sponsored:false,image:'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=500&q=80'},
+{id:'p21',title:'Sensor-Mülltrennung',hook:'Gerüche in der Küche?',cat:'haushalt',price:'40–80 €',fit:82,emoji:'',grad:'grad-3',problem:'Trennen nervt.',solution:'3 Fächer + Aktivkohle.',pros:['Geruchsfrei'],cons:['Teuer'],notfor:['Mini-Küche'],watch:['Filter'],affiliate:'',sponsored:false,image:'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?auto=format&fit=crop&w=500&q=80'},
+{id:'p22',title:'Steh-Sitz-Erhöhung',hook:'Sitzen = Rauchen?',cat:'homeoffice',price:'35–70 €',fit:85,emoji:'',grad:'grad-4',problem:'Nur sitzen = ungesund.',solution:'Schnell hoch/runter.',pros:['Mehr Bewegung'],cons:['Braucht Platz'],notfor:['Stehtisch vorhanden'],watch:['Stabilität'],affiliate:'',sponsored:false,image:'https://images.unsplash.com/photo-1593642702821-c8da6771f0c6?auto=format&fit=crop&w=500&q=80'},
+{id:'p23',title:'ANC Over-Ear Kopfhörer',hook:'Büro zu laut?',cat:'tech',price:'60–150 €',fit:83,emoji:'',grad:'grad-5',problem:'Lärm stört.',solution:'Aktives Noise Cancelling.',pros:['Ruhe','Fokus'],cons:['Teuer'],notfor:['Straßenverkehr'],watch:['Tragekomfort'],affiliate:'',sponsored:false,image:'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=500&q=80'},
+{id:'p24',title:'Mikrofaser-Sprühwischer',hook:'Putzen nervt?',cat:'haushalt',price:'12–22 €',fit:86,emoji:'',grad:'grad-6',problem:'Chemie & Aufwand.',solution:'Weniger Chemie, mehr Wirkung.',pros:['Nachhaltig'],cons:['Waschen nötig'],notfor:['Grobreinigung'],watch:['Düse'],affiliate:'',sponsored:false,image:'https://images.unsplash.com/photo-1585421514738-01798e348b17?auto=format&fit=crop&w=500&q=80'},
+{id:'p25',title:'Sitzkissen Memory',hook:'Stuhl unbequem?',cat:'homeoffice',price:'18–35 €',fit:88,emoji:'',grad:'grad-1',problem:'Rückenschmerzen.',solution:'Entlastet Wirbelsäule.',pros:['Komfort','Waschbar'],cons:['Wird warm'],notfor:['Ergonom. Stuhl'],watch:['Größe'],affiliate:'',sponsored:false,image:'https://images.unsplash.com/photo-1558211583-d26f610c1eb1?auto=format&fit=crop&w=500&q=80'},
+{id:'p26',title:'WLAN Steckdosenleiste',hook:'Standby frisst Strom?',cat:'energie',price:'30–55 €',fit:81,emoji:'',grad:'grad-2',problem:'Viele Geräte im Standby.',solution:'Jede Dose einzeln schaltbar.',pros:['Spart Strom'],cons:['WLAN nötig'],notfor:['Einfachleiste reicht'],watch:['Gesamtlast'],affiliate:'',sponsored:false,image:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=500&q=80'},
+{id:'p27',title:'Thermo-Trinkflasche',hook:'Getränk nicht mehr kalt?',cat:'reise',price:'20–40 €',fit:90,emoji:'',grad:'grad-3',problem:'Temperatur weg.',solution:'24h kalt / 12h warm.',pros:['Dicht','Robust'],cons:['Schwer'],notfor:['Leichtgewicht'],watch:['Öffnung'],affiliate:'',sponsored:false,image:'https://images.unsplash.com/photo-1602143407151-7111542de6e8?auto=format&fit=crop&w=500&q=80'},
+{id:'p28',title:'Fitnessbänder Set',hook:'Keine Zeit fürs Gym?',cat:'fitness',price:'15–30 €',fit:84,emoji:'',grad:'grad-4',problem:'Studio zu weit.',solution:'Ganzkörper zuhause.',pros:['Klein','Günstig'],cons:['Kein Krafttraining'],notfor:['Powerlifter'],watch:['Qualität'],affiliate:'',sponsored:false,image:'https://images.unsplash.com/photo-1598289431512-b97b0917affc?auto=format&fit=crop&w=500&q=80'},
+{id:'p29',title:'Küchenwaage mit App',hook:'Backen = Chemie?',cat:'haushalt',price:'18–35 €',fit:87,emoji:'',grad:'grad-5',problem:'Ungenau = misslingt.',solution:'0,1g genau + Nährwerte.',pros:['Perfekte Ergebnisse'],cons:['App nötig'],notfor:['Pi-mal-Daumen'],watch:['Oberfläche'],affiliate:'',sponsored:false,image:'https://images.unsplash.com/photo-1615484477778-ca3b77940c25?auto=format&fit=crop&w=500&q=80'},
+{id:'p30',title:'LED-Lampe mit Qi',hook:'Lampe + Ladegerät?',cat:'homeoffice',price:'25–50 €',fit:86,emoji:'',grad:'grad-6',problem:'Kabelsalat.',solution:'Licht + Wireless Charging.',pros:['Ordnung'],cons:['Nur Qi'],notfor:['Kein Qi-Handy'],watch:['Ladeleistung'],affiliate:'',sponsored:false,image:'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&w=500&q=80'},
+{id:'p31',title:'Auto-Organizer Konsole',hook:'Kleinkram fliegt rum?',cat:'auto',price:'7–15 €',fit:79,emoji:'',grad:'grad-1',problem:'Unordnung im Auto.',solution:'Fächer für alles.',pros:['Ordnung','Günstig'],cons:['Nicht universal'],notfor:['Kaum Ablage'],watch:['Passform'],affiliate:'',sponsored:false,image:'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=500&q=80'},
+{id:'p32',title:'Digitaler Bilderrahmen',hook:'Fotos in der Cloud vergessen?',cat:'tech',price:'40–80 €',fit:78,emoji:'',grad:'grad-2',problem:'Nie angeschaut.',solution:'App-gesteuert, immer neu.',pros:['Familie lädt mit'],cons:['Strom'],notfor:['Wenig Fotos'],watch:['Display'],affiliate:'',sponsored:false,image:'https://images.unsplash.com/photo-1585795463784-b56d296470c4?auto=format&fit=crop&w=500&q=80'},
+{id:'p33',title:'Elektrischer Dosenöffner',hook:'Dosen = Fummelei?',cat:'haushalt',price:'15–30 €',fit:82,emoji:'',grad:'grad-3',problem:'Scharfe Kanten.',solution:'Automatisch, magnetisch.',pros:['Sicher'],cons:['Akku'],notfor:['Wenig Dosen'],watch:['Reinigung'],affiliate:'',sponsored:false,image:'https://images.unsplash.com/photo-1585771724684-38269d6639fd?auto=format&fit=crop&w=500&q=80'},
+{id:'p34',title:'Türklingel mit Kamera',hook:'Wer ist da?',cat:'smarthome',price:'40–100 €',fit:81,emoji:'',grad:'grad-4',problem:'Unsicherheit.',solution:'Live-Bild aufs Handy.',pros:['Sicher','Bequem'],cons:['WLAN nötig'],notfor:['Miete ohne OK'],watch:['Speicher'],affiliate:'',sponsored:false,image:'https://images.unsplash.com/photo-1558002038-10917738179d?auto=format&fit=crop&w=500&q=80'},
+{id:'p35',title:'Matratzen-Topper',hook:'Nächtliche Unfälle?',cat:'familie',price:'20–40 €',fit:85,emoji:'',grad:'grad-5',problem:'Matratze schützen.',solution:'Atmungsaktiv + dicht.',pros:['Schutz','Waschbar'],cons:['Extra Schicht'],notfor:['Ohne Kinder'],watch:['Größe'],affiliate:'',sponsored:false,image:'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&w=500&q=80'},
+{id:'p36',title:'Nackenkissen Memory',hook:'Flug = Nackenschmerzen?',cat:'reise',price:'18–35 €',fit:83,emoji:'',grad:'grad-6',problem:'Schlecht schlafen.',solution:'Ergonomisch, komprimierbar.',pros:['Besser schlafen'],cons:['Gewöhnung'],notfor:['Kurzstrecke'],watch:['Bezug'],affiliate:'',sponsored:false,image:'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=500&q=80'},
+{id:'p37',title:'Fenster-Saugroboter',hook:'Fensterputzen nervt?',cat:'haushalt',price:'80–180 €',fit:72,emoji:'',grad:'grad-1',problem:'Aufwendig.',solution:'Robot wischt.',pros:['Zeit sparen'],cons:['Teuer'],notfor:['Sprossenfenster'],watch:['Sicherungsseil'],affiliate:'',sponsored:false,image:'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=500&q=80'},
+{id:'p38',title:'Klapp-Powerbank 10k',hook:'Powerbank zu klobig?',cat:'tech',price:'22–40 €',fit:85,emoji:'',grad:'grad-2',problem:'Passt nicht in Tasche.',solution:'Faltet auf 1cm.',pros:['Superflach'],cons:['Weniger Kapazität'],notfor:['Mehrtagestour'],watch:['Mechanik'],affiliate:'',sponsored:false,image:'https://images.unsplash.com/photo-1622436433554-2a53b9842367?auto=format&fit=crop&w=500&q=80'},
+{id:'p39',title:'Notizbuch wiederbeschreibbar',hook:'Papier vs. digital?',cat:'homeoffice',price:'25–50 €',fit:80,emoji:'',grad:'grad-3',problem:'Notizen verloren.',solution:'Schreiben + Cloud.',pros:['Papiergefühl'],cons:['Spezialstift'],notfor:['Nur tippen'],watch:['App'],affiliate:'',sponsored:false,image:'https://images.unsplash.com/photo-1531346878377-a5be20888e57?auto=format&fit=crop&w=500&q=80'},
+{id:'p40',title:'Pflanzen-Bewässerung smart',hook:'Pflanzen sterben im Urlaub?',cat:'smarthome',price:'30–60 €',fit:84,emoji:'',grad:'grad-4',problem:'Vergessen zu gießen.',solution:'Timer + Sensor.',pros:['Überleben'],cons:['Setup'],notfor:['Keine Pflanzen'],watch:['Schläuche'],affiliate:'',sponsored:false,image:'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?auto=format&fit=crop&w=500&q=80'},
+{id:'p41',title:'WLAN Wetterstation',hook:'App-Wetter ungenau?',cat:'smarthome',price:'30–70 €',fit:77,emoji:'',grad:'grad-5',problem:'Lokal anders.',solution:'Eigener Sensor.',pros:['Genau'],cons:['Batterien'],notfor:['Innenstadt'],watch:['Reichweite'],affiliate:'',sponsored:false,image:'https://images.unsplash.com/photo-1585771724684-38269d6639fd?auto=format&fit=crop&w=500&q=80'},
+{id:'p42',title:'Kinder-Trinkflasche Timer',hook:'Kind trinkt zu wenig?',cat:'familie',price:'10–18 €',fit:86,emoji:'',grad:'grad-6',problem:'Vergessen zu trinken.',solution:'Zeit-Markierungen.',pros:['Mehr trinken'],cons:['Klein'],notfor:['Babys'],watch:['Material'],affiliate:'',sponsored:false,image:'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=500&q=80'},
+{id:'p43',title:'Luftentfeuchter smart',hook:'Schimmelgefahr?',cat:'haushalt',price:'40–90 €',fit:79,emoji:'',grad:'grad-1',problem:'Zu feucht.',solution:'Hält Ziel-Feuchte.',pros:['Gesünder'],cons:['Strom'],notfor:['Neubau trocken'],watch:['Leistung'],affiliate:'',sponsored:false,image:'https://images.unsplash.com/photo-1585771724684-38269d6639fd?auto=format&fit=crop&w=500&q=80'},
+{id:'p44',title:'Akku-Staubsauger leicht',hook:'Kabel nervt?',cat:'haushalt',price:'45–90 €',fit:82,emoji:'',grad:'grad-2',problem:'Schwer, unhandlich.',solution:'Leicht, schnell.',pros:['Wendig'],cons:['Laufzeit'],notfor:['Teppich-Palast'],watch:['Behälter'],affiliate:'',sponsored:false,image:'https://images.unsplash.com/photo-1558317374-067fb5f30001?auto=format&fit=crop&w=500&q=80'},
+{id:'p45',title:'KI-Übersetzer offline',hook:'Sprachbarriere?',cat:'reise',price:'35–80 €',fit:81,emoji:'',grad:'grad-3',problem:'Verständigung schwer.',solution:'Echtzeit-Übersetzung.',pros:['Offline','Klein'],cons:['Nicht perfekt'],notfor:['Fließend Englisch'],watch:['Sprachen'],affiliate:'',sponsored:false,image:'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=500&q=80'},
+];
+
+// ============ ADMIN ============
+function adminLogout(){S.adminLogged=false;LS.del('adminLogged');showView('home');}
+function adminLogin(){
+  const s=settings();
+  const e=document.getElementById('admEmail')?.value;
+  const p=document.getElementById('admPass')?.value;
+  if(!e||!p){toast('Bitte ausfüllen');return;}
+  if(e===s.admin_email&&p===s.admin_pass){
+    S.adminLogged=true;LS.set('adminLogged',true);S.adminTab='dashboard';S.view='admin';toast('Admin aktiv');render();
+  } else {toast('Login fehlgeschlagen — prüfe E-Mail & Passwort');}
+}
+function renderAdminLogin(){
+  return `<div class="header">${getLogoHtml()}<div class="header-actions"><button class="chip" onclick="showView('home')">← Zurück</button></div></div>
+  <div class="list" style="display:flex;align-items:center;justify-content:center"><div class="auth-card">
+    <div class="auth-title">🔒 Admin</div>
+    <div class="auth-sub">Zugang zum Verwaltungsbereich</div>
+    <div class="auth-form">
+      <input id="admEmail" type="email" placeholder="Admin E-Mail" value="admin@aishopr.local">
+      <input id="admPass" type="password" placeholder="Passwort" value="admin123">
+      <button class="btn btn-primary btn-full" onclick="adminLogin()">Admin öffnen</button>
+    </div>
+    <div class="auth-link" style="margin-top:16px"><a href="#" onclick="showView('feed');return false">← Zurück zum Feed</a></div>
+  </div></div>`;
+}
+function renderAdmin(){
+  if(!S.adminLogged)return renderAdminLogin();
+  const tabs=[
+    {id:'dashboard',label:'Übersicht',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>'},
+    {id:'products',label:'Produkte',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><path d="M3.27 6.96L12 12.01l8.73-5.05M12 22.08V12"/></svg>'},
+    {id:'categories',label:'Kategorien',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>'},
+    {id:'affiliate',label:'Affiliate',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>'},
+    {id:'users',label:'Nutzer',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>'},
+    {id:'ai',label:'KI & OpenAI',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1010 10H12V2z"/><path d="M12 12L2.1 12.1"/><path d="M12 12l7.1-7.1"/></svg>'},
+    {id:'footer',label:'Footer',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>'},
+    {id:'backup',label:'Backup & Import',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>'},
+    {id:'info',label:'Info & Business',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>'},
+    {id:'algorithm',label:'Algorithmus',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20M5 5l14 14M19 5L5 19"/></svg>'},
+    {id:'settings',label:'Einstellungen',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>'}
+  ];
+
+  return `
+  <div class="admin-layout">
+    <div class="admin-header-mobile">
+      ${getLogoHtml(true)}
+      <button class="btn btn-ghost btn-sm" onclick="document.querySelector('.admin-sidebar').classList.toggle('open')">☰</button>
+    </div>
+    <div class="admin-sidebar">
+      <div class="admin-sidebar-header">${getLogoHtml(true)}</div>
+      ${tabs.map(t=>`
+        <div class="admin-nav-item ${S.adminTab===t.id?'active':''}" onclick="S.adminTab='${t.id}';render();document.querySelector('.admin-sidebar').classList.remove('open')">
+          ${t.icon} ${t.label}
+        </div>
+      `).join('')}
+      <div style="flex:1"></div>
+      <div class="admin-nav-item" onclick="adminLogout()" style="color:var(--danger)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg> Logout
+      </div>
+    </div>
+    <div class="admin-main" id="adminContent">${adminPage(S.adminTab)}</div>
+  </div>`;
+}
+function bindAdminEvents(){}
+
+function adminPage(tab){
+  if(tab==='dashboard')return adminDashboard();
+  if(tab==='products')return adminProducts();
+  if(tab==='categories')return adminCategories();
+  if(tab==='affiliate')return adminAffiliate();
+  if(tab==='users')return adminUsers();
+  if(tab==='ai')return adminAI();
+  if(tab==='footer')return adminFooter();
+  if(tab==='backup')return adminBackup();
+  if(tab==='info')return adminInfo();
+  if(tab==='algorithm')return adminAlgorithm();
+  if(tab==='settings')return adminSettings();
+  return '';
+}
+
+function adminInfo(){
+  const s=settings();
+  const all=ideas();
+  const sponsored=all.filter(p=>p.sponsored).length;
+  const withAff=all.filter(p=>p.affiliate).length;
+  const log=LS.get('swipeLog',[]);
+  const clicks=log.filter(l=>l.type==='buy'||l.type==='click').length;
+  const users=LS.get('users',[]).length;
+
+  return `
+  <div class="admin-section"><div class="admin-section-title">ℹ️ AIshopr — Komplette Systemübersicht</div>
+  <p style="font-size:13px;color:var(--ink-2);line-height:1.6;margin-bottom:16px">
+    Dieses Dokument erklärt dir als Administrator, <b>worum es bei AIshopr geht</b>, <b>wie es funktioniert</b> und <b>womit du Geld verdienen kannst</b>. Bitte lies es einmal vollständig durch.
+  </p></div>
+
+  <div class="admin-section"><div class="admin-section-title">1️⃣ Was ist AIshopr?</div>
+  <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:20px;line-height:1.6;font-size:13px">
+    <p><b>AIshopr ist ein Swipe-Feed für Einkaufsideen.</b> Die App kombiniert das bekannte Tinder-/TikTok-Prinzip mit KI-gestützter Shopping-Inspiration.</p>
+    <p style="margin-top:8px">Nutzer wischen durch personalisierte Produktkarten. Jede Karte zeigt: Hook, Nutzen, Vorteile, Nachteile, Zielgruppe und einen AIshopr-Fit-Score (0–100%).</p>
+    <p style="margin-top:8px"><b>Der Clou:</b> Die KI lernt aus jedem Swipe und wird mit jedem Wischen besser darin, passende Produkte vorzuschlagen.</p>
+    <p style="margin-top:8px"><b>USP gegenüber normalen Shops:</b> AIshopr verkauft keine eigenen Produkte. Es bewertet ehrlich — inkl. "Nicht kaufen wenn..." und "Achte auf..." — was Vertrauen schafft.</p>
+  </div></div>
+
+  <div class="admin-section"><div class="admin-section-title">2️⃣ Nutzer-Funktionen im Überblick</div>
+  <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:20px;font-size:13px;line-height:1.7">
+    <div><b>👆 Swipe-Feed:</b> Wisch nach rechts = Like, links = Weiter, hoch = Merken, runter = Kein Interesse.</div>
+    <div><b>🔖 Merkliste:</b> Gespeicherte Produkte werden im Profil angezeigt.</div>
+    <div><b>🤖 KI-Profil:</b> Wird automatisch aus dem Swiping-Verhalten aufgebaut.</div>
+    <div><b>💬 Chatbot:</b> Beantwortet Fragen zur App (via OpenAI, wenn konfiguriert).</div>
+    <div><b>🎯 Feed-Modi:</b> Für dich, Problemlöser, Unter 25€, Smart Home, Reisen, Geschenke, Technik.</div>
+    <div><b>🎓 Onboarding-Tour:</b> Neue User werden interaktiv durch die App geführt.</div>
+    <div><b>👤 Account:</b> Registrierung per Google, Apple oder E-Mail. Daten können geändert werden.</div>
+  </div></div>
+
+  <div class="admin-section"><div class="admin-section-title">3️⃣ Monetarisierung — Womit verdienst du Geld?</div>
+  <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:20px;font-size:13px;line-height:1.7">
+
+    <h4 style="color:var(--primary);font-size:14px;margin-top:12px">💰 A) Affiliate-Marketing (Hauptquelle)</h4>
+    <p>Jede Produktkarte kann einen Affiliate-Link enthalten. Klickt der User auf "Zum Anbieter", wird der Link mit deiner Partner-ID aufgerufen. Erfolgt ein Kauf, erhältst du eine Provision (meist 3–10% je nach Händler).</p>
+    <p style="margin-top:6px"><b>Typische Partner:</b> Amazon Associates, eBay Partner Network, Digitec, OTTO, MediaMarkt, Awin-Netzwerk.</p>
+    <p style="margin-top:6px"><b>Aktueller Stand:</b> ${withAff} von ${all.length} Produkten haben einen Affiliate-Link. ${clicks} Klicks wurden registriert.</p>
+
+    <h4 style="color:var(--accent);font-size:14px;margin-top:16px">⭐ B) Sponsored Cards</h4>
+    <p>Anbieter zahlen dafür, dass ihre Produkte im Feed bevorzugt erscheinen. Gesponserte Karten müssen klar markiert sein (gesetzliche Pflicht!). Du kannst im Admin pro Produkt einen "Gesponsert"-Status setzen.</p>
+    <p style="margin-top:6px"><b>Aktueller Stand:</b> ${sponsored} gesponserte Produkte im Feed.</p>
+    <p style="margin-top:6px"><b>Tipp:</b> Maximal 15–30% Sponsored-Anteil, um das Nutzervertrauen nicht zu gefährden.</p>
+
+    <h4 style="color:var(--mint);font-size:14px;margin-top:16px">💎 C) Premium-Funktionen (Zukunft)</h4>
+    <p>Mögliche Erweiterungen, die später eingebaut werden können:</p>
+    <ul style="padding-left:20px;margin-top:6px">
+      <li>Werbefreie Premium-Version (Abo)</li>
+      <li>Erweiterte KI-Empfehlungen (GPT-4o)</li>
+      <li>Persönlicher Shopping-Assistent (1:1 Chat)</li>
+      <li>Preis-Alarme für gespeicherte Produkte</li>
+      <li>Exklusive Deals nur für Premium-Nutzer</li>
+    </ul>
+
+    <h4 style="color:var(--sun);font-size:14px;margin-top:16px">📊 D) Daten-Lizenzierung (Optional, DSGVO-konform)</h4>
+    <p>Anonymisierte Trend-Daten (welche Kategorien gerade beliebt sind, Preis-Toleranzen) sind für Marktforschung wertvoll. Nur mit explizitem Opt-In und anonymisiert umsetzbar.</p>
+  </div></div>
+
+  <div class="admin-section"><div class="admin-section-title">4️⃣ Affiliate-Marketing — Schritt für Schritt</div>
+  <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:20px;font-size:13px;line-height:1.7">
+    <p><b>Schritt 1:</b> Registriere dich bei Partner-Netzwerken (z.B. Amazon PartnerNet, Awin, eBay Partner Network).</p>
+    <p><b>Schritt 2:</b> Im Admin unter "Affiliate" → Anbieter aktivieren und Partner-ID hinterlegen.</p>
+    <p><b>Schritt 3:</b> Im Admin unter "Affiliate" → bei Produkten die Affiliate-URL eintragen.</p>
+    <p><b>Schritt 4:</b> URL-Format: Normaler Produktlink + dein Tag, z.B. <code style="background:var(--bg-soft);padding:2px 6px;border-radius:4px">https://amazon.de/dp/B08XYZ?tag=dein-tag-21</code></p>
+    <p style="margin-top:8px"><b>Rechtlicher Hinweis:</b> Affiliate-Links MÜSSEN gekennzeichnet sein (siehe Footer-Einstellungen). Transparenz = Vertrauen = Conversions.</p>
+  </div></div>
+
+  <div class="admin-section"><div class="admin-section-title">5️⃣ Aktuelle System-Statistiken</div>
+  <div class="kpi-grid">
+    <div class="kpi"><div class="kpi-val">${all.length}</div><div class="kpi-label">Produktideen gesamt</div></div>
+    <div class="kpi"><div class="kpi-val">${withAff}</div><div class="kpi-label">Mit Affiliate-Link</div></div>
+    <div class="kpi"><div class="kpi-val">${sponsored}</div><div class="kpi-label">Gesponsert</div></div>
+    <div class="kpi"><div class="kpi-val">${log.length}</div><div class="kpi-label">Swipes gesamt</div></div>
+    <div class="kpi"><div class="kpi-val">${clicks}</div><div class="kpi-label">Affiliate-Klicks</div></div>
+    <div class="kpi"><div class="kpi-val">${users}</div><div class="kpi-label">Registrierte User</div></div>
+    <div class="kpi"><div class="kpi-val">${s.db_mode==='mysql'?'🗄️':'💾'}</div><div class="kpi-label">${s.db_mode==='mysql'?'MySQL':'Local JSON'}</div></div>
+    <div class="kpi"><div class="kpi-val">${s.openai_enabled?'🤖':''}</div><div class="kpi-label">OpenAI ${s.openai_enabled?'aktiv':'aus'}</div></div>
+  </div></div>
+
+  <div class="admin-section"><div class="admin-section-title">6️⃣ Zukunftsvision</div>
+  <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:20px;font-size:13px;line-height:1.7">
+    <p><b>Kurzfristig:</b> Mehr Produktideen, bessere OpenAI-Integration, A/B-Testing für Hooks, Push-Benachrichtigungen.</p>
+    <p style="margin-top:8px"><b>Mittelfristig:</b> Preisvergleich-Funktion, Community-Features (User teilen Ideen), Push-Deals, Browser-Extension.</p>
+    <p style="margin-top:8px"><b>Langfristig:</b> Native Apps (iOS/Android), internationale Expansion (EN, FR, IT), B2B-Version für Händler, Voice-Integration.</p>
+  </div></div>
+
+  <div class="admin-section"><div class="admin-section-title">7️⃣ Rechtliches & Compliance</div>
+  <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:20px;font-size:13px;line-height:1.7">
+    <p><b>DSGVO:</b> User-Daten lokal oder verschlüsselt in MySQL. Keine Tracker-Cookies. Recht auf Löschung implementiert.</p>
+    <p style="margin-top:6px"><b>Impressum:</b> Pflicht in DE/AT/CH — muss vollständig ausgefüllt sein (siehe Footer-Einstellungen).</p>
+    <p style="margin-top:6px"><b>AGB:</b> Empfehlenswert, besonders bei Premium-Features und Zahlungen.</p>
+    <p style="margin-top:6px"><b>Werbe-Kennzeichnung:</b> § 5a UWG — Sponsored Cards und Affiliate-Links MÜSSEN klar erkennbar sein.</p>
+  </div></div>`;
+}
+
+function showInfoSheet(){
+  openSheet('about');
+}
+
+function adminDashboard(){
+  const all=ideas();const log=LS.get('swipeLog',[]);const users=LS.get('users',[]);
+  const clicks=log.filter(l=>l.type==='buy');const saves=log.filter(l=>l.type==='save');
+  const impressions=LS.get('impressions',{});
+  const totalImpressions=Object.values(impressions).reduce((a,b)=>a+Number(b||0),0);
+  const active=all.filter(p=>p.status!=='inactive').length;
+  const inactive=all.length-active;
+  const providers=settings().aff_providers||{};
+  const activeProviders=Object.values(providers).filter(p=>p.active).length;
+  const topClicks=Object.entries(LS.get('buyClicks',{})).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  const topSaves=all.map(p=>({p,count:S.saved.filter(id=>id===p.id).length})).sort((a,b)=>b.count-a.count).slice(0,10);
+  return `<div class="admin-section"><div class="admin-section-title">📊 Dashboard</div>
+  <div class="kpi-grid">
+    <div class="kpi"><div class="kpi-val">${all.length}</div><div class="kpi-label">Produktideen</div></div>
+    <div class="kpi"><div class="kpi-val">${active}</div><div class="kpi-label">Aktiv</div></div>
+    <div class="kpi"><div class="kpi-val">${inactive}</div><div class="kpi-label">Inaktiv</div></div>
+    <div class="kpi"><div class="kpi-val">${log.length}</div><div class="kpi-label">Swipes</div></div>
+    <div class="kpi"><div class="kpi-val">${clicks.length}</div><div class="kpi-label">Affiliate-Klicks</div></div>
+    <div class="kpi"><div class="kpi-val">${saves.length}</div><div class="kpi-label">Saves</div></div>
+    <div class="kpi"><div class="kpi-val">${totalImpressions}</div><div class="kpi-label">Impressions</div></div>
+    <div class="kpi"><div class="kpi-val">${totalImpressions?Math.round(clicks.length/totalImpressions*100):0}%</div><div class="kpi-label">CTR lokal</div></div>
+    <div class="kpi"><div class="kpi-val">${activeProviders}</div><div class="kpi-label">Affiliate aktiv</div></div>
+    <div class="kpi"><div class="kpi-val">${users.length}</div><div class="kpi-label">Nutzer</div></div>
+    <div class="kpi"><div class="kpi-val">${all.filter(p=>p.sponsored).length}</div><div class="kpi-label">Gesponsert</div></div>
+  </div></div>
+  <div class="admin-section"><div class="admin-section-title">Top 10 Klicks</div>${topClicks.length?topClicks.map(([id,c])=>{const p=all.find(x=>x.id===id);return `<div class="item" style="cursor:default"><div class="item-body"><div class="item-title">${esc(p?.title||id)}</div><div class="item-sub">${c} Klicks</div></div></div>`}).join(''):'<p style="font-size:12px;color:var(--ink-3)">Noch keine Klicks.</p>'}</div>
+  <div class="admin-section"><div class="admin-section-title">System-Version</div><div class="kpi-grid"><div class="kpi"><div class="kpi-val">${APP_VERSION}</div><div class="kpi-label">App-Version</div></div><div class="kpi"><div class="kpi-val">${DATA_SCHEMA_VERSION}</div><div class="kpi-label">Schema</div></div><div class="kpi"><div class="kpi-val">${BUILD_DATE}</div><div class="kpi-label">Build</div></div></div></div>`;
+}
+function adminProducts(){
+  const all=ideas();
+  return `<div class="admin-section"><div class="admin-section-title">📦 Produktideen (${all.length})</div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+    <button class="btn btn-ghost btn-sm" onclick="exportProductsJson()">JSON Export</button>
+    <button class="btn btn-ghost btn-sm" onclick="exportProductsCsv()">CSV Export</button>
+    <label class="btn btn-ghost btn-sm" style="cursor:pointer">JSON Import<input type="file" accept=".json,application/json" onchange="importProductsFile(event,'json')" style="display:none"></label>
+    <label class="btn btn-ghost btn-sm" style="cursor:pointer">CSV Import<input type="file" accept=".csv,text/csv" onchange="importProductsFile(event,'csv')" style="display:none"></label>
+    <button class="btn btn-ghost btn-sm" onclick="showAsinImport()">ASIN-Liste</button>
+  </div>
+  <div style="overflow-x:auto"><table class="tbl"><thead><tr><th>Titel</th><th>Kategorie</th><th>Preis</th><th>Fit</th><th>Aktionen</th></tr></thead><tbody>
+  ${all.map(p=>`<tr><td>${esc(p.title)}</td><td>${catName(p.cat)}</td><td>${p.price}</td><td>${p.fit}%</td>
+  <td><button class="btn btn-ghost btn-sm" onclick="editProduct('${p.id}')">✏️</button> <button class="btn btn-ghost btn-sm" onclick="deleteProduct('${p.id}')">🗑</button></td></tr>`).join('')}
+  </tbody></table></div>
+  <button class="btn btn-primary btn-sm" style="margin-top:12px" onclick="editProduct(null)">+ Neues Produkt</button></div>`;
+}
+function editProduct(id){
+  const all=ideas();const p=id?all.find(x=>x.id===id):{id:'p'+Date.now(),title:'',hook:'',cat:'smarthome',price:'0 €',fit:70,emoji:'📦',grad:'grad-1',problem:'',solution:'',pros:[],cons:[],notfor:[],watch:[],affiliate:'',sponsored:false,image:''};
+  document.getElementById('infoTitle').textContent=id?'Produkt bearbeiten':'Neues Produkt';
+  document.getElementById('infoBody').innerHTML=`
+    <div class="form-grid">
+      <div><label>Titel</label><input id="ed_title" value="${esc(p.title)}"></div>
+      <div><label>Hook</label><input id="ed_hook" value="${esc(p.hook)}"></div>
+      <div><label>Kategorie</label><select id="ed_cat">${CATS.map(c=>`<option value="${c.id}" ${p.cat===c.id?'selected':''}>${c.icon} ${c.name}</option>`).join('')}</select></div>
+      <div><label>Preis</label><input id="ed_price" value="${esc(p.price)}"></div>
+      <div><label>Fit-Score</label><input id="ed_fit" type="number" value="${p.fit}"></div>
+      <div><label>Affiliate-URL</label><input id="ed_aff" value="${esc(p.affiliate)}"></div>
+      <div><label>Problem</label><input id="ed_problem" value="${esc(p.problem)}"></div>
+      <div><label>Lösung</label><input id="ed_solution" value="${esc(p.solution)}"></div>
+      <div><label>Vorteile (kommasepariert)</label><input id="ed_pros" value="${(p.pros||[]).join(', ')}"></div>
+      <div><label>Nachteile (kommasepariert)</label><input id="ed_cons" value="${(p.cons||[]).join(', ')}"></div>
+      <div><label>Nicht kaufen wenn (kommasepariert)</label><input id="ed_notfor" value="${(p.notfor||[]).join(', ')}"></div>
+      <div><label>Achte auf (kommasepariert)</label><input id="ed_watch" value="${(p.watch||[]).join(', ')}"></div>
+      <div><label>Bild-URL (Amazon-Format)</label><input id="ed_image" value="${esc(p.image||'')}"></div>
+    </div>
+    <div style="margin-top:12px;display:flex;gap:8px">
+      <button class="btn btn-primary" onclick="saveProduct('${id}')">Speichern</button>
+      <button class="btn btn-ghost" onclick="closeInfoSheet()">Abbrechen</button>
+    </div>`;
+  document.getElementById('infoSheet').classList.add('show');
+}
+function saveProduct(id){
+  const d={title:document.getElementById('ed_title').value,hook:document.getElementById('ed_hook').value,cat:document.getElementById('ed_cat').value,price:document.getElementById('ed_price').value,fit:parseInt(document.getElementById('ed_fit').value)||70,affiliate:document.getElementById('ed_aff').value,problem:document.getElementById('ed_problem').value,solution:document.getElementById('ed_solution').value,pros:document.getElementById('ed_pros').value.split(',').map(s=>s.trim()).filter(Boolean),cons:document.getElementById('ed_cons').value.split(',').map(s=>s.trim()).filter(Boolean),notfor:document.getElementById('ed_notfor').value.split(',').map(s=>s.trim()).filter(Boolean),watch:document.getElementById('ed_watch').value.split(',').map(s=>s.trim()).filter(Boolean),image:document.getElementById('ed_image').value};
+  if(!d.title){toast('Titel fehlt');return;}
+  const all=ideas();
+  if(id){const idx=all.findIndex(p=>p.id===id);if(idx>=0)all[idx]={...all[idx],...d};}else all.push({...d,id:'p'+Date.now(),grad:'grad-'+Math.floor(Math.random()*6+1),sponsored:false});
+  LS.set('ideas',all);closeInfoSheet();toast('Gespeichert');render();
+}
+function deleteProduct(id){if(!confirm('Produktidee löschen?'))return;LS.set('ideas',ideas().filter(p=>p.id!==id));toast('Gelöscht');render();}
+
+function normalizeProduct(p){
+  const now=new Date().toISOString();
+  return {
+    id:String(p.id||('p_'+Date.now()+'_'+Math.random().toString(36).slice(2,6))),title:p.title||'',hook:p.hook||p.title||'',category:p.category||p.cat||'',cat:p.cat||p.category||'tech',price:p.price||'',price_value:Number(p.price_value||parseInt(p.price)||0),currency:p.currency||'EUR',fit:Number(p.fit||70),problem:p.problem||'',solution:p.solution||'',pros:Array.isArray(p.pros)?p.pros:String(p.pros||'').split('|').filter(Boolean),cons:Array.isArray(p.cons)?p.cons:String(p.cons||'').split('|').filter(Boolean),notfor:Array.isArray(p.notfor)?p.notfor:String(p.notfor||'').split('|').filter(Boolean),watch:Array.isArray(p.watch)?p.watch:String(p.watch||'').split('|').filter(Boolean),image:p.image||p.image_url||'',image_url:p.image_url||p.image||'',local_image:p.local_image||'',merchant:p.merchant||p.merchant_name||'',merchant_name:p.merchant_name||p.merchant||'',affiliate_provider:p.affiliate_provider||'',affiliate:p.affiliate||p.affiliate_url||'',affiliate_url:p.affiliate_url||p.affiliate||'',asin:p.asin||'',ean:p.ean||'',sku:p.sku||'',sponsored:!!p.sponsored,sponsor_label:p.sponsor_label||'',status:p.status||'active',priority:Number(p.priority||0),created_at:p.created_at||now,updated_at:now,grad:p.grad||'grad-1',emoji:p.emoji||''
+  };
+}
+function exportProductsJson(){downloadFile('aishopr-products.json',JSON.stringify(ideas().map(normalizeProduct),null,2),'application/json');}
+function exportProductsCsv(){const rows=ideas().map(normalizeProduct);const keys=['id','title','hook','cat','price','fit','affiliate_url','asin','ean','sku','sponsored','status','image_url'];downloadFile('aishopr-products.csv',[keys.join(','),...rows.map(r=>keys.map(k=>`"${String(r[k]??'').replace(/"/g,'""')}"`).join(','))].join('\n'),'text/csv');}
+function downloadFile(name,content,type){const blob=new Blob([content],{type});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();URL.revokeObjectURL(a.href);}
+function importProductsFile(e,type){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const txt=r.result;let items=[];try{if(type==='json')items=JSON.parse(txt);else{const lines=txt.split(/\r?\n/).filter(Boolean);const keys=lines.shift().split(',').map(x=>x.replace(/"/g,'').trim());items=lines.map(line=>{const vals=line.match(/("[^"]*(?:""[^"]*)*"|[^,]+)/g)||[];const o={};keys.forEach((k,i)=>o[k]=(vals[i]||'').replace(/^"|"$/g,'').replace(/""/g,'"'));return o;});}}catch(err){toast('Importfehler');return;}showImportPreview(items);};r.readAsText(f);}
+function showImportPreview(items){const all=ideas();const normalized=items.map(normalizeProduct).filter(p=>p.title);const dup=normalized.filter(p=>all.some(x=>[x.id,x.asin,x.ean,x.sku,x.affiliate].some(v=>v&&[p.id,p.asin,p.ean,p.sku,p.affiliate].includes(v))||x.title===p.title));document.getElementById('infoTitle').textContent='Import-Vorschau';document.getElementById('infoBody').innerHTML=`<p>${normalized.length} gültige Produkte, ${dup.length} mögliche Dubletten.</p><label><input type="checkbox" id="imp_overwrite"> Bestehende überschreiben</label><div style="max-height:260px;overflow:auto;margin-top:10px">${normalized.slice(0,30).map(p=>`<div class="item"><div class="item-body"><div class="item-title">${esc(p.title)}</div><div class="item-sub">${esc(p.asin||p.ean||p.sku||p.affiliate||'')}</div></div></div>`).join('')}</div><button class="btn btn-primary btn-full" onclick='commitProductImport(${JSON.stringify(normalized).replace(/'/g,"&#39;")})'>Import übernehmen</button>`;document.getElementById('infoSheet').classList.add('show');}
+function commitProductImport(items){createSnapshot('before_product_import');let all=ideas();const overwrite=document.getElementById('imp_overwrite')?.checked;items.forEach(p=>{const idx=all.findIndex(x=>x.id===p.id||x.asin&&x.asin===p.asin||x.ean&&x.ean===p.ean||x.sku&&x.sku===p.sku||x.affiliate&&x.affiliate===p.affiliate||x.title===p.title);if(idx>=0&&overwrite)all[idx]={...all[idx],...p,updated_at:new Date().toISOString()};else if(idx<0)all.push(p);});LS.set('ideas',all);closeInfoSheet();toast('Import abgeschlossen');render();}
+function showAsinImport(){document.getElementById('infoTitle').textContent='ASIN-Listen-Import';document.getElementById('infoBody').innerHTML=`<p style="font-size:12px;color:var(--ink-3)">Eine ASIN pro Zeile. Preise/Bilder werden nicht automatisch von Amazon geladen.</p><textarea id="asinList" style="min-height:180px" placeholder="B08XYZ123\nB09ABC456"></textarea><button class="btn btn-primary btn-full" onclick="importAsins()">ASINs übernehmen</button>`;document.getElementById('infoSheet').classList.add('show');}
+function importAsins(){const asins=document.getElementById('asinList').value.split(/\s+/).filter(Boolean);const rows=asins.map(a=>normalizeProduct({title:'Amazon Produkt '+a,hook:'Produktidee importiert per ASIN',asin:a,affiliate_provider:'amazon',cat:'tech',status:'active'}));commitProductImport(rows);}
+
+function adminCategories(){
+  return `<div class="admin-section"><div class="admin-section-title">🏷 Kategorien (${CATS.length})</div>
+  <p style="font-size:12px;color:var(--ink-3);margin-bottom:12px">Lege Kategorien an, bearbeite oder lösche sie. Kategorien werden im Feed und bei Produkten verwendet.</p>
+  <button class="btn btn-primary btn-sm" style="margin-bottom:12px" onclick="editCategory(null)">+ Neue Kategorie</button>
+  ${CATS.map(c=>`
+    <div class="item" style="cursor:default">
+      <div class="item-emoji">${c.icon||'📦'}</div>
+      <div class="item-body">
+        <div class="item-title">${esc(c.name)}</div>
+        <div class="item-sub">ID: ${esc(c.id)}</div>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="editCategory('${c.id}')">✏️</button>
+      <button class="btn btn-ghost btn-sm" onclick="deleteCategory('${c.id}')">🗑</button>
+    </div>
+  `).join('')}
+  </div>`;
+}
+function editCategory(id){
+  const c = id ? CATS.find(x=>x.id===id) : {id:'',name:'',icon:''};
+  document.getElementById('infoTitle').textContent = id?'Kategorie bearbeiten':'Neue Kategorie';
+  document.getElementById('infoBody').innerHTML=`
+    <div class="form-grid">
+      <div><label>Name</label><input id="cat_name" value="${esc(c.name)}" placeholder="z.B. Smart Home"></div>
+      <div><label>Icon (Emoji)</label><input id="cat_icon" value="${esc(c.icon)}" placeholder="🏠"></div>
+      ${id?'':'<div><label>ID (Kleinbuchstaben, keine Leerzeichen)</label><input id="cat_id" placeholder="smarthome"></div>'}
+    </div>
+    <div style="margin-top:12px;display:flex;gap:8px">
+      <button class="btn btn-primary" onclick="saveCategory('${id||''}')">Speichern</button>
+      <button class="btn btn-ghost" onclick="closeInfoSheet()">Abbrechen</button>
+    </div>`;
+  document.getElementById('infoSheet').classList.add('show');
+}
+function saveCategory(id){
+  const name=document.getElementById('cat_name').value.trim();
+  const icon=document.getElementById('cat_icon').value.trim()||'📦';
+  if(!name){toast('Name fehlt');return;}
+  if(id){
+    const idx=CATS.findIndex(c=>c.id===id);
+    if(idx>=0){CATS[idx].name=name;CATS[idx].icon=icon;}
+  } else {
+    let cid=(document.getElementById('cat_id').value.trim()||name.toLowerCase().replace(/[^a-z0-9]/g,''))||('cat'+Date.now());
+    if(CATS.some(c=>c.id===cid)){toast('ID existiert bereits');return;}
+    CATS.push({id:cid,name,icon});
+  }
+  saveCategories();closeInfoSheet();toast('Kategorie gespeichert');render();
+}
+function deleteCategory(id){
+  if(!confirm('Kategorie löschen? Produkte dieser Kategorie bleiben bestehen.'))return;
+  CATS=CATS.filter(c=>c.id!==id);
+  saveCategories();toast('Kategorie gelöscht');render();
+}
+function adminAffiliate(){
+  const s=settings();
+  const all=ideas();
+  const withAff=all.filter(p=>p.affiliate);
+  const log=LS.get('swipeLog',[]);
+  const clicks=log.filter(l=>l.type==='buy');
+  
+  // Common Affiliate Providers
+  const providers = [
+    {id:'amazon', name:'Amazon Associates'},
+    {id:'ebay', name:'eBay Partner Network'},
+    {id:'digitec', name:'Digitec Galaxus'},
+    {id:'otto', name:'OTTO Partnerprogramm'},
+    {id:'mediamarkt', name:'MediaMarkt/Saturn'},
+    {id:'awin', name:'Awin Network'}
+  ];
+
+  return `<div class="admin-section"><div class="admin-section-title">💰 Affiliate & Sponsoring</div>
+  <div class="kpi-grid">
+    <div class="kpi"><div class="kpi-val">${withAff.length}</div><div class="kpi-label">Mit Affiliate-Link</div></div>
+    <div class="kpi"><div class="kpi-val">${all.filter(p=>p.sponsored).length}</div><div class="kpi-label">Gesponsert</div></div>
+    <div class="kpi"><div class="kpi-val">${clicks.length}</div><div class="kpi-label">Affiliate-Klicks</div></div>
+    <div class="kpi"><div class="kpi-val">${s.max_sponsored_pct||15}%</div><div class="kpi-label">Max. Sponsored-Anteil</div></div>
+  </div></div>
+  
+  <div class="admin-section"><div class="admin-section-title">Affiliate Anbieter</div>
+  <p style="font-size:12px;color:var(--ink-3);margin-bottom:12px">Aktiviere Anbieter und hinterlege deine Partner-IDs.</p>
+  <div class="form-grid" style="gap:16px">
+    ${providers.map(p => {
+      const isActive = s.aff_providers && s.aff_providers[p.id] && s.aff_providers[p.id].active;
+      const pid = s.aff_providers && s.aff_providers[p.id] ? s.aff_providers[p.id].id : '';
+      return `
+      <div style="background:var(--bg-soft);padding:12px;border-radius:12px;border:1px solid var(--border);display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="font-weight:700;font-size:14px">${p.name}</div>
+          <div class="toggle ${isActive?'on':''}" onclick="toggleAffProvider('${p.id}')"></div>
+        </div>
+        ${isActive?`<input type="text" placeholder="Partner ID" value="${esc(pid)}" onchange="updateAffId('${p.id}', this.value)" style="font-size:12px;padding:6px 10px">`:''}
+      </div>`;
+    }).join('')}
+  </div></div>
+
+  <div class="admin-section"><div class="admin-section-title">Sponsored Links verwalten</div>
+  <p style="font-size:12px;color:var(--ink-3);margin-bottom:12px">Erstelle und verwalte Sponsored/Affiliate-Einträge mit Bild, Video und Link.</p>
+
+  <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:12px">
+    <div class="form-grid">
+      <label>Titel</label>
+      <input id="sp_title" placeholder="Produkt- oder Kampagnenname">
+      <label>Hook / Kurzbeschreibung</label>
+      <input id="sp_hook" placeholder="Starker Einstiegssatz">
+      <div class="form-row">
+        <div><label>Kategorie</label><select id="sp_cat">${CATS.map(c=>`<option value="${c.id}">${c.icon} ${c.name}</option>`).join('')}</select></div>
+        <div><label>Preis-Anzeige</label><input id="sp_price" placeholder="z.B. 29–49 €"></div>
+      </div>
+      <div class="form-row">
+        <div><label>Fit-Score</label><input id="sp_fit" type="number" value="85" min="0" max="100"></div>
+        <div><label>Sponsor-Label</label><input id="sp_label" value="Gesponsert"></div>
+      </div>
+      <label>Affiliate / Tracking URL</label>
+      <input id="sp_url" placeholder="https://amazon.de/dp/...?tag=dein-tag">
+      <label>Anbieter / Merchant</label>
+      <input id="sp_merchant" placeholder="z.B. Amazon, OTTO...">
+      <label>Bild-URL (Produktfoto)</label>
+      <input id="sp_image" placeholder="https://... .jpg">
+      <label>Video-URL (optional, z.B. YouTube Embed)</label>
+      <input id="sp_video" placeholder="https://youtube.com/embed/...">
+      <label>Problem das gelöst wird</label>
+      <input id="sp_problem" placeholder="Welches Problem löst das Produkt?">
+      <label>Lösung</label>
+      <input id="sp_solution" placeholder="Was macht das Produkt?">
+      <label>Vorteile (kommasepariert)</label>
+      <input id="sp_pros" placeholder="Vorteil 1, Vorteil 2">
+      <label>Nachteile (kommasepariert)</label>
+      <input id="sp_cons" placeholder="Nachteil 1, Nachteil 2">
+      <button class="btn btn-primary btn-full" onclick="createSponsoredLink()">Sponsored Karte erstellen</button>
+    </div>
+  </div>
+
+  <div style="font-size:13px;font-weight:700;margin-bottom:8px">Aktive Sponsored Karten (${all.filter(p=>p.sponsored).length})</div>
+  ${all.filter(p=>p.sponsored).map(p=>`
+    <div class="item" style="cursor:default">
+      ${p.image?`<div class="item-emoji" style="background:#fff;overflow:hidden"><img src="${esc(p.image)}" style="width:100%;height:100%;object-fit:cover"></div>`:`<div class="item-emoji">📢</div>`}
+      <div class="item-body">
+        <div class="item-title">${esc(p.title)}</div>
+        <div class="item-sub">${esc(p.affiliate||'Kein Link')} · ${esc(p.merchant_name||p.cat)}</div>
+      </div>
+      <button class="item-action" onclick="removeSponsor('${p.id}')">✕</button>
+    </div>
+  `).join('') || '<p style="font-size:12px;color:var(--ink-3)">Noch keine Sponsored Karten.</p>'}
+  </div>
+
+  <div class="admin-section"><div class="admin-section-title">Allgemeine Einstellungen</div>
+  <div class="form-grid">
+    <label>Max. Sponsored-Anteil (%)</label><input id="aff_max" type="number" min="0" max="100" value="${s.max_sponsored_pct||15}">
+    <label>Affiliate-Hinweis (Footer/Details)</label><textarea id="aff_notice">${esc(s.affiliate_notice||'Enthält Affiliate-Links.')}</textarea>
+    <button class="btn btn-primary" onclick="saveAffiliateSettings()">Speichern</button>
+  </div></div>
+  
+  <div class="admin-section"><div class="admin-section-title">Klick-Log (letzte 20)</div>
+  ${clicks.length?`<table class="tbl"><thead><tr><th>Produkt</th><th>Kategorie</th><th>Zeitpunkt</th></tr></thead><tbody>${clicks.slice(-20).reverse().map(c=>{const p=all.find(x=>x.id===c.pid);return `<tr><td>${p?esc(p.title):c.pid}</td><td>${catName(c.cat)}</td><td>${new Date(c.ts).toLocaleString('de-DE')}</td></tr>`;}).join('')}</tbody></table>`:'<p style="color:var(--ink-3)">Noch keine Klicks.</p>'}</div>`;
+}
+
+// Helper functions for affiliate providers
+function toggleAffProvider(id){
+  const s=settings();
+  if(!s.aff_providers) s.aff_providers={};
+  if(!s.aff_providers[id]) s.aff_providers[id]={active:false, id:''};
+  s.aff_providers[id].active=!s.aff_providers[id].active;
+  LS.set('settings',s);
+  render(); // Re-render admin to show/hide input
+}
+function updateAffId(id, val){
+  const s=settings();
+  if(!s.aff_providers) s.aff_providers={};
+  if(!s.aff_providers[id]) s.aff_providers[id]={active:false, id:''};
+  s.aff_providers[id].id=val;
+  LS.set('settings',s);
+}
+function saveAffiliateSettings(){
+  const s=settings();
+  s.max_sponsored_pct=parseInt(document.getElementById('aff_max').value)||15;
+  s.affiliate_notice=document.getElementById('aff_notice').value;
+  LS.set('settings',s);toast('Affiliate-Einstellungen gespeichert');
+}
+
+function createSponsoredLink(){
+  const title=document.getElementById('sp_title')?.value.trim();
+  const url=document.getElementById('sp_url')?.value.trim();
+  if(!title){toast('Titel eingeben');return;}
+  if(!url){toast('Affiliate-URL eingeben');return;}
+  
+  const split = s => (s||'').split(',').map(x=>x.trim()).filter(Boolean);
+  const newProduct = {
+    id: 'sp_' + Date.now().toString(36),
+    title,
+    hook: document.getElementById('sp_hook')?.value||title,
+    cat: document.getElementById('sp_cat')?.value||'tech',
+    price: document.getElementById('sp_price')?.value||'',
+    fit: parseInt(document.getElementById('sp_fit')?.value)||85,
+    affiliate: url,
+    merchant_name: document.getElementById('sp_merchant')?.value||'',
+    image: document.getElementById('sp_image')?.value||'',
+    video: document.getElementById('sp_video')?.value||'',
+    problem: document.getElementById('sp_problem')?.value||'',
+    solution: document.getElementById('sp_solution')?.value||'',
+    pros: split(document.getElementById('sp_pros')?.value),
+    cons: split(document.getElementById('sp_cons')?.value),
+    notfor: [],
+    watch: [],
+    sponsored: true,
+    sponsor_label: document.getElementById('sp_label')?.value||'Gesponsert',
+    grad: 'grad-' + Math.floor(Math.random()*6+1),
+    emoji: '',
+    status: 'active'
+  };
+  
+  const all = ideas();
+  all.unshift(newProduct);
+  LS.set('ideas', all);
+  toast('Sponsored Karte erstellt');
+  render();
+}
+
+function removeSponsor(id){
+  if(!confirm('Sponsored-Status entfernen?')) return;
+  const all = ideas();
+  const idx = all.findIndex(p=>p.id===id);
+  if(idx>=0){
+    all[idx].sponsored = false;
+    all[idx].affiliate = '';
+    LS.set('ideas', all);
+    toast('Sponsored entfernt');
+    render();
+  }
+}
+
+function adminUsers(){
+  const users=LS.get('users',[]);
+  return `<div class="admin-section"><div class="admin-section-title">👥 Nutzer (${users.length})</div>
+  ${users.length?`<table class="tbl"><thead><tr><th>Name</th><th>E-Mail</th><th>Anbieter</th><th>Aktion</th></tr></thead><tbody>
+  ${users.map(u=>`<tr><td>${esc(u.name)}</td><td>${esc(u.email)}</td><td>${u.provider}</td><td><button class="btn btn-ghost btn-sm" onclick="deleteUser('${u.id}')">🗑</button></td></tr>`).join('')}
+  </tbody></table>`:'<p style="color:var(--ink-3)">Noch keine registrierten Nutzer.</p>'}</div>`;
+}
+function deleteUser(id){if(!confirm('Nutzer löschen?'))return;LS.set('users',LS.get('users',[]).filter(u=>u.id!==id));toast('Nutzer gelöscht');render();}
+
+function adminAI(){
+  const s=settings();
+  return `<div class="admin-section"><div class="admin-section-title">🤖 KI & OpenAI</div>
+  <div class="ai-box"><h4>OpenAI Konfiguration</h4><p>Damit der Chatbot antworten kann, muss hier ein gültiger API-Key hinterlegt werden.</p></div>
+  <div class="form-grid" style="margin-top:16px">
+    <div class="form-row"><div><label>OpenAI API-Key</label><input id="ai_key" type="password" value="${esc(s.openai_key)}"></div><div><label>Modell</label><select id="ai_model"><option value="gpt-4o-mini" ${s.openai_model==='gpt-4o-mini'?'selected':''}>gpt-4o-mini</option><option value="gpt-4o" ${s.openai_model==='gpt-4o'?'selected':''}>gpt-4o</option></select></div></div>
+    <div style="display:flex;align-items:center;gap:8px"><div class="toggle ${s.openai_enabled?'on':''}" id="ai_toggle"></div><label style="margin:0">OpenAI aktiv</label></div>
+    <button class="btn btn-primary" onclick="saveAI()">Speichern</button>
+  </div></div>`;
+}
+function saveAI(){
+  const s=settings();
+  s.openai_key=document.getElementById('ai_key').value;
+  s.openai_model=document.getElementById('ai_model').value;
+  s.openai_enabled=document.getElementById('ai_toggle').classList.contains('on');
+  LS.set('settings',s);toast('KI-Einstellungen gespeichert');
+}
+function adminFooter(){
+  const s=settings();
+  const links = (s.footer_links && Array.isArray(s.footer_links) && s.footer_links.length) ? s.footer_links : DEFAULT_SETTINGS.footer_links;
+  // Sync draft
+  footerLinksDraft = JSON.parse(JSON.stringify(links));
+  const socials = s.socials || {};
+  const socialDefs = [
+    {key:'instagram',name:'Instagram',icon:'📷',placeholder:'https://instagram.com/...'},
+    {key:'tiktok',name:'TikTok',icon:'🎵',placeholder:'https://tiktok.com/@...'},
+    {key:'x',name:'X (Twitter)',icon:'𝕏',placeholder:'https://x.com/...'},
+    {key:'facebook',name:'Facebook',icon:'👥',placeholder:'https://facebook.com/...'},
+    {key:'linkedin',name:'LinkedIn',icon:'💼',placeholder:'https://linkedin.com/company/...'},
+    {key:'youtube',name:'YouTube',icon:'📺',placeholder:'https://youtube.com/@...'}
+  ];
+
+  return `
+  <div class="admin-section"><div class="admin-section-title">📝 Footer & Rechtliches</div>
+    <p style="font-size:12px;color:var(--ink-3);margin-bottom:16px">Verwalte den Footer der App, rechtliche Texte und Social-Media-Profile.</p>
+
+    <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:16px">
+      <h4 style="font-size:14px;margin-bottom:12px">🔗 Footer-Links (Menü)</h4>
+      <div id="footerLinksList">
+        ${links.map((l,i)=>`
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+            <input class="fl-label" data-i="${i}" value="${esc(l.label)}" placeholder="Name" style="flex:1;font-size:13px;padding:8px 10px">
+            <input class="fl-url" data-i="${i}" value="${esc(l.url||'')}" placeholder="URL oder # für Popup" style="flex:1;font-size:13px;padding:8px 10px">
+            <button class="btn btn-ghost btn-sm" onclick="removeFooterLink(${i})">✕</button>
+          </div>
+        `).join('')}
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="addFooterLink()">+ Link hinzufügen</button>
+    </div>
+
+    <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:16px">
+      <h4 style="font-size:14px;margin-bottom:12px">🌐 Social-Media Profile</h4>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        ${socialDefs.map(d=>`
+          <div style="display:flex;align-items:center;gap:8px;background:var(--bg-soft);padding:8px 10px;border-radius:10px">
+            <span style="font-size:18px">${d.icon}</span>
+            <input id="social_${d.key}" value="${esc(socials[d.key]||'')}" placeholder="${d.placeholder}" style="flex:1;border:none;background:transparent;font-size:12px">
+          </div>
+        `).join('')}
+      </div>
+    </div>
+
+    <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:16px">
+      <h4 style="font-size:14px;margin-bottom:12px">© Copyright & Tagline</h4>
+      <label style="font-size:12px;color:var(--ink-2);margin-bottom:4px;display:block">Copyright-Text</label>
+      <input id="ft_text" value="${esc(s.footer_text)}" style="margin-bottom:10px">
+      <label style="font-size:12px;color:var(--ink-2);margin-bottom:4px;display:block">Slogan (wird im Footer angezeigt)</label>
+      <input id="ft_tagline" value="${esc(s.app_tagline||'')}">
+    </div>
+
+    <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:16px">
+      <h4 style="font-size:14px;margin-bottom:12px">📄 Impressum (§ 5 TMG)</h4>
+      <textarea id="leg_impressum" style="min-height:200px;font-size:12px;line-height:1.5">${esc(s.legal.impressum)}</textarea>
+      <p style="font-size:11px;color:var(--ink-3);margin-top:6px">Alle Pflichtangaben nach § 5 TMG. Platzhalter müssen mit Ihren echten Daten ersetzt werden.</p>
+    </div>
+
+    <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:16px">
+      <h4 style="font-size:14px;margin-bottom:12px">🔒 Datenschutzerklärung (DSGVO)</h4>
+      <textarea id="leg_privacy" style="min-height:200px;font-size:12px;line-height:1.5">${esc(s.legal.datenschutz)}</textarea>
+    </div>
+
+    <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:16px">
+      <h4 style="font-size:14px;margin-bottom:12px">📋 AGB</h4>
+      <textarea id="leg_agb" style="min-height:120px;font-size:12px;line-height:1.5">${esc(s.legal.agb)}</textarea>
+    </div>
+
+    <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:16px">
+      <h4 style="font-size:14px;margin-bottom:12px">✉️ Kontakt</h4>
+      <textarea id="leg_kontakt" style="min-height:100px;font-size:12px;line-height:1.5">${esc(s.legal.kontakt)}</textarea>
+    </div>
+
+    <button class="btn btn-primary btn-full" onclick="saveFooter()">Alle rechtlichen Daten & Footer speichern</button>
+  </div>`;
+}
+
+// Footer Link Management
+let footerLinksDraft = null;
+function getFooterLinksDraft(){
+  if(!footerLinksDraft){
+    const s = settings();
+    footerLinksDraft = (s.footer_links && s.footer_links.length) ? [...s.footer_links] : [...DEFAULT_SETTINGS.footer_links];
+  }
+  return footerLinksDraft;
+}
+function addFooterLink(){
+  const list = getFooterLinksDraft();
+  list.push({label:'Neuer Link',url:'#',type:'link'});
+  saveFooterLinksDraft();
+  render();
+}
+function removeFooterLink(i){
+  const list = getFooterLinksDraft();
+  list.splice(i,1);
+  saveFooterLinksDraft();
+  render();
+}
+function saveFooterLinksDraft(){
+  const s = settings();
+  s.footer_links = getFooterLinksDraft();
+  LS.set('settings',s);
+}
+
+function saveFooter(){
+  const s=settings();
+
+  // Update footer links from inputs
+  const labels = document.querySelectorAll('.fl-label');
+  const urls = document.querySelectorAll('.fl-url');
+  const linksDraft = getFooterLinksDraft();
+  labels.forEach((el,i)=>{ if(linksDraft[i]) linksDraft[i].label = el.value; });
+  urls.forEach((el,i)=>{ if(linksDraft[i]) linksDraft[i].url = el.value; });
+  s.footer_links = linksDraft.filter(l=>l && l.label); // filter empty
+  footerLinksDraft = s.footer_links;
+
+  // Update socials
+  const socialKeys = ['instagram','tiktok','x','facebook','linkedin','youtube'];
+  if(!s.socials) s.socials = {};
+  socialKeys.forEach(k=>{
+    const inp = document.getElementById('social_'+k);
+    if(inp) s.socials[k] = inp.value.trim();
+  });
+
+  // Update legal texts
+  s.footer_text = document.getElementById('ft_text').value;
+  s.app_tagline = document.getElementById('ft_tagline').value;
+  s.legal.impressum = document.getElementById('leg_impressum').value;
+  s.legal.datenschutz = document.getElementById('leg_privacy').value;
+  s.legal.agb = document.getElementById('leg_agb').value;
+  s.legal.kontakt = document.getElementById('leg_kontakt').value;
+
+  LS.set('settings',s);
+  toast('Footer, Socials & rechtliche Daten gespeichert');
+  updateAppBranding();
+  render();
+}
+
+function collectBackup(){return {app_version:APP_VERSION,build_date:BUILD_DATE,data_schema_version:DATA_SCHEMA_VERSION,created_at:new Date().toISOString(),settings:settings(),products:ideas(),users:LS.get('users',[]),swipe_events:LS.get('swipeLog',[]),saved_products:S.saved,impressions:LS.get('impressions',{}),buy_clicks:LS.get('buyClicks',{}),categories:CATS,affiliate_providers:settings().aff_providers||{}};}
+function exportBackup(){downloadFile(`aishopr-backup-${APP_VERSION}-${Date.now()}.json`,JSON.stringify(collectBackup(),null,2),'application/json');}
+function importBackupFile(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const b=JSON.parse(r.result);if(!b.products&&!b.settings)throw new Error('Invalid');createSnapshot('before_backup_import');if(b.products)LS.set('ideas',b.products);if(b.settings)LS.set('settings',b.settings);if(b.users)LS.set('users',b.users);if(b.swipe_events)LS.set('swipeLog',b.swipe_events);if(b.saved_products){S.saved=b.saved_products;LS.set('saved',S.saved);}if(b.impressions)LS.set('impressions',b.impressions);if(b.buy_clicks)LS.set('buyClicks',b.buy_clicks);toast('Backup importiert');render();}catch{toast('Backup ungültig');}};r.readAsText(f);}
+function snapshotKey(label='manual'){return `aishopr_snapshot_${APP_VERSION.replace(/\./g,'_')}_${new Date().toISOString().slice(0,16).replace(/[-:T]/g,'_')}_${label}`;}
+function createSnapshot(label='manual'){const key=snapshotKey(label);LS.set(key,collectBackup());return key;}
+function listSnapshots(){return Object.keys(localStorage).filter(k=>k.startsWith('as_aishopr_snapshot_')).map(k=>k.replace(/^as_/,''));}
+function restoreSnapshot(key){if(!confirm('Snapshot wiederherstellen?'))return;const b=LS.get(key,null);if(!b){toast('Snapshot fehlt');return;}if(b.products)LS.set('ideas',b.products);if(b.settings)LS.set('settings',b.settings);if(b.users)LS.set('users',b.users);if(b.swipe_events)LS.set('swipeLog',b.swipe_events);if(b.saved_products){S.saved=b.saved_products;LS.set('saved',S.saved);}toast('Snapshot wiederhergestellt');render();}
+function deleteSnapshot(key){if(!confirm('Snapshot löschen?'))return;LS.del(key);render();}
+function adminBackup(){const snaps=listSnapshots();return `<div class="admin-section"><div class="admin-section-title">Backup & Versionen</div><div class="kpi-grid"><div class="kpi"><div class="kpi-val">${APP_VERSION}</div><div class="kpi-label">Version</div></div><div class="kpi"><div class="kpi-val">${DATA_SCHEMA_VERSION}</div><div class="kpi-label">Schema</div></div><div class="kpi"><div class="kpi-val">${snaps.length}</div><div class="kpi-label">Snapshots</div></div></div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px"><button class="btn btn-primary" onclick="exportBackup()">Vollbackup exportieren</button><label class="btn btn-ghost" style="cursor:pointer">Backup importieren<input type="file" accept=".json" onchange="importBackupFile(event)" style="display:none"></label><button class="btn btn-ghost" onclick="createSnapshot('manual');toast('Snapshot erstellt');render();">Snapshot erstellen</button></div></div><div class="admin-section"><div class="admin-section-title">Lokale Snapshots</div>${snaps.length?snaps.map(k=>`<div class="item" style="cursor:default"><div class="item-body"><div class="item-title">${esc(k)}</div></div><button class="btn btn-ghost btn-sm" onclick="restoreSnapshot('${k}')">Restore</button><button class="btn btn-danger btn-sm" onclick="deleteSnapshot('${k}')">Löschen</button></div>`).join(''):'<p style="font-size:12px;color:var(--ink-3)">Noch keine Snapshots.</p>'}</div>`;}
+
+function adminSettings(){
+  const s=settings();
+  return `<div class="admin-section"><div class="admin-section-title">⚙️ Datenbank & System</div>
+  <div class="form-grid">
+    <div style="background:var(--bg-card);padding:16px;border-radius:12px;border:1px solid var(--border);margin-bottom:12px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <label style="margin:0">Speicher-Modus</label>
+        <div style="display:flex;gap:4px;background:var(--bg-soft);padding:4px;border-radius:8px">
+          <button class="btn btn-sm ${s.db_mode==='json'?'btn-primary':'btn-ghost'}" onclick="setDbMode('json')">Local JSON</button>
+          <button class="btn btn-sm ${s.db_mode==='mysql'?'btn-primary':'btn-ghost'}" onclick="setDbMode('mysql')">MySQL</button>
+        </div>
+      </div>
+      ${s.db_mode==='mysql'?`
+        <div class="form-grid">
+          <label>MySQL Host</label><input id="db_host" value="${esc(s.db_config.host)}">
+          <label>MySQL User</label><input id="db_user" value="${esc(s.db_config.user)}">
+          <label>MySQL Passwort</label><input id="db_pass" type="password" value="${esc(s.db_config.pass)}">
+          <label>Datenbank Name</label><input id="db_name" value="${esc(s.db_config.name)}">
+          <p style="font-size:11px;color:var(--rose)">Hinweis: PHP-Skripte müssen serverseitig vorhanden sein.</p>
+        </div>
+      `:''}
+    </div>
+    <div class="form-row"><div><label>Admin E-Mail</label><input id="st_email" value="${esc(s.admin_email)}"></div><div><label>Admin Passwort</label><input id="st_pass" type="password" value="${esc(s.admin_pass)}"></div></div>
+    <div class="form-row"><div><label>Google Client-ID</label><input id="st_google" value="${esc(s.google_client_id)}"></div><div><label>Apple Client-ID</label><input id="st_apple" value="${esc(s.apple_client_id)}"></div></div>
+  </div></div>
+
+  <div class="admin-section"><div class="admin-section-title">🏷️ App-Name & Branding</div>
+  <div class="form-grid">
+    <div class="form-row"><div><label>App-Name (erscheint überall)</label><input id="st_name" value="${esc(s.app_name||'AIshopr')}"></div><div><label>Slogan / Tagline</label><input id="st_tagline" value="${esc(s.app_tagline||'')}"></div></div>
+  </div></div>
+
+  <div class="admin-section"><div class="admin-section-title">📧 E-Mail-Versand (SMTP)</div>
+  <p style="font-size:12px;color:var(--ink-3);margin-bottom:12px">Für Registrierungs-Mails, Passwort-Reset und Systembenachrichtigungen. PHP-Migration: später serverseitig in PHPMailer umsetzen.</p>
+  <div class="form-grid">
+    <div class="form-row"><div><label>SMTP-Host</label><input id="smtp_host" value="${esc(s.smtp.host)}"></div><div><label>SMTP-Port</label><input id="smtp_port" type="number" value="${s.smtp.port||587}"></div></div>
+    <div class="form-row"><div><label>SMTP-Benutzer</label><input id="smtp_user" value="${esc(s.smtp.user)}"></div><div><label>SMTP-Passwort</label><input id="smtp_pass" type="password" value="${esc(s.smtp.pass)}"></div></div>
+    <div class="form-row"><div><label>Absender E-Mail</label><input id="smtp_from_email" value="${esc(s.smtp.from_email)}"></div><div><label>Absender Name</label><input id="smtp_from_name" value="${esc(s.smtp.from_name)}"></div></div>
+    <div style="display:flex;align-items:center;gap:8px;margin-top:6px">
+      <div class="toggle ${s.smtp.tls?'on':''}" id="smtp_tls"></div>
+      <label style="margin:0">TLS/SSL-Verschlüsselung</label>
+    </div>
+  </div></div>
+
+  <div class="admin-section"><div class="admin-section-title">Branding</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <div style="background:var(--bg-card);padding:20px;border-radius:16px;border:1px solid var(--border);text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px">
+      <div style="font-weight:700;font-size:13px;color:var(--ink)">Logo</div>
+      <div style="width:80px;height:60px;background:var(--bg-soft);border-radius:12px;display:grid;place-items:center;border:2px dashed var(--border);overflow:hidden">
+        ${s.logo ? `<img src="${s.logo}" style="max-width:100%;max-height:100%;object-fit:contain">` : '<span style="font-size:10px;color:var(--ink-3)">Kein Logo</span>'}
+      </div>
+      <div style="font-size:11px;color:var(--ink-3)">Für Startseite & Header</div>
+      <label class="btn btn-ghost btn-sm" style="cursor:pointer;display:inline-flex;align-items:center;gap:4px;font-size:12px;height:32px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+        Upload
+        <input type="file" accept="image/*" onchange="handleLogoUpload(event)" style="display:none">
+      </label>
+    </div>
+    <div style="background:var(--bg-card);padding:20px;border-radius:16px;border:1px solid var(--border);text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px">
+      <div style="font-weight:700;font-size:13px;color:var(--ink)">Symbol</div>
+      <div style="width:48px;height:48px;background:var(--bg-soft);border-radius:12px;display:grid;place-items:center;border:2px dashed var(--border);overflow:hidden">
+        ${s.logo_symbol ? `<img src="${s.logo_symbol}" style="width:100%;height:100%;object-fit:cover">` : '<span style="font-size:10px;color:var(--ink-3)">—</span>'}
+      </div>
+      <div style="font-size:11px;color:var(--ink-3)">Für Slider-Navigation</div>
+      <label class="btn btn-ghost btn-sm" style="cursor:pointer;display:inline-flex;align-items:center;gap:4px;font-size:12px;height:32px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+        Upload
+        <input type="file" accept="image/*" onchange="handleLogoSymbolUpload(event)" style="display:none">
+      </label>
+    </div>
+  </div></div>
+  <button class="btn btn-primary btn-full" onclick="saveAllSettings()" style="margin-bottom:20px">Alle Einstellungen speichern</button>
+
+  <div class="admin-section"><div class="admin-section-title">Daten</div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <button class="btn btn-ghost" onclick="exportAll()">📥 Alles exportieren (JSON)</button>
+    <button class="btn btn-ghost" onclick="importData()">📤 JSON importieren</button>
+    <button class="btn btn-danger" onclick="resetEverything()">🗑 Alles zurücksetzen</button>
+  </div>
+  <input type="file" id="importFile" style="display:none" accept=".json" onchange="handleImport(event)">
+  </div>
+  <div class="admin-section"><div class="admin-section-title">Systemstatus</div>
+  <div class="kpi-grid">
+    <div class="kpi"><div class="kpi-val badge badge-green">✓</div><div class="kpi-label">localStorage</div></div>
+    <div class="kpi"><div class="kpi-val">${ideas().length}</div><div class="kpi-label">Produktideen</div></div>
+    <div class="kpi"><div class="kpi-val">${s.openai_enabled?'<span class="badge badge-green">Aktiv</span>':'<span class="badge badge-orange">Aus</span>'}</div><div class="kpi-label">OpenAI</div></div>
+    <div class="kpi"><div class="kpi-val">${s.google_client_id?'<span class="badge badge-green">✓</span>':'<span class="badge badge-orange">–</span>'}</div><div class="kpi-label">Google Auth</div></div>
+    <div class="kpi"><div class="kpi-val">${s.apple_client_id?'<span class="badge badge-green">✓</span>':'<span class="badge badge-orange">–</span>'}</div><div class="kpi-label">Apple Auth</div></div>
+  </div></div>`;
+}
+function saveSettings(){
+  const s=settings();
+  s.admin_email=document.getElementById('st_email').value;
+  s.admin_pass=document.getElementById('st_pass').value;
+  s.google_client_id=document.getElementById('st_google').value;
+  s.apple_client_id=document.getElementById('st_apple').value;
+  if(s.db_mode==='mysql'){
+    s.db_config.host=document.getElementById('db_host').value;
+    s.db_config.user=document.getElementById('db_user').value;
+    s.db_config.pass=document.getElementById('db_pass').value;
+    s.db_config.name=document.getElementById('db_name').value;
+  }
+  LS.set('settings',s);toast('System-Einstellungen gespeichert');
+}
+function setDbMode(m){const s=settings();s.db_mode=m;LS.set('settings',s);render();}
+
+function saveAllSettings(){
+  const s=settings();
+  s.admin_email=document.getElementById('st_email')?.value||s.admin_email;
+  s.admin_pass=document.getElementById('st_pass')?.value||s.admin_pass;
+  s.google_client_id=document.getElementById('st_google')?.value||'';
+  s.apple_client_id=document.getElementById('st_apple')?.value||'';
+  if(s.db_mode==='mysql'){
+    s.db_config.host=document.getElementById('db_host')?.value||s.db_config.host;
+    s.db_config.user=document.getElementById('db_user')?.value||s.db_config.user;
+    s.db_config.pass=document.getElementById('db_pass')?.value||'';
+    s.db_config.name=document.getElementById('db_name')?.value||s.db_config.name;
+  }
+  s.app_name=document.getElementById('st_name')?.value||s.app_name;
+  s.app_tagline=document.getElementById('st_tagline')?.value||s.app_tagline;
+  s.smtp.host=document.getElementById('smtp_host')?.value||s.smtp.host;
+  s.smtp.port=parseInt(document.getElementById('smtp_port')?.value)||s.smtp.port;
+  s.smtp.user=document.getElementById('smtp_user')?.value||'';
+  s.smtp.pass=document.getElementById('smtp_pass')?.value||'';
+  s.smtp.from_email=document.getElementById('smtp_from_email')?.value||s.smtp.from_email;
+  s.smtp.from_name=document.getElementById('smtp_from_name')?.value||s.smtp.from_name;
+  s.smtp.tls=document.getElementById('smtp_tls')?.classList.contains('on')||false;
+  LS.set('settings',s);
+  updateAppBranding();
+  toast('Alle Einstellungen gespeichert');
+  render();
+}
+
+function saveBranding(){
+  const s = settings();
+  s.app_name = document.getElementById('st_name').value || 'AIshopr';
+  s.app_tagline = document.getElementById('st_tagline').value || '';
+  LS.set('settings',s);
+  updateAppBranding();
+  toast('App-Name & Branding gespeichert');
+  render();
+}
+
+function saveSmtp(){
+  const s = settings();
+  s.smtp.host = document.getElementById('smtp_host').value;
+  s.smtp.port = parseInt(document.getElementById('smtp_port').value) || 587;
+  s.smtp.user = document.getElementById('smtp_user').value;
+  s.smtp.pass = document.getElementById('smtp_pass').value;
+  s.smtp.from_email = document.getElementById('smtp_from_email').value;
+  s.smtp.from_name = document.getElementById('smtp_from_name').value;
+  s.smtp.tls = document.getElementById('smtp_tls').classList.contains('on');
+  LS.set('settings',s);
+  toast('SMTP-Einstellungen gespeichert');
+}
+
+// ============ GUIDE / TOUR ============
+let tourIdx = 0;
+function getTourSteps(){
+  const name = (settings().app_name || 'AIshopr');
+  return [
+    {icon:'👋', title:`Willkommen bei ${name}`, text:`Dein smarter Feed für Einkaufsideen. Lass uns kurz zeigen, wie es geht!`},
+    {icon:'↔️', title:'Swipen & Entscheiden', text:'Wische Karten nach RECHTS bei Interesse, nach LINKS wenn nicht. Die KI lernt deinen Geschmack.'},
+    {icon:'⬆️', title:'Ideen merken', text:'Wische eine Karte nach OBEN, um sie auf deine Merkliste zu setzen.'},
+    {icon:'🤖', title:'KI-Support', text:'Unser Support-Bot beantwortet dir jederzeit Fragen zur App und den Produkten.'}
+  ];
+}
+
+function startTour(){
+  tourIdx = 0;
+  renderTourStep();
+}
+
+function renderTourStep(){
+  const steps = getTourSteps();
+  const step = steps[tourIdx];
+  const overlay = document.createElement('div');
+  overlay.className = 'tour-overlay';
+  overlay.id = 'tourOverlay';
+  overlay.innerHTML = `
+    <div class="tour-card">
+      <span class="tour-icon">${step.icon}</span>
+      <h3 class="tour-title">${step.title}</h3>
+      <p class="tour-text">${step.text}</p>
+      <div class="tour-dots">${steps.map((_,i)=>`<div class="tour-dot ${i===tourIdx?'active':''}"></div>`).join('')}</div>
+      <button class="btn btn-primary btn-full" onclick="nextTourStep()">${tourIdx === steps.length - 1 ? 'Tour beenden' : 'Weiter'}</button>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+}
+
+function nextTourStep(){
+  const ov = document.getElementById('tourOverlay');
+  if(ov) ov.remove();
+  tourIdx++;
+  const steps = getTourSteps();
+  if(tourIdx < steps.length) renderTourStep();
+  else toast('Viel Spaß beim Swipen! 🚀');
+}
+function exportAll(){
+  const data={users:LS.get('users',[]),swipeLog:LS.get('swipeLog',[]),settings:settings(),ideas:ideas()};
+  navigator.clipboard?.writeText(JSON.stringify(data,null,2)).then(()=>toast('Exportiert 📋')).catch(()=>toast('Export fehlgeschlagen'));
+}
+function importData(){document.getElementById('importFile').click();}
+function handleImport(event){
+  const file=event.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=(e)=>{
+    try{
+      const data=JSON.parse(e.target.result);
+      if(data.users)LS.set('users',data.users);
+      if(data.swipeLog)LS.set('swipeLog',data.swipeLog);
+      if(data.settings)LS.set('settings',data.settings);
+      if(data.ideas)LS.set('ideas',data.ideas);
+      toast('Import erfolgreich');render();
+    }catch{toast('Ungültige JSON-Datei');}
+  };reader.readAsText(file);
+}
+function resetEverything(){if(!confirm('Wirklich alles löschen?'))return;LS.del('users');LS.del('swipeLog');LS.del('settings');LS.del('ideas');LS.del('adminLogged');S.adminLogged=false;S.view='home';toast('Alles zurückgesetzt');render();}
+
+// ============ AI IDEA GENERATION ============
+async function generateAIIdeas(){
+  const s=settings();
+  if(!s.openai_enabled||!s.openai_key){toast('KI-Funktion im Admin aktivieren & API-Key eintragen');S.feedMode='foryou';render();return;}
+  toast('KI generiert Ideen basierend auf deinem Profil… ⏳');
+  const profileCats=S.interests.map(i=>catName(i)).join(', ')||'diverse Kategorien';
+  try{
+    const res=await fetch('https://api.openai.com/v1/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+s.openai_key},
+      body:JSON.stringify({model:s.openai_model,messages:[
+        {role:'system',content:'Du bist ein Shopping-Experte. Generiere 3 Produktideen im JSON-Format: [{title,hook,cat,price,fit,emoji,grad,problem,solution,pros,cons,notfor,watch,affiliate,sponsored,image}]. Kategorien: '+CATS.map(c=>c.id).join(', ')},
+        {role:'user',content:'Meine Interessen: '+profileCats}
+      ],temperature:0.8})
+    });
+    const data=await res.json();
+    const text=data.choices?.[0]?.message?.content||'';
+    const match=text.match(/\[[\s\S]*\]/);
+    if(match){
+      const newIdeas=JSON.parse(match[0]);
+      const all=ideas();newIdeas.forEach(n=>{if(!all.find(x=>x.title===n.title))all.push(n);});
+      LS.set('ideas',all);toast('3 neue KI-Ideen generiert! 🤖');
+      S.feedMode='foryou';render();
+    } else {toast('KI-Antwort konnte nicht verarbeitet werden');S.feedMode='foryou';render();}
+  }catch(e){toast('KI-Fehler: '+e.message);S.feedMode='foryou';render();}
+}
+
+// ============ COOKIE CONSENT ============
+const COOKIE_KEY = 'ai_cookie_consent';
+function showCookieBanner(){
+  if(LS.get(COOKIE_KEY)) return;
+  document.getElementById('cookieBanner').style.display='block';
+}
+function saveConsent(c){
+  LS.set(COOKIE_KEY, {...c, ts: Date.now()});
+  document.getElementById('cookieBanner').style.display='none';
+  toast('Einstellungen gespeichert');
+}
+function saveCurrentConsent(){
+  saveConsent({
+    necessary:true,
+    functional:document.getElementById('ct_func').classList.contains('on'),
+    analytics:document.getElementById('ct_anal').classList.contains('on'),
+    marketing:document.getElementById('ct_mark').classList.contains('on')
+  });
+}
+function selectAllCookies(){
+  ['ct_func','ct_anal','ct_mark'].forEach(id=>document.getElementById(id).classList.add('on'));
+  saveCurrentConsent();
+}
+function getConsent(){ return LS.get(COOKIE_KEY, {necessary:true,functional:true,analytics:false,marketing:false}); }
+
+// ============ INTEREST ALGORITHM ENGINE ============
+const InterestEngine = {
+  /*
+   * Dieser Algorithmus baut aus jeder Swipe-Bewegung ein detailliertes
+   * Interessen-Profil auf. Das Profil enthält:
+   * - categoryScores: gewichtete Scores pro Kategorie
+   * - priceRange: min/max/avg/preferred
+   * - brandAffinity: Präferenzen für Anbieter
+   * - temporalDecay: neuere Swipes zählen mehr
+   * - totalSwipes, lastActivity
+   *
+   * Für eingeloggte User wird es im User-Objekt gespeichert,
+   * für Gäste im Cookie (Cookie-Funktional muss erlaubt sein).
+   */
+
+  DEFAULT_CONFIG: {
+    likeWeight: 3,
+    saveWeight: 4,
+    skipWeight: -0.5,
+    rejectWeight: -2,
+    decayDays: 30,
+    decayFactor: 0.97,
+    priceSensitivity: 0.6,
+    categoryDiversityBonus: 0.3,
+    recencyBoost: 1.5
+  },
+
+  getConfig(){
+    try {
+      const custom = LS.get('algo_config');
+      return custom ? {...this.DEFAULT_CONFIG, ...custom} : this.DEFAULT_CONFIG;
+    } catch { return this.DEFAULT_CONFIG; }
+  },
+
+  getProfile(){
+    if(S.user && S.user.interestProfile) return S.user.interestProfile;
+    try {
+      const raw = document.cookie.split(';').find(c=>c.trim().startsWith('ai_profile='));
+      if(raw) return JSON.parse(decodeURIComponent(raw.split('=')[1]));
+    } catch {}
+    return this.emptyProfile();
+  },
+
+  emptyProfile(){
+    return {
+      categoryScores: {},
+      priceHistory: [],
+      brandAffinity: {},
+      swipes: [],
+      totalSwipes: 0,
+      lastActivity: Date.now(),
+      version: 1
+    };
+  },
+
+  saveProfile(profile){
+    if(S.user){
+      if(!S.user.interestProfile) S.user.interestProfile = {};
+      S.user.interestProfile = profile;
+      const users = LS.get('users',[]);
+      const idx = users.findIndex(u=>u.id===S.user.id);
+      if(idx>=0){ users[idx].interestProfile = profile; LS.set('users', users); }
+      return;
+    }
+    if(!getConsent().functional) return;
+    try {
+      const json = encodeURIComponent(JSON.stringify(profile));
+      if(json.length < 3500){
+        document.cookie = `ai_profile=${json};max-age=${365*24*60*60};path=/;SameSite=Lax`;
+      }
+    } catch {}
+  },
+
+  recordSwipe(productId, action){
+    const ideas = LS.get('ideas',[]);
+    const product = ideas.find(p=>p.id===productId);
+    if(!product) return;
+    const profile = this.getProfile();
+    const cfg = this.getConfig();
+    const now = Date.now();
+
+    profile.totalSwipes = (profile.totalSwipes||0) + 1;
+    profile.lastActivity = now;
+
+    // Kategorie-Score updaten
+    const cat = product.cat || 'other';
+    if(!profile.categoryScores[cat]) profile.categoryScores[cat] = 0;
+    let weight = 0;
+    if(action==='yes') weight = cfg.likeWeight;
+    else if(action==='save') weight = cfg.saveWeight;
+    else if(action==='skip') weight = cfg.skipWeight;
+    else if(action==='notInterested') weight = cfg.rejectWeight;
+    profile.categoryScores[cat] = (profile.categoryScores[cat]||0) + weight;
+
+    // Preis-Historie
+    const priceMatch = (product.price||'').match(/(\d+)/);
+    if(priceMatch){
+      const price = parseInt(priceMatch[1]);
+      profile.priceHistory.push({price, ts: now, action});
+      if(profile.priceHistory.length > 100) profile.priceHistory = profile.priceHistory.slice(-100);
+    }
+
+    // Marken-Präferenz
+    if(product.merchant_name){
+      if(!profile.brandAffinity[product.merchant_name]) profile.brandAffinity[product.merchant_name] = 0;
+      profile.brandAffinity[product.merchant_name] += weight * 0.5;
+    }
+
+    // Swipe-Historie für Recency
+    profile.swipes.push({productId, action, cat, ts: now});
+    if(profile.swipes.length > 200) profile.swipes = profile.swipes.slice(-200);
+
+    // Decay auf alte Scores anwenden
+    this.applyDecay(profile);
+    this.saveProfile(profile);
+    return profile;
+  },
+
+  applyDecay(profile){
+    const cfg = this.getConfig();
+    const daysSinceLast = (Date.now() - (profile.lastActivity||Date.now())) / (1000*60*60*24);
+    if(daysSinceLast > 1){
+      const decay = Math.pow(cfg.decayFactor, daysSinceLast);
+      Object.keys(profile.categoryScores||{}).forEach(k=>{
+        profile.categoryScores[k] = (profile.categoryScores[k]||0) * decay;
+      });
+    }
+  },
+
+  computeProductScore(product){
+    const profile = this.getProfile();
+    const cfg = this.getConfig();
+    let score = product.fit || 50;
+
+    // 1. Kategorie-Match (stärkster Faktor)
+    const catScore = profile.categoryScores[product.cat] || 0;
+    score += catScore * 5;
+
+    // 2. Preis-Match
+    const priceMatch = (product.price||'').match(/(\d+)/);
+    if(priceMatch && profile.priceHistory.length > 3){
+      const likedPrices = profile.priceHistory.filter(p=>p.action==='yes'||p.action==='save').map(p=>p.price);
+      const rejectedPrices = profile.priceHistory.filter(p=>p.action==='notInterested').map(p=>p.price);
+      const productPrice = parseInt(priceMatch[1]);
+      const avgLiked = likedPrices.length ? likedPrices.reduce((a,b)=>a+b,0)/likedPrices.length : productPrice;
+      const avgRejected = rejectedPrices.length ? rejectedPrices.reduce((a,b)=>a+b,0)/rejectedPrices.length : null;
+      const priceDiff = Math.abs(productPrice - avgLiked);
+      score -= priceDiff * cfg.priceSensitivity * 0.3;
+      if(avgRejected !== null && Math.abs(productPrice - avgRejected) < 10){
+        score -= 15;
+      }
+    }
+
+    // 3. Marken-Match
+    if(product.merchant_name && profile.brandAffinity[product.merchant_name]){
+      score += profile.brandAffinity[product.merchant_name] * 2;
+    }
+
+    // 4. Recency-Boost (neue Produkte bevorzugt)
+    score += cfg.recencyBoost;
+
+    // 5. Diversitäts-Bonus (wenn Kategorie unterrepräsentiert ist)
+    const catsSeen = Object.keys(profile.categoryScores||{}).length;
+    if(profile.categoryScores[product.cat] === 0 && catsSeen < 8){
+      score += cfg.categoryDiversityBonus * 10;
+    }
+
+    // 6. Negative Filter
+    if((profile.categoryScores[product.cat]||0) < -5) score -= 20;
+    if(product.sponsored && !getConsent().marketing) score -= 10;
+
+    return Math.max(0, Math.min(100, score));
+  },
+
+  getFeedRecommendations(){
+    const ideas = LS.get('ideas',[]);
+    return ideas
+      .filter(p=>p.status !== 'inactive')
+      .map(p => ({...p, computedScore: this.computeProductScore(p)}))
+      .sort((a,b) => b.computedScore - a.computedScore);
+  },
+
+  exportProfile(){ return this.getProfile(); },
+  resetProfile(){
+    const p = this.emptyProfile();
+    this.saveProfile(p);
+    return p;
+  }
+};
+
+function adminAlgorithm(){
+  const profile=InterestEngine.getProfile();
+  const cats=Object.entries(profile.categoryScores||{}).sort((a,b)=>b[1]-a[1]);
+  const cfg=InterestEngine.getConfig();
+  return `<div class="admin-section"><div class="admin-section-title">🧠 Feed-Algorithmus</div>
+  <p style="font-size:12px;color:var(--ink-2);line-height:1.5;margin-bottom:12px">Der Algorithmus wird aus sicheren Konfigurationswerten berechnet. Beliebiger JavaScript-Code wird aus Sicherheitsgründen nicht ausgeführt.</p>
+  <div class="kpi-grid"><div class="kpi"><div class="kpi-val">${profile.totalSwipes||0}</div><div class="kpi-label">Swipes gelernt</div></div><div class="kpi"><div class="kpi-val">${cats.length}</div><div class="kpi-label">Kategorien</div></div></div>
+  ${cats.slice(0,8).map(([c,v])=>`<span class="tag" style="margin:3px">${c}: ${v.toFixed(1)}</span>`).join('')}
+  </div><div class="admin-section"><div class="admin-section-title">Sichere Gewichtungen</div><div class="form-grid" style="background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:14px">
+  <div class="form-row"><div><label>Kategorie-Gewichtung</label><input id="al_cat" type="number" step=".1" value="${cfg.categoryWeight||5}"></div><div><label>Preis-Gewichtung</label><input id="al_price" type="number" step=".1" value="${cfg.priceSensitivity||.6}"></div></div>
+  <div class="form-row"><div><label>Merchant-Gewichtung</label><input id="al_merchant" type="number" step=".1" value="${cfg.merchantWeight||2}"></div><div><label>Sponsored-Abwertung</label><input id="al_sponsored" type="number" step=".1" value="${cfg.sponsoredPenalty||10}"></div></div>
+  <div class="form-row"><div><label>Diversity-Bonus</label><input id="al_div" type="number" step=".1" value="${cfg.categoryDiversityBonus||.3}"></div><div><label>Recency-Bonus</label><input id="al_recency" type="number" step=".1" value="${cfg.recencyBoost||1.5}"></div></div>
+  <button class="btn btn-primary" onclick="saveAlgorithmConfig()">Algorithmus-Konfiguration speichern</button>
+  <button class="btn btn-ghost" onclick="if(confirm('Profil leeren?')){InterestEngine.resetProfile();render();}">Profil leeren</button>
+  </div></div>`;
+}
+
+function saveAlgorithmConfig(){
+  const cfg={categoryWeight:parseFloat(document.getElementById('al_cat').value)||5,priceSensitivity:parseFloat(document.getElementById('al_price').value)||.6,merchantWeight:parseFloat(document.getElementById('al_merchant').value)||2,sponsoredPenalty:parseFloat(document.getElementById('al_sponsored').value)||10,categoryDiversityBonus:parseFloat(document.getElementById('al_div').value)||.3,recencyBoost:parseFloat(document.getElementById('al_recency').value)||1.5,likeWeight:3,saveWeight:4,skipWeight:-.5,rejectWeight:-2,decayFactor:.97,decayDays:30};
+  LS.set('algo_config',cfg);toast('Algorithmus-Konfiguration gespeichert');
+}
+
+// ============ DARK MODE ============
+function getTheme(){
+  if(S.user){
+    const pref = LS.get('theme_'+S.user.id, 'auto');
+    return pref;
+  }
+  return LS.get('theme_guest', 'auto');
+}
+function setTheme(mode){
+  if(S.user) LS.set('theme_'+S.user.id, mode);
+  else LS.set('theme_guest', mode);
+  applyTheme();
+}
+function applyTheme(){
+  const mode = getTheme();
+  const html = document.documentElement;
+  html.classList.remove('dark','auto-dark');
+  if(mode === 'dark') html.classList.add('dark');
+  else if(mode === 'auto') html.classList.add('auto-dark');
+  // else 'light' = no class
+}
+
+// ============ START ============
+applyTheme();
+showCookieBanner();
+render();
+</script>
+</body>
+</html>
