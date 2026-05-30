@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aishopr.local/schema.product.json",
+  "title": "AIshopr Product",
+  "type": "object",
+  "required": ["id", "title", "hook", "cat", "price", "fit", "problem", "solution", "status"],
+  "properties": {
+    "id": {"type": "string", "minLength": 3, "maxLength": 120, "pattern": "^[a-zA-Z0-9_-]+$"},
+    "title": {"type": "string", "minLength": 3, "maxLength": 255},
+    "hook": {"type": "string", "minLength": 3, "maxLength": 255},
+    "cat": {"type": "string", "minLength": 2, "maxLength": 80},
+    "price": {"type": "string", "minLength": 1, "maxLength": 80},
+    "price_value": {"type": ["number", "integer"], "minimum": 0},
+    "fit": {"type": ["number", "integer"], "minimum": 0, "maximum": 100},
+    "emoji": {"type": "string", "maxLength": 16},
+    "grad": {"type": "string", "maxLength": 40},
+    "image_url": {"type": "string", "maxLength": 2000},
+    "affiliate": {"type": "string", "maxLength": 2000},
+    "affiliate_url": {"type": "string", "maxLength": 2000},
+    "merchant_name": {"type": "string", "maxLength": 190},
+    "problem": {"type": "string", "minLength": 3},
+    "solution": {"type": "string", "minLength": 3},
+    "pros": {"type": "array", "items": {"type": "string"}},
+    "cons": {"type": "array", "items": {"type": "string"}},
+    "notfor": {"type": "array", "items": {"type": "string"}},
+    "watch": {"type": "array", "items": {"type": "string"}},
+    "sponsored": {"type": "boolean"},
+    "status": {"type": "string", "enum": ["active", "inactive", "draft"]},
+    "priority": {"type": ["number", "integer"]}
+  },
+  "additionalProperties": true
+}
