@@ -1,0 +1,50 @@
+{
+  "version": "2.1.0",
+  "title": "AIshopr Production Readiness Roadmap",
+  "groups": [
+    {
+      "id": "product_cards",
+      "title": "Produktkarten & Bildsystem",
+      "status": "in_progress",
+      "priority": 1,
+      "items": [
+        {"id": "card_layout_modes", "title": "Packshot/Lifestyle/Deal-Kartenmodi", "status": "planned"},
+        {"id": "image_fallbacks", "title": "Bild-Fallbacks und defekte Bild-URLs erkennen", "status": "planned"},
+        {"id": "image_demo", "title": "Bildkarten-Testkatalog", "status": "done"}
+      ]
+    },
+    {
+      "id": "sources_imports",
+      "title": "Produktquellen & Import",
+      "status": "planned",
+      "priority": 2,
+      "items": [
+        {"id": "source_schema", "title": "Universelles Quellenmodell", "status": "done"},
+        {"id": "import_preview", "title": "Import-Vorschau vor Übernahme", "status": "planned"},
+        {"id": "connector_blueprints", "title": "Amazon/Awin/eBay Connector Blueprints", "status": "planned"}
+      ]
+    },
+    {
+      "id": "backend",
+      "title": "Backend & Betrieb",
+      "status": "planned",
+      "priority": 3,
+      "items": [
+        {"id": "php_api", "title": "PHP API-Endpunkte", "status": "planned"},
+        {"id": "mysql", "title": "MySQL Datenmodell", "status": "in_progress"},
+        {"id": "security", "title": "Echter Admin-Login und Secrets serverseitig", "status": "planned"}
+      ]
+    },
+    {
+      "id": "business",
+      "title": "Tracking, Consent & Monetarisierung",
+      "status": "planned",
+      "priority": 4,
+      "items": [
+        {"id": "tracking_schema", "title": "Tracking Event Schema", "status": "planned"},
+        {"id": "affiliate_disclosure", "title": "Affiliate-/Werbekennzeichnung", "status": "planned"},
+        {"id": "analytics", "title": "Business KPI Dashboard", "status": "planned"}
+      ]
+    }
+  ]
+}
