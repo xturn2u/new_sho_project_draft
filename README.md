@@ -1,32 +1,45 @@
-Arena Import Projekt
+# AIshopr Web-App
 
-Dieses Repository dient ausschließlich dazu, den bestehenden Quellcode für Arena.ai bereitzustellen.
+Dieses Repository enthält die AIshopr Web-App für GitHub Pages.
 
-Wichtige Datei
+## Aktuelle Projektstruktur
 
-Die komplette Web-App befindet sich in:
+```text
+/index.html
+/css/styles.css
+/js/app.js
+/data/categories.json
+/data/settings.default.json
+/data/products.json
+```
 
-index.html
+## Live-Test
 
-Ziel
+```text
+https://xturn2u.github.io/new_sho_project_draft/
+```
 
-Bitte analysiere die Datei index.html vollständig und entwickle auf dieser bestehenden Version weiter.
+Bei Cache-Problemen mit Versionsparameter testen:
 
-Wichtige Regeln für die Weiterentwicklung
+```text
+https://xturn2u.github.io/new_sho_project_draft/?v=fix5
+```
 
-* Das bestehende Design darf nicht grundlegend verändert werden.
-* Die vorhandenen Basisfunktionen müssen erhalten bleiben.
-* Bestehende CSS-, JavaScript- und HTML-Strukturen sollen möglichst respektiert werden.
-* Änderungen sollen gezielt, sauber und nachvollziehbar erfolgen.
-* Keine Funktionen entfernen, sofern dies nicht ausdrücklich verlangt wird.
-* Keine Platzhalter oder Demo-Funktionen einbauen, wenn bestehende echte Logik vorhanden ist.
-* Wenn größere Umbauten nötig sind, zuerst erklären, was geändert werden muss.
+## Entwicklungsstand
 
-Projektstatus
+- Die frühere Single-File-App wurde in HTML, CSS und JavaScript getrennt.
+- Fix 4 mit Runtime-Diagnose und Fehlerbehandlung ist aktiv.
+- Fix 5 hat den Ordner `/data` vorbereitet.
+- Kategorien und Standard-Settings liegen zusätzlich als JSON-Dateien vor.
+- `products.json` ist als externer Produktkatalog vorbereitet.
 
-Aktuell handelt es sich um eine Single-File-Web-App.
-HTML, CSS und JavaScript befinden sich gesammelt in index.html.
+## Wichtig
 
-Erwartung an Arena.ai
+Die App nutzt aktuell weiterhin interne Fallback-Daten in `js/app.js`, damit die Seite stabil bleibt. Die externen JSON-Dateien sind die vorbereitete Datenbasis für die nächsten Umbauten.
 
-Arena.ai soll den vorhandenen Code als Ausgangsbasis nutzen und ihn Schritt für Schritt verbessern, ohne die bestehende Optik und Grundlogik zu zerstören.
+## Nächste Schritte
+
+1. Produktdaten vollständig aus `js/app.js` in `/data/products.json` auslagern.
+2. `js/app.js` weiter modularisieren.
+3. Admin-Produktpflege an externe Datenstruktur anpassen.
+4. Spätere Migration auf PHP/MySQL vorbereiten.
