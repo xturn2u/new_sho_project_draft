@@ -1,6 +1,6 @@
 /* Mega-Fix 23 — Card UX Redesign renderer override */
 (function(){
-  const VERSION='2.3.6';
+  const VERSION='2.3.7';
 
   function safeLog(source, err, extra){
     try{
@@ -86,11 +86,11 @@
         <div class="card-title">${escSafe(p.title)}</div>
         <div class="ux-benefits"><div class="ux-benefit"><span class="ux-benefit-icon">${svgIcon('bag')}</span><span>${escSafe(ben[0])}</span></div><div class="ux-benefit"><span class="ux-benefit-icon">${svgIcon('protect')}</span><span>${escSafe(ben[1])}</span></div><div class="ux-benefit"><span class="ux-benefit-icon">${svgIcon('fit')}</span><span>${escSafe(ben[2])}</span></div></div>
         <div class="card-problem">${escSafe(p.problem)}</div>
-        <div class="card-tags"><span class="tag mint" data-label="Preis">${escSafe(p.price)}</span><span class="tag" data-label="Kategorie">${catIcon(p.cat)} ${catName(p.cat)}</span><span class="tag sun" data-label="Fit-Score">${p.fit}%</span></div>
+        <div class="card-tags"><span class="tag mint" data-label="Preis">${escSafe(p.price)}</span><span class="tag save-tag" data-label="Saves heute">${saves}</span><span class="tag pulse-tag" data-label="AIshopr Pulse">${pulse}</span></div>
       </div>
       <div class="ux-cta" onclick="openSheet&&openSheet('product')"><span class="ux-bag-icon">${svgIcon('bag')}</span><span>Jetzt ansehen</span><span class="ux-cta-arrow">›</span></div>
       <div class="ux-trust"><span class="ux-trust-icon">${svgIcon('trust')}</span><span>Vertrauenswürdig. Fair. Transparent.</span></div>
-      <div class="card-foot ux-kpi-foot"><div class="fit ux-match"><div class="fit-ring" style="--p:${p.fit}"><span>${p.fit}</span></div><div class="fit-label">Match</div></div><div class="ux-pulse"><div class="ux-pulse-icon">${svgIcon('pulse')}</div><div><div class="ux-pulse-val">${saves}</div><div class="ux-pulse-label">Saves heute · Pulse ${pulse}</div></div></div></div>`;
+      <div class="card-foot ux-kpi-foot"><div class="fit ux-match"><div class="fit-ring" style="--p:${p.fit}"><span>${p.fit}</span></div><div class="fit-label">Fit-Score</div></div><div class="price">${escSafe(p.price)}</div></div>`;
     stage.appendChild(card);updateActionStates();enableDrag(card);
     const img=card.querySelector('.card-hero img');
     if(img){img.loading='lazy';img.decoding='async';img.onerror=function(){try{img.remove();card.querySelector('.card-hero').insertAdjacentHTML('beforeend','<div class="image-error-note">Bild nicht geladen</div>');}catch(e){}};}
