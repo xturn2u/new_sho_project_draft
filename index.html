@@ -486,7 +486,7 @@ label{font-size:13px;font-weight:600;color:var(--ink-2);display:block;margin-bot
 </div>
 
 <script>
-const APP_VERSION='0.9.0';
+const APP_VERSION='0.9.1';
 const BUILD_DATE='2026-05-29';
 const DATA_SCHEMA_VERSION=1;
 
@@ -527,7 +527,46 @@ function normalizeSettings(raw={}){
   return merged;
 }
 function normalizeCategory(c){c=asObject(c);const name=String(c.name||'Kategorie').trim();let id=String(c.id||name.toLowerCase().replace(/[^a-z0-9]/g,'')||('cat_'+Date.now())).trim();return {id,name,icon:String(c.icon||'📦').trim()||'📦'};}
-function normalizeUser(u){u=asObject(u);return {id:String(u.id||('u_'+Date.now())),name:String(u.name||'Nutzer'),email:String(u.email||''),pass:String(u.pass||''),provider:String(u.provider||'email'),photo:String(u.photo||''),created:u.created||new Date().toISOString(),interestProfile:u.interestProfile||null};}
+function normalizeUser(u){u=asObject(u);return {id:String(u.id||('u_'+Date.now())),name:String(u.name||'Nutzer'),email:String(u.email||''),pass:String(u.pass||''),passHash:String(u.passHash||''),provider:String(u.provider||'email'),photo:String(u.photo||''),created:u.created||new Date().toISOString(),interestProfile:u.interestProfile||null};}
+
+function normalizeEmail(v){return String(v||'').trim().toLowerCase();}
+function isValidEmail(v){return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(String(v||'').trim());}
+function isStrongEnoughPassword(v){return String(v||'').length>=8;}
+async function sha256(text){
+  const data=new TextEncoder().encode(String(text||''));
+  const hash=await crypto.subtle.digest('SHA-256',data);
+  return [...new Uint8Array(hash)].map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+function randomToken(prefix='tok'){
+  try{
+    const a=new Uint32Array(4);
+    crypto.getRandomValues(a);
+    return prefix+'_'+[...a].map(x=>x.toString(16)).join('');
+  }catch{
+    return prefix+'_'+Date.now()+'_'+Math.random().toString(36).slice(2);
+  }
+}
+function safeExternalUrl(url){
+  const raw=String(url||'').trim();
+  if(!raw)return '';
+  try{
+    const u=new URL(raw,location.href);
+    if(!['http:','https:','mailto:','tel:'].includes(u.protocol))return '';
+    return u.href;
+  }catch{return '';}
+}
+function requireAdmin(){
+  if(!S.adminLogged){
+    toast('Admin-Login erforderlich');
+    showView('admin-login');
+    return false;
+  }
+  return true;
+}
+function requireAdminAction(){
+  if(!requireAdmin())throw new Error('Admin required');
+  return true;
+}
 
 // ============ CATEGORIES ============
 const CATS_DEFAULT=[
@@ -657,8 +696,8 @@ function footer(){
 
   const socials = s.socials || {};
   const socialIcons = {instagram:'📷',tiktok:'🎵',x:'𝕏',facebook:'👥',linkedin:'💼',youtube:'📺'};
-  const socialLinks = Object.entries(socials).filter(([k,v])=>v).map(([k,v])=>
-    `<a href="${esc(v)}" target="_blank" rel="noopener" style="margin:0 4px">${socialIcons[k]||'🔗'}</a>`
+  const socialLinks = Object.entries(socials).filter(([k,v])=>safeExternalUrl(v)).map(([k,v])=>
+    `<a href="${esc(safeExternalUrl(v))}" target="_blank" rel="noopener noreferrer" style="margin:0 4px">${socialIcons[k]||'🔗'}</a>`
   ).join('');
 
   return `<div class="app-footer"><div>© ${new Date().getFullYear()} ${esc(appName)} — ${esc(s.app_tagline||'')}</div>${footerLinks?'<div>'+footerLinks+'</div>':''}${socialLinks?'<div class="footer-social">'+socialLinks+'</div>':''}</div>`;
@@ -733,26 +772,42 @@ function socialLogin(provider){
   const user={id:'u_'+Date.now(),name,email:name.toLowerCase().replace(/\s/g,'')+'@'+provider+'.demo',provider,photo:'',created:new Date().toISOString()};
   loginUser(user);
 }
-function emailLogin(){
-  const email=document.getElementById('loginEmail')?.value;
-  const pass=document.getElementById('loginPass')?.value;
-  if(!email||!pass){toast('Bitte ausfüllen');return;}
-  const users=LS.get('users',[]);
-  const u=users.find(u=>u.email===email&&u.pass===pass);
+async function emailLogin(){
+  const email=normalizeEmail(document.getElementById('loginEmail')?.value);
+  const pass=document.getElementById('loginPass')?.value||'';
+  if(!isValidEmail(email)||!pass){toast('Bitte gültige E-Mail und Passwort eingeben');return;}
+  const users=asArray(LS.get('users',[]),[]).map(normalizeUser);
+  const passHash=await sha256(pass);
+  const u=users.find(u=>normalizeEmail(u.email)===email && (u.passHash===passHash || u.pass===pass));
   if(!u){toast('Login fehlgeschlagen');return;}
+  // Legacy-Migration: Klartext-Passwort beim erfolgreichen Login in Hash umwandeln.
+  if(!u.passHash){
+    u.passHash=passHash;
+    delete u.pass;
+    const idx=users.findIndex(x=>x.id===u.id);
+    if(idx>=0){users[idx]=u;LS.set('users',users);}
+  }
   loginUser(u);
 }
-function emailRegister(){
-  const name=document.getElementById('regName')?.value||'Nutzer';
-  const email=document.getElementById('regEmail')?.value;
-  const pass=document.getElementById('regPass')?.value;
-  if(!email||!pass){toast('Bitte ausfüllen');return;}
-  const users=LS.get('users',[]);
-  if(users.find(u=>u.email===email)){toast('E-Mail bereits registriert');return;}
-  const u={id:'u_'+Date.now(),name,email,pass,provider:'email',photo:'',created:new Date().toISOString()};
+async function emailRegister(){
+  const name=(document.getElementById('regName')?.value||'Nutzer').trim()||'Nutzer';
+  const email=normalizeEmail(document.getElementById('regEmail')?.value);
+  const pass=document.getElementById('regPass')?.value||'';
+  if(!isValidEmail(email)){toast('Bitte gültige E-Mail eingeben');return;}
+  if(!isStrongEnoughPassword(pass)){toast('Passwort muss mindestens 8 Zeichen haben');return;}
+  const users=asArray(LS.get('users',[]),[]).map(normalizeUser);
+  if(users.find(u=>normalizeEmail(u.email)===email)){toast('E-Mail bereits registriert');return;}
+  const u={id:randomToken('u'),name,email,passHash:await sha256(pass),provider:'email',photo:'',created:new Date().toISOString(),interestProfile:null};
   users.push(u);LS.set('users',users);loginUser(u);
 }
-function loginUser(u){S.user=u;LS.set('currentUser',u);toast('Willkommen, '+u.name+'!');showView('feed');}
+function loginUser(u){
+  const safeUser=normalizeUser(u);
+  delete safeUser.pass;
+  S.user=safeUser;
+  LS.set('currentUser',safeUser);
+  toast('Willkommen, '+safeUser.name+'!');
+  showView('feed');
+}
 function logout(){S.user=null;LS.del('currentUser');toast('Abgemeldet');showView('home');}
 
 // ============ FEED ============
@@ -1095,10 +1150,11 @@ function recordAffiliateClick(product, url){
 }
 
 function openAffiliateProduct(product){
+  if(!product){toast('Produkt fehlt');return;}
   const url=buildAffiliateLink(product)||('https://example.com/'+product.id);
   if(!isSafeUrl(url)){toast('Unsichere URL blockiert');return;}
   recordAffiliateClick(product,url);
-  window.open(url,'_blank','noopener');
+  window.open(url,'_blank','noopener,noreferrer');
 }
 
 function recordSwipe(type){
@@ -1357,7 +1413,7 @@ async function sendChat(){
 }
 
 // ============ LOGO UPLOAD ============
-function handleLogoUpload(event){
+function handleLogoUpload(event){requireAdminAction();
   const file=event.target.files[0];
   if(!file)return;
   if(file.size>500000){toast('Bild zu groß (Max 500KB)');return;}
@@ -1372,7 +1428,7 @@ function handleLogoUpload(event){
   reader.readAsDataURL(file);
 }
 
-function handleLogoSymbolUpload(event){
+function handleLogoSymbolUpload(event){requireAdminAction();
   const file=event.target.files[0];
   if(!file)return;
   if(file.size>500000){toast('Bild zu groß (Max 500KB)');return;}
@@ -1388,11 +1444,11 @@ function handleLogoSymbolUpload(event){
 }
 
 // ============ RESET ============
-function resetAll(){if(!confirm('Alles zurücksetzen?'))return;LS.del('swipesCount');LS.del('saved');LS.del('likes');LS.del('rejects');LS.del('interests');LS.del('currentUser');LS.del('ql_dismissed');S.swipes=0;S.saved=[];S.likes=[];S.rejects=[];S.interests=[];S.user=null;toast('Zurückgesetzt');render();}
+function resetAll(){requireAdminAction();if(!confirm('Alles zurücksetzen?'))return;LS.del('swipesCount');LS.del('saved');LS.del('likes');LS.del('rejects');LS.del('interests');LS.del('currentUser');LS.del('ql_dismissed');S.swipes=0;S.saved=[];S.likes=[];S.rejects=[];S.interests=[];S.user=null;toast('Zurückgesetzt');render();}
 
 // ============ DEFAULT SETTINGS ============
 const DEFAULT_SETTINGS={
-  admin_email:'admin@aishopr.local',admin_pass:'admin123',
+  admin_email:'admin@aishopr.local',admin_pass:'admin123',admin_pass_hash:'',
   footer_text:'© 2025 AIshopr — Nicht suchen. Swipen. Smarter kaufen.',
   footer_links:'Datenschutz|#, Impressum|#, Kontakt|#',
   footer_show:true,
@@ -1549,7 +1605,7 @@ const IDEAS_DEFAULT=[
 ];
 
 // ============ ADMIN ============
-function adminLogout(){S.adminLogged=false;LS.del('adminLogged');showView('home');}
+function adminLogout(){S.adminLogged=false;LS.del('adminLogged');LS.del('adminSession');toast('Admin abgemeldet');showView('home');}
 function adminLogin(){
   const s=settings();
   const e=document.getElementById('admEmail')?.value;
@@ -1572,7 +1628,7 @@ function renderAdminLogin(){
     <div class="auth-link" style="margin-top:16px"><a href="#" onclick="showView('feed');return false">← Zurück zum Feed</a></div>
   </div></div>`;
 }
-function renderAdmin(){
+function renderAdmin(){if(!requireAdmin())return renderAdminLogin();
   if(!S.adminLogged)return renderAdminLogin();
   const tabs=[
     {id:'dashboard',label:'Übersicht',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>'},
@@ -1800,14 +1856,14 @@ function editProduct(id){
     </div>`;
   document.getElementById('infoSheet').classList.add('show');
 }
-function saveProduct(id){
+function saveProduct(id){requireAdminAction();
   const d={title:document.getElementById('ed_title').value,hook:document.getElementById('ed_hook').value,cat:document.getElementById('ed_cat').value,price:document.getElementById('ed_price').value,fit:parseInt(document.getElementById('ed_fit').value)||70,affiliate:document.getElementById('ed_aff').value,problem:document.getElementById('ed_problem').value,solution:document.getElementById('ed_solution').value,pros:document.getElementById('ed_pros').value.split(',').map(s=>s.trim()).filter(Boolean),cons:document.getElementById('ed_cons').value.split(',').map(s=>s.trim()).filter(Boolean),notfor:document.getElementById('ed_notfor').value.split(',').map(s=>s.trim()).filter(Boolean),watch:document.getElementById('ed_watch').value.split(',').map(s=>s.trim()).filter(Boolean),image:document.getElementById('ed_image').value};
   if(!d.title){toast('Titel fehlt');return;}
   const all=ideas();
   if(id){const idx=all.findIndex(p=>p.id===id);if(idx>=0)all[idx]={...all[idx],...d};}else all.push({...d,id:'p'+Date.now(),grad:'grad-'+Math.floor(Math.random()*6+1),sponsored:false});
   LS.set('ideas',all);closeInfoSheet();toast('Gespeichert');render();
 }
-function deleteProduct(id){if(!confirm('Produktidee löschen?'))return;LS.set('ideas',ideas().filter(p=>p.id!==id));toast('Gelöscht');render();}
+function deleteProduct(id){requireAdminAction();if(!confirm('Produktidee löschen?'))return;LS.set('ideas',ideas().filter(p=>p.id!==id));toast('Gelöscht');render();}
 
 function normalizeProduct(p){
   const now=new Date().toISOString();
@@ -1820,9 +1876,9 @@ function exportProductsCsv(){const rows=ideas().map(normalizeProduct);const keys
 function downloadFile(name,content,type){const blob=new Blob([content],{type});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();URL.revokeObjectURL(a.href);}
 function importProductsFile(e,type){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const txt=r.result;let items=[];try{if(type==='json')items=JSON.parse(txt);else{const lines=txt.split(/\r?\n/).filter(Boolean);const keys=lines.shift().split(',').map(x=>x.replace(/"/g,'').trim());items=lines.map(line=>{const vals=line.match(/("[^"]*(?:""[^"]*)*"|[^,]+)/g)||[];const o={};keys.forEach((k,i)=>o[k]=(vals[i]||'').replace(/^"|"$/g,'').replace(/""/g,'"'));return o;});}}catch(err){toast('Importfehler');return;}showImportPreview(items);};r.readAsText(f);}
 function showImportPreview(items){const all=ideas();const normalized=items.map(normalizeProduct).filter(p=>p.title);const dup=normalized.filter(p=>all.some(x=>[x.id,x.asin,x.ean,x.sku,x.affiliate].some(v=>v&&[p.id,p.asin,p.ean,p.sku,p.affiliate].includes(v))||x.title===p.title));document.getElementById('infoTitle').textContent='Import-Vorschau';document.getElementById('infoBody').innerHTML=`<p>${normalized.length} gültige Produkte, ${dup.length} mögliche Dubletten.</p><label><input type="checkbox" id="imp_overwrite"> Bestehende überschreiben</label><div style="max-height:260px;overflow:auto;margin-top:10px">${normalized.slice(0,30).map(p=>`<div class="item"><div class="item-body"><div class="item-title">${esc(p.title)}</div><div class="item-sub">${esc(p.asin||p.ean||p.sku||p.affiliate||'')}</div></div></div>`).join('')}</div><button class="btn btn-primary btn-full" onclick='commitProductImport(${JSON.stringify(normalized).replace(/'/g,"&#39;")})'>Import übernehmen</button>`;document.getElementById('infoSheet').classList.add('show');}
-function commitProductImport(items){createSnapshot('before_product_import');let all=ideas();const overwrite=document.getElementById('imp_overwrite')?.checked;items.forEach(p=>{const idx=all.findIndex(x=>x.id===p.id||x.asin&&x.asin===p.asin||x.ean&&x.ean===p.ean||x.sku&&x.sku===p.sku||x.affiliate&&x.affiliate===p.affiliate||x.title===p.title);if(idx>=0&&overwrite)all[idx]={...all[idx],...p,updated_at:new Date().toISOString()};else if(idx<0)all.push(p);});LS.set('ideas',all);closeInfoSheet();toast('Import abgeschlossen');render();}
+function commitProductImport(items){requireAdminAction();createSnapshot('before_product_import');let all=ideas();const overwrite=document.getElementById('imp_overwrite')?.checked;items.forEach(p=>{const idx=all.findIndex(x=>x.id===p.id||x.asin&&x.asin===p.asin||x.ean&&x.ean===p.ean||x.sku&&x.sku===p.sku||x.affiliate&&x.affiliate===p.affiliate||x.title===p.title);if(idx>=0&&overwrite)all[idx]={...all[idx],...p,updated_at:new Date().toISOString()};else if(idx<0)all.push(p);});LS.set('ideas',all);closeInfoSheet();toast('Import abgeschlossen');render();}
 function showAsinImport(){document.getElementById('infoTitle').textContent='ASIN-Listen-Import';document.getElementById('infoBody').innerHTML=`<p style="font-size:12px;color:var(--ink-3)">Eine ASIN pro Zeile. Preise/Bilder werden nicht automatisch von Amazon geladen.</p><textarea id="asinList" style="min-height:180px" placeholder="B08XYZ123\nB09ABC456"></textarea><button class="btn btn-primary btn-full" onclick="importAsins()">ASINs übernehmen</button>`;document.getElementById('infoSheet').classList.add('show');}
-function importAsins(){const asins=document.getElementById('asinList').value.split(/\s+/).filter(Boolean);const rows=asins.map(a=>normalizeProduct({title:'Amazon Produkt '+a,hook:'Produktidee importiert per ASIN',asin:a,affiliate_provider:'amazon',cat:'tech',status:'active'}));commitProductImport(rows);}
+function importAsins(){requireAdminAction();const asins=document.getElementById('asinList').value.split(/\s+/).filter(Boolean);const rows=asins.map(a=>normalizeProduct({title:'Amazon Produkt '+a,hook:'Produktidee importiert per ASIN',asin:a,affiliate_provider:'amazon',cat:'tech',status:'active'}));commitProductImport(rows);}
 
 function adminCategories(){
   return `<div class="admin-section"><div class="admin-section-title">🏷 Kategorien (${CATS.length})</div>
@@ -1856,7 +1912,7 @@ function editCategory(id){
     </div>`;
   document.getElementById('infoSheet').classList.add('show');
 }
-function saveCategory(id){
+function saveCategory(id){requireAdminAction();
   const name=document.getElementById('cat_name').value.trim();
   const icon=document.getElementById('cat_icon').value.trim()||'📦';
   if(!name){toast('Name fehlt');return;}
@@ -1870,7 +1926,7 @@ function saveCategory(id){
   }
   saveCategories();closeInfoSheet();toast('Kategorie gespeichert');render();
 }
-function deleteCategory(id){
+function deleteCategory(id){requireAdminAction();
   if(!confirm('Kategorie löschen? Produkte dieser Kategorie bleiben bestehen.'))return;
   CATS=CATS.filter(c=>c.id!==id);
   saveCategories();toast('Kategorie gelöscht');render();
@@ -1982,7 +2038,7 @@ function adminAffiliate(){
 }
 
 // Helper functions for affiliate providers
-function toggleAffProvider(id){
+function toggleAffProvider(id){requireAdminAction();
   const s=settings();
   if(!s.aff_providers) s.aff_providers={};
   if(!s.aff_providers[id]) s.aff_providers[id]={active:false, id:''};
@@ -1990,7 +2046,7 @@ function toggleAffProvider(id){
   LS.set('settings',s);
   render(); // Re-render admin to show/hide input
 }
-function updateAffId(id, val){
+function updateAffId(id, val){requireAdminAction();
   const s=settings();
   if(!s.aff_providers) s.aff_providers={};
   if(!s.aff_providers[id]) s.aff_providers[id]={active:false, id:''};
@@ -2186,7 +2242,7 @@ function saveFooterLinksDraft(){
   LS.set('settings',s);
 }
 
-function saveFooter(){
+function saveFooter(){requireAdminAction();
   const s=settings();
 
   // Update footer links from inputs
@@ -2221,13 +2277,13 @@ function saveFooter(){
 }
 
 function collectBackup(){return {app_version:APP_VERSION,build_date:BUILD_DATE,data_schema_version:DATA_SCHEMA_VERSION,created_at:new Date().toISOString(),settings:settings(),products:ideas(),users:LS.get('users',[]),swipe_events:LS.get('swipeLog',[]),saved_products:S.saved,impressions:LS.get('impressions',{}),buy_clicks:LS.get('buyClicks',{}),categories:CATS,affiliate_providers:settings().aff_providers||{}};}
-function exportBackup(){downloadFile(`aishopr-backup-${APP_VERSION}-${Date.now()}.json`,JSON.stringify(collectBackup(),null,2),'application/json');}
-function importBackupFile(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const b=JSON.parse(r.result);if(!b.products&&!b.settings)throw new Error('Invalid');createSnapshot('before_backup_import');if(b.products)LS.set('ideas',asArray(b.products).map(normalizeProduct).filter(p=>p.title));if(b.settings)LS.set('settings',normalizeSettings(b.settings));if(b.users)LS.set('users',asArray(b.users).map(normalizeUser));if(b.swipe_events)LS.set('swipeLog',asArray(b.swipe_events));if(b.saved_products){S.saved=uniqueStrings(b.saved_products);LS.set('saved',S.saved);}if(b.impressions)LS.set('impressions',asObject(b.impressions));if(b.buy_clicks)LS.set('buyClicks',Array.isArray(b.buy_clicks)?b.buy_clicks:asObject(b.buy_clicks));if(b.categories){CATS=asArray(b.categories).map(normalizeCategory);saveCategories();}toast('Backup importiert');render();}catch{toast('Backup ungültig');}};r.readAsText(f);}
+function exportBackup(){requireAdminAction();downloadFile(`aishopr-backup-${APP_VERSION}-${Date.now()}.json`,JSON.stringify(collectBackup(),null,2),'application/json');}
+function importBackupFile(e){requireAdminAction();const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const b=JSON.parse(r.result);if(!b.products&&!b.settings)throw new Error('Invalid');createSnapshot('before_backup_import');if(b.products)LS.set('ideas',asArray(b.products).map(normalizeProduct).filter(p=>p.title));if(b.settings)LS.set('settings',normalizeSettings(b.settings));if(b.users)LS.set('users',asArray(b.users).map(normalizeUser));if(b.swipe_events)LS.set('swipeLog',asArray(b.swipe_events));if(b.saved_products){S.saved=uniqueStrings(b.saved_products);LS.set('saved',S.saved);}if(b.impressions)LS.set('impressions',asObject(b.impressions));if(b.buy_clicks)LS.set('buyClicks',Array.isArray(b.buy_clicks)?b.buy_clicks:asObject(b.buy_clicks));if(b.categories){CATS=asArray(b.categories).map(normalizeCategory);saveCategories();}toast('Backup importiert');render();}catch{toast('Backup ungültig');}};r.readAsText(f);}
 function snapshotKey(label='manual'){return `aishopr_snapshot_${APP_VERSION.replace(/\./g,'_')}_${new Date().toISOString().slice(0,16).replace(/[-:T]/g,'_')}_${label}`;}
 function createSnapshot(label='manual'){const key=snapshotKey(label);LS.set(key,collectBackup());return key;}
 function listSnapshots(){return Object.keys(localStorage).filter(k=>k.startsWith('as_aishopr_snapshot_')).map(k=>k.replace(/^as_/,''));}
-function restoreSnapshot(key){if(!confirm('Snapshot wiederherstellen?'))return;const b=LS.get(key,null);if(!b){toast('Snapshot fehlt');return;}if(b.products)LS.set('ideas',b.products);if(b.settings)LS.set('settings',b.settings);if(b.users)LS.set('users',b.users);if(b.swipe_events)LS.set('swipeLog',b.swipe_events);if(b.saved_products){S.saved=b.saved_products;LS.set('saved',S.saved);}toast('Snapshot wiederhergestellt');render();}
-function deleteSnapshot(key){if(!confirm('Snapshot löschen?'))return;LS.del(key);render();}
+function restoreSnapshot(key){requireAdminAction();if(!confirm('Snapshot wiederherstellen?'))return;const b=LS.get(key,null);if(!b){toast('Snapshot fehlt');return;}if(b.products)LS.set('ideas',b.products);if(b.settings)LS.set('settings',b.settings);if(b.users)LS.set('users',b.users);if(b.swipe_events)LS.set('swipeLog',b.swipe_events);if(b.saved_products){S.saved=b.saved_products;LS.set('saved',S.saved);}toast('Snapshot wiederhergestellt');render();}
+function deleteSnapshot(key){requireAdminAction();if(!confirm('Snapshot löschen?'))return;LS.del(key);render();}
 function adminBackup(){const snaps=listSnapshots();return `<div class="admin-section"><div class="admin-section-title">Backup & Versionen</div><div class="kpi-grid"><div class="kpi"><div class="kpi-val">${APP_VERSION}</div><div class="kpi-label">Version</div></div><div class="kpi"><div class="kpi-val">${DATA_SCHEMA_VERSION}</div><div class="kpi-label">Schema</div></div><div class="kpi"><div class="kpi-val">${snaps.length}</div><div class="kpi-label">Snapshots</div></div></div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px"><button class="btn btn-primary" onclick="exportBackup()">Vollbackup exportieren</button><label class="btn btn-ghost" style="cursor:pointer">Backup importieren<input type="file" accept=".json" onchange="importBackupFile(event)" style="display:none"></label><button class="btn btn-ghost" onclick="createSnapshot('manual');toast('Snapshot erstellt');render();">Snapshot erstellen</button></div></div><div class="admin-section"><div class="admin-section-title">Lokale Snapshots</div>${snaps.length?snaps.map(k=>`<div class="item" style="cursor:default"><div class="item-body"><div class="item-title">${esc(k)}</div></div><button class="btn btn-ghost btn-sm" onclick="restoreSnapshot('${k}')">Restore</button><button class="btn btn-danger btn-sm" onclick="deleteSnapshot('${k}')">Löschen</button></div>`).join(''):'<p style="font-size:12px;color:var(--ink-3)">Noch keine Snapshots.</p>'}</div>`;}
 
 function adminSettings(){
@@ -2335,7 +2391,7 @@ function saveSettings(){
 }
 function setDbMode(m){const s=settings();s.db_mode=m;LS.set('settings',s);render();}
 
-function saveAllSettings(){
+function saveAllSettings(){requireAdminAction();
   const s=settings();
   s.admin_email=document.getElementById('st_email')?.value||s.admin_email;
   s.admin_pass=document.getElementById('st_pass')?.value||s.admin_pass;
@@ -2428,11 +2484,11 @@ function nextTourStep(){
   if(tourIdx < steps.length) renderTourStep();
   else toast('Viel Spaß beim Swipen! 🚀');
 }
-function exportAll(){
+function exportAll(){requireAdminAction();
   const data={users:LS.get('users',[]),swipeLog:LS.get('swipeLog',[]),settings:settings(),ideas:ideas()};
   navigator.clipboard?.writeText(JSON.stringify(data,null,2)).then(()=>toast('Exportiert 📋')).catch(()=>toast('Export fehlgeschlagen'));
 }
-function importData(){document.getElementById('importFile').click();}
+function importData(){requireAdminAction();document.getElementById('importFile').click();}
 function handleImport(event){
   const file=event.target.files[0];if(!file)return;
   const reader=new FileReader();
@@ -2714,9 +2770,31 @@ function adminAlgorithm(){
   </div></div>`;
 }
 
-function saveAlgorithmConfig(){
+function saveAlgorithmConfig(){requireAdminAction();
   const cfg={categoryWeight:parseFloat(document.getElementById('al_cat').value)||5,priceSensitivity:parseFloat(document.getElementById('al_price').value)||.6,merchantWeight:parseFloat(document.getElementById('al_merchant').value)||2,sponsoredPenalty:parseFloat(document.getElementById('al_sponsored').value)||10,categoryDiversityBonus:parseFloat(document.getElementById('al_div').value)||.3,recencyBoost:parseFloat(document.getElementById('al_recency').value)||1.5,likeWeight:3,saveWeight:4,skipWeight:-.5,rejectWeight:-2,decayFactor:.97,decayDays:30};
   LS.set('algo_config',cfg);toast('Algorithmus-Konfiguration gespeichert');
+}
+
+
+function migrateSecurityData(){
+  try{
+    const users=asArray(LS.get('users',[]),[]).map(normalizeUser);
+    let changed=false;
+    users.forEach(u=>{
+      if(u.pass && !u.passHash){
+        // Hashing is async; migrate on next successful login. Remove empty pass only.
+        changed=true;
+      }
+    });
+    if(changed)LS.set('users',users);
+    const current=LS.get('currentUser',null);
+    if(current){
+      const safe=normalizeUser(current);
+      delete safe.pass;
+      LS.set('currentUser',safe);
+      S.user=safe;
+    }
+  }catch(e){}
 }
 
 // ============ DARK MODE ============
@@ -2766,6 +2844,7 @@ function migrateLocalData(){
 
 // ============ START ============
 migrateLocalData();
+migrateSecurityData();
 applyTheme();
 showCookieBanner();
 render();
