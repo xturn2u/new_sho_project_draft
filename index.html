@@ -486,7 +486,7 @@ label{font-size:13px;font-weight:600;color:var(--ink-2);display:block;margin-bot
 </div>
 
 <script>
-const APP_VERSION='0.9.1';
+const APP_VERSION='0.9.2';
 const BUILD_DATE='2026-05-29';
 const DATA_SCHEMA_VERSION=1;
 
@@ -496,6 +496,43 @@ const LS={
   set(k,v){localStorage.setItem('as_'+k,JSON.stringify(v))},
   del(k){localStorage.removeItem('as_'+k)}
 };
+
+// ============ RUNTIME DIAGNOSTICS / ERROR HARDENING ============
+const DIAG_KEY='runtimeErrors';
+function serializeError(err){
+  if(!err)return {message:'Unbekannter Fehler'};
+  return {
+    message:String(err.message||err||'Unbekannter Fehler'),
+    stack:String(err.stack||''),
+    name:String(err.name||'Error')
+  };
+}
+function logRuntimeError(source,err,extra={}){
+  try{
+    const list=Array.isArray(LS.get(DIAG_KEY,[]))?LS.get(DIAG_KEY,[]):[];
+    const item={ts:new Date().toISOString(),source:String(source||'unknown'),...serializeError(err),extra};
+    list.push(item);
+    LS.set(DIAG_KEY,list.slice(-50));
+    console.error('[AIshopr]',source,err,extra);
+  }catch(e){console.error('[AIshopr diagnostic failed]',e,err);}
+}
+function getRuntimeErrors(){return Array.isArray(LS.get(DIAG_KEY,[]))?LS.get(DIAG_KEY,[]):[];}
+function clearRuntimeErrors(){LS.set(DIAG_KEY,[]);toast('Fehlerprotokoll geleert');render();}
+function appErrorScreen(err){
+  const e=serializeError(err);
+  return `<div style="padding:24px;max-width:520px;margin:40px auto;font-family:var(--font);color:var(--ink)">
+    <div style="font-size:28px;font-weight:900;margin-bottom:8px">⚠️ App-Fehler</div>
+    <p style="color:var(--ink-2);line-height:1.5;margin-bottom:14px">Die App konnte diese Ansicht nicht sauber rendern. Der Fehler wurde lokal protokolliert.</p>
+    <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:14px;font-size:12px;white-space:pre-wrap;overflow:auto;max-height:220px">${esc(e.message)}</div>
+    <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+      <button class="btn btn-primary" onclick="S.view='home';render()">Zur Startseite</button>
+      <button class="btn btn-ghost" onclick="location.reload()">Neu laden</button>
+      <button class="btn btn-ghost" onclick="showView('admin-login')">Admin öffnen</button>
+    </div>
+  </div>`;
+}
+window.addEventListener('error',e=>logRuntimeError('window.error',e.error||e.message,{filename:e.filename,lineno:e.lineno,colno:e.colno}));
+window.addEventListener('unhandledrejection',e=>logRuntimeError('unhandledrejection',e.reason||'Unhandled promise rejection'));
 
 // ============ DATA HARDENING / MIGRATION HELPERS ============
 function asArray(v,d=[]){return Array.isArray(v)?v:d;}
@@ -610,7 +647,7 @@ function updateAppBranding(){
 }
 
 // ============ RENDER ENGINE ============
-function render(){
+function render(){try{
   updateAppBranding();
   const app=document.getElementById('app');
   app.innerHTML='';
@@ -651,6 +688,11 @@ function render(){
       }
     }
   }
+}catch(err){
+  logRuntimeError('render:'+S.view,err,{view:S.view,adminTab:S.adminTab});
+  const app=document.getElementById('app');
+  if(app)app.innerHTML=appErrorScreen(err);
+}
 }
 
 // ============ TIKTOK NAV ============
@@ -828,7 +870,7 @@ function renderFeed(){
   ${tiktokNav()}`;
 }
 function setMode(m){S.feedMode=m;if(m==='ai'){generateAIIdeas();return;}loadFeed(true);}
-function loadFeed(reset){
+function loadFeed(reset){try{
   if(reset){S.feedQueue=[];S.feedIdx=0;}
   let pool=[...ideas()];const s=settings();
   if(S.feedMode==='under25')pool=pool.filter(p=>parseInt(p.price)<=25);
@@ -868,8 +910,13 @@ function loadFeed(reset){
     [pool[i],pool[j]]=[pool[j],pool[i]];
   }
   S.feedQueue=pool;renderCard();
+}catch(err){
+  logRuntimeError('loadFeed',err,{feedMode:S.feedMode});
+  const stage=document.getElementById('feedStage');
+  if(stage)stage.insertAdjacentHTML('beforeend','<div style="text-align:center;color:var(--rose);padding:40px">Feed konnte nicht geladen werden. Bitte neu laden.</div>');
 }
-function renderCard(){
+}
+function renderCard(){try{
   const stage=document.getElementById('feedStage');if(!stage)return;
   stage.querySelectorAll('.swipe-card').forEach(c=>c.remove());
   stage.querySelectorAll('div[style]').forEach(c=>{if(!c.classList.contains('swipe-hint'))c.remove();});
@@ -891,6 +938,11 @@ function renderCard(){
   <div class="card-tags"><span class="tag mint">${esc(p.price)}</span><span class="tag">${catIcon(p.cat)} ${catName(p.cat)}</span><span class="tag sun">Fit ${p.fit}%</span>${p.sponsored?'<span class="tag rose">Gesponsert</span>':''}</div></div>
   <div class="card-foot"><div class="fit"><div class="fit-ring" style="--p:${p.fit}"><span>${p.fit}</span></div><div class="fit-label">Fit-Score</div></div><div class="price">${esc(p.price)}</div></div>`;
   stage.appendChild(card);updateActionStates();enableDrag(card);
+}catch(err){
+  logRuntimeError('renderCard',err,{idx:S.feedIdx,current:S.currentCard&&S.currentCard.id});
+  const stage=document.getElementById('feedStage');
+  if(stage)stage.insertAdjacentHTML('beforeend','<div style="text-align:center;color:var(--rose);padding:40px">Produktkarte konnte nicht angezeigt werden.</div>');
+}
 }
 function bindFeedEvents(){renderCard();}
 
@@ -1679,6 +1731,7 @@ function adminPage(tab){
   if(tab==='info')return adminInfo();
   if(tab==='algorithm')return adminAlgorithm();
   if(tab==='settings')return adminSettings();
+  if(tab==='diagnostics')return adminDiagnostics();
   return '';
 }
 
@@ -2795,6 +2848,41 @@ function migrateSecurityData(){
       S.user=safe;
     }
   }catch(e){}
+}
+
+
+function adminDiagnostics(){
+  const errors=getRuntimeErrors();
+  const storageKeys=Object.keys(localStorage).filter(k=>k.startsWith('as_')).sort();
+  const approxSize=storageKeys.reduce((sum,k)=>sum+(localStorage.getItem(k)||'').length,0);
+  return `<div class="admin-section"><div class="admin-section-title">🧪 Diagnose & Stabilität</div>
+    <div class="kpi-grid">
+      <div class="kpi"><div class="kpi-val">${APP_VERSION}</div><div class="kpi-label">App-Version</div></div>
+      <div class="kpi"><div class="kpi-val">${DATA_SCHEMA_VERSION}</div><div class="kpi-label">Schema</div></div>
+      <div class="kpi"><div class="kpi-val">${errors.length}</div><div class="kpi-label">Fehler im Log</div></div>
+      <div class="kpi"><div class="kpi-val">${Math.round(approxSize/1024)} KB</div><div class="kpi-label">LocalStorage</div></div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+      <button class="btn btn-primary" onclick="exportDiagnostics()">Diagnose exportieren</button>
+      <button class="btn btn-ghost" onclick="clearRuntimeErrors()">Fehlerlog leeren</button>
+      <button class="btn btn-ghost" onclick="createSnapshot('before_diagnostics_repair');migrateLocalData();toast('Migration erneut ausgeführt');render()">Daten reparieren</button>
+    </div>
+  </div>
+  <div class="admin-section"><div class="admin-section-title">Letzte Fehler</div>
+    ${errors.length?errors.slice().reverse().map(e=>`<div class="item" style="cursor:default;align-items:flex-start">
+      <div class="item-body">
+        <div class="item-title">${esc(e.source)} · ${esc(e.ts)}</div>
+        <div class="item-sub" style="white-space:pre-wrap">${esc(e.name)}: ${esc(e.message)}</div>
+      </div>
+    </div>`).join(''):'<p style="font-size:12px;color:var(--ink-3)">Keine protokollierten Fehler.</p>'}
+  </div>
+  <div class="admin-section"><div class="admin-section-title">LocalStorage Keys</div>
+    <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:12px;font-size:12px;line-height:1.6;max-height:220px;overflow:auto">${storageKeys.map(k=>esc(k)).join('<br>')}</div>
+  </div>`;
+}
+function exportDiagnostics(){
+  const payload={app_version:APP_VERSION,build_date:BUILD_DATE,schema:DATA_SCHEMA_VERSION,userAgent:navigator.userAgent,url:location.href,created_at:new Date().toISOString(),errors:getRuntimeErrors(),storage_keys:Object.keys(localStorage).filter(k=>k.startsWith('as_'))};
+  downloadFile(`aishopr-diagnostics-${Date.now()}.json`,JSON.stringify(payload,null,2),'application/json');
 }
 
 // ============ DARK MODE ============
