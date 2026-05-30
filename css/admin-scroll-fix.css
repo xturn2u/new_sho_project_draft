@@ -1,0 +1,79 @@
+/* Fix 6.1 — Admin scroll repair
+   Purpose: allow all admin pages to scroll fully on mobile, desktop and iOS Safari.
+   This file intentionally overrides only layout/scroll behavior. */
+
+body:has(.admin-layout){
+  overflow:hidden;
+}
+
+.admin-layout{
+  height:100dvh;
+  min-height:100dvh;
+  max-height:100dvh;
+  overflow:hidden;
+}
+
+.admin-main{
+  height:100dvh;
+  min-height:0;
+  overflow-y:auto;
+  overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
+  padding-bottom:calc(160px + var(--safe-bottom)) !important;
+  scroll-padding-bottom:calc(160px + var(--safe-bottom));
+}
+
+.admin-wrap{
+  min-height:0;
+  overflow:visible;
+  padding-bottom:calc(160px + var(--safe-bottom)) !important;
+}
+
+.admin-section:last-child{
+  margin-bottom:calc(140px + var(--safe-bottom)) !important;
+}
+
+.admin-sidebar{
+  height:100dvh;
+  max-height:100dvh;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  padding-bottom:calc(40px + var(--safe-bottom)) !important;
+}
+
+@media(max-width:768px){
+  .admin-layout{
+    height:100dvh;
+    min-height:100dvh;
+  }
+
+  .admin-main{
+    height:100dvh;
+    max-height:100dvh;
+    padding-top:80px !important;
+    padding-bottom:calc(190px + var(--safe-bottom)) !important;
+  }
+
+  .admin-wrap{
+    padding-bottom:calc(190px + var(--safe-bottom)) !important;
+  }
+
+  .admin-section:last-child{
+    margin-bottom:calc(180px + var(--safe-bottom)) !important;
+  }
+
+  .admin-sidebar{
+    height:100dvh;
+    max-height:100dvh;
+  }
+}
+
+@supports not (height:100dvh){
+  .admin-layout,
+  .admin-main,
+  .admin-sidebar{
+    height:100vh;
+    max-height:100vh;
+  }
+}
