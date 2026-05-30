@@ -1,0 +1,26 @@
+{
+  "source": "index_fix4.html",
+  "created_files": [
+    {
+      "path": "index.html",
+      "bytes": 5536
+    },
+    {
+      "path": "css/styles.css",
+      "bytes": 32195
+    },
+    {
+      "path": "js/app.js",
+      "bytes": 165608
+    },
+    {
+      "path": "README_SPLIT.md",
+      "bytes": 544
+    }
+  ],
+  "notes": [
+    "HTML, CSS und JS wurden aus der Fix-4-Single-File-App extrahiert.",
+    "Keine bewussten Funktionsänderungen gegenüber Fix 4.",
+    "Lege alle Dateien/Ordner im Repository-Root ab."
+  ]
+}
