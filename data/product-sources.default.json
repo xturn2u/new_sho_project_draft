@@ -1,0 +1,62 @@
+[
+  {
+    "id": "amazon_creator_api",
+    "name": "Amazon / Creators API",
+    "provider": "amazon",
+    "mode": "api",
+    "status": "planned",
+    "requires_backend": true,
+    "requires_secret": true,
+    "public_fields": ["partner_tag", "marketplace"],
+    "secret_fields": ["access_key", "secret_key"],
+    "notes": "Nicht im Frontend speichern. Backend muss Requests signieren und Produktdaten bereinigt zurückgeben."
+  },
+  {
+    "id": "awin_feed",
+    "name": "Awin Produktfeed",
+    "provider": "awin",
+    "mode": "feed",
+    "status": "planned",
+    "requires_backend": true,
+    "requires_secret": true,
+    "public_fields": ["publisher_id"],
+    "secret_fields": ["api_token"],
+    "notes": "Geeignet für Händlerfeeds und Vergleich über mehrere Shops."
+  },
+  {
+    "id": "ebay_partner",
+    "name": "eBay Partner Network",
+    "provider": "ebay",
+    "mode": "api",
+    "status": "planned",
+    "requires_backend": true,
+    "requires_secret": true,
+    "public_fields": ["campaign_id"],
+    "secret_fields": ["client_id", "client_secret"],
+    "notes": "Alternative Quelle für breite Produktabdeckung."
+  },
+  {
+    "id": "manual_json",
+    "name": "Manueller JSON-Katalog",
+    "provider": "manual_json",
+    "mode": "manual",
+    "status": "active",
+    "requires_backend": false,
+    "requires_secret": false,
+    "public_fields": ["products_json_url"],
+    "secret_fields": [],
+    "notes": "Aktueller Betriebsmodus über /data/products.json."
+  },
+  {
+    "id": "image_demo",
+    "name": "Bildkarten-Testdaten",
+    "provider": "demo",
+    "mode": "mock",
+    "status": "active",
+    "requires_backend": false,
+    "requires_secret": false,
+    "public_fields": ["products_image_demo_json_url"],
+    "secret_fields": [],
+    "notes": "Nur zum UX-Test der Swipe-Karten mit echten Bildflächen."
+  }
+]
