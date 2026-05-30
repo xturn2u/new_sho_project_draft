@@ -1,4 +1,4 @@
-/* Fix 23.7 — Feed Fit & KPI placement correction */
+/* Fix 23.8 — Feed Fit & KPI placement correction with Price-Check */
 
 /* One app canvas: no white/cream break at bottom/top. */
 html,body,#app,.app,.screen,.feed-screen,.ds-phone-screen{
@@ -58,7 +58,7 @@ body{
 .swipe-card.ux-redesign .ux-benefit-icon{width:22px!important;height:22px!important}
 .swipe-card.ux-redesign .ux-benefit-icon svg{width:13px!important;height:13px!important}
 
-/* The three cards above CTA: Price + Saves + Pulse, compact and not covered. */
+/* The three cards above CTA: Price-Check + Saves + Pulse, compact and not covered. */
 .swipe-card.ux-redesign .card-tags{
   gap:6px!important;
   margin-bottom:7px!important;
@@ -70,10 +70,15 @@ body{
   font-size:8.8px!important;
 }
 .swipe-card.ux-redesign .card-tags .tag::after{font-size:8.8px!important}
-.swipe-card.ux-redesign .card-tags .tag.mint,
-.swipe-card.ux-redesign .card-tags .tag.sun,
+.swipe-card.ux-redesign .card-tags .tag.price-check-tag,
+.swipe-card.ux-redesign .card-tags .tag.save-tag,
 .swipe-card.ux-redesign .card-tags .tag.pulse-tag{
   font-size:13.5px!important;
+  font-weight:900!important;
+}
+.swipe-card.ux-redesign .card-tags .tag.price-check-tag{
+  background:#e9fbf5!important;
+  color:#0e9b7f!important;
 }
 .swipe-card.ux-redesign .card-tags .tag.save-tag{
   background:#fff5ef!important;
