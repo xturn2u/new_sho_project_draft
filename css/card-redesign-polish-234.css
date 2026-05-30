@@ -1,0 +1,144 @@
+/* Mega-Fix 23.4 — icon fixes, height usage, smaller pills/headlines */
+
+/* Use more available vertical space and reduce the feeling of unused whitespace. */
+.feed-stage{
+  padding-top:4px!important;
+  padding-bottom:18px!important;
+}
+.swipe-card.ux-redesign{
+  height:calc(100% - 22px)!important;
+  max-height:650px!important;
+}
+
+/* Smaller pills inside image. */
+.swipe-card.ux-redesign .ux-top-badge,
+.swipe-card.ux-redesign .ux-swipes{
+  height:31px!important;
+  padding:0 11px!important;
+  font-size:11px!important;
+  top:14px!important;
+}
+.swipe-card.ux-redesign .ux-top-badge{left:14px!important;gap:6px!important}
+.swipe-card.ux-redesign .ux-swipes{right:14px!important}
+.swipe-card.ux-redesign .ux-pill-star{font-size:12px!important;line-height:1!important}
+.swipe-card.ux-redesign .ux-image-claim{
+  font-size:11.5px!important;
+  padding:8px 12px!important;
+  left:14px!important;
+  bottom:14px!important;
+}
+.swipe-card.ux-redesign .ux-claim-check{font-weight:950;margin-right:2px;color:#1b1b1f!important}
+
+/* Slightly smaller headline so benefit row stays visible. */
+.swipe-card.ux-redesign .card-hook{
+  font-size:20px!important;
+  line-height:1.08!important;
+  margin-bottom:7px!important;
+}
+.swipe-card.ux-redesign .card-title{
+  font-size:14px!important;
+  line-height:1.28!important;
+  margin-bottom:10px!important;
+}
+
+/* Benefit row must be visible and not hidden behind CTA. */
+.swipe-card.ux-redesign .ux-benefits{
+  display:grid!important;
+  grid-template-columns:repeat(3,1fr)!important;
+  gap:8px!important;
+  margin:0 0 10px!important;
+  padding-bottom:10px!important;
+  border-bottom:1px solid rgba(0,0,0,.05)!important;
+}
+.swipe-card.ux-redesign .ux-benefit{
+  font-size:9.8px!important;
+  line-height:1.16!important;
+  overflow:hidden!important;
+}
+.swipe-card.ux-redesign .ux-benefit-icon{
+  width:27px!important;
+  height:27px!important;
+}
+.swipe-card.ux-redesign .ux-benefit-icon svg,
+.swipe-card.ux-redesign .ux-bag-icon svg,
+.swipe-card.ux-redesign .ux-trust-icon svg{
+  width:16px!important;
+  height:16px!important;
+  display:block!important;
+}
+.swipe-card.ux-redesign .ux-bag-icon{
+  width:22px!important;
+  height:22px!important;
+  display:grid!important;
+  place-items:center!important;
+  color:#fff!important;
+}
+.swipe-card.ux-redesign .ux-trust-icon{
+  width:16px!important;
+  height:16px!important;
+  display:grid!important;
+  place-items:center!important;
+  color:#777783!important;
+}
+
+/* Remove old pseudo glyphs that caused broken symbol display. */
+.swipe-card.ux-redesign .ux-cta::before,
+.swipe-card.ux-redesign .ux-trust::before{
+  content:none!important;
+  display:none!important;
+}
+
+/* Info cards remain compact and above the CTA. */
+.swipe-card.ux-redesign .card-tags{
+  margin-bottom:9px!important;
+  gap:8px!important;
+}
+.swipe-card.ux-redesign .card-tags .tag{
+  min-height:50px!important;
+  font-size:10px!important;
+}
+.swipe-card.ux-redesign .card-tags .tag.mint,
+.swipe-card.ux-redesign .card-tags .tag.sun{
+  font-size:15px!important;
+}
+
+/* CTA lower height so trust line and footer breathe. */
+.swipe-card.ux-redesign .ux-cta{
+  height:50px!important;
+  margin-bottom:9px!important;
+  font-size:17px!important;
+  gap:10px!important;
+}
+.swipe-card.ux-redesign .ux-cta-arrow{
+  width:30px!important;
+  height:30px!important;
+}
+.swipe-card.ux-redesign .ux-trust{
+  gap:6px!important;
+  font-size:10.5px!important;
+  margin-bottom:10px!important;
+}
+
+/* Header menu: make purpose clearer as Admin/Menu, not random hamburger. */
+.feed-menu-btn{
+  position:relative!important;
+}
+.feed-menu-btn::after{
+  content:'Admin';
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
+  bottom:-5px;
+  font-size:8px;
+  font-weight:800;
+  color:#8e8e99;
+  letter-spacing:.01em;
+}
+
+@media(max-height:760px){
+  .swipe-card.ux-redesign{height:calc(100% - 12px)!important;}
+  .swipe-card.ux-redesign .card-hero{height:38%!important;min-height:198px!important}
+  .swipe-card.ux-redesign .card-hook{font-size:19px!important}
+  .swipe-card.ux-redesign .ux-benefits{grid-template-columns:repeat(3,1fr)!important;display:grid!important}
+  .swipe-card.ux-redesign .ux-benefit{font-size:9px!important}
+}
