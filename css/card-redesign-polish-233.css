@@ -1,0 +1,130 @@
+/* Mega-Fix 23.3 — Closer to approved mockup: colors, spacing, CTA, chips */
+
+.swipe-card.ux-redesign{
+  background:#fff!important;
+  box-shadow:0 24px 56px rgba(34,24,20,.13),0 8px 18px rgba(34,24,20,.06)!important;
+}
+
+.swipe-card.ux-redesign .card-hero{
+  height:45%!important;
+  min-height:246px!important;
+  border-bottom:0!important;
+}
+
+/* Mockup-like softer coral identity */
+.swipe-card.ux-redesign .ux-top-badge{
+  background:linear-gradient(135deg,#ff536f,#ff8b5f)!important;
+  box-shadow:0 12px 26px rgba(255,88,99,.24)!important;
+}
+.swipe-card.ux-redesign .ux-swipes{
+  background:rgba(255,255,255,.88)!important;
+  border:2px solid rgba(255,111,97,.78)!important;
+  color:#ff665b!important;
+}
+.swipe-card.ux-redesign .ux-image-claim{
+  background:rgba(255,255,255,.88)!important;
+  color:#2b2b31!important;
+  box-shadow:0 10px 24px rgba(0,0,0,.10)!important;
+}
+.swipe-card.ux-redesign .ux-image-claim b{
+  color:#ff665b!important;
+}
+
+/* Better editorial hierarchy */
+.swipe-card.ux-redesign .card-body{
+  padding:18px 18px 0!important;
+}
+.swipe-card.ux-redesign .card-hook{
+  font-size:22px!important;
+  line-height:1.08!important;
+  margin-bottom:8px!important;
+  letter-spacing:-.04em!important;
+}
+.swipe-card.ux-redesign .card-title{
+  font-size:15px!important;
+  color:#5f5f6a!important;
+  font-weight:750!important;
+  margin-bottom:14px!important;
+}
+
+/* Small benefit row directly under title like mockup. */
+.swipe-card.ux-redesign .ux-benefits{
+  display:grid!important;
+  grid-template-columns:repeat(3,1fr)!important;
+  gap:10px!important;
+  margin:0 0 14px!important;
+  padding-bottom:12px!important;
+  border-bottom:1px solid rgba(0,0,0,.055)!important;
+}
+.swipe-card.ux-redesign .ux-benefit{
+  font-size:10.5px!important;
+  line-height:1.22!important;
+  color:#696974!important;
+  font-weight:720!important;
+}
+.swipe-card.ux-redesign .ux-benefit-icon{
+  width:30px!important;
+  height:30px!important;
+  background:#fff0eb!important;
+  color:#e87368!important;
+}
+
+/* Info cards directly above CTA, more mockup-like and less loud. */
+.swipe-card.ux-redesign .card-tags{
+  margin:0 0 12px!important;
+  gap:10px!important;
+}
+.swipe-card.ux-redesign .card-tags .tag{
+  min-height:58px!important;
+  background:#fff5ef!important;
+  border:1px solid rgba(234,110,96,.10)!important;
+  color:#6c6264!important;
+  box-shadow:0 6px 18px rgba(34,24,20,.035)!important;
+}
+.swipe-card.ux-redesign .card-tags .tag.mint{
+  background:#e9fbf5!important;
+  color:#0e9b7f!important;
+}
+.swipe-card.ux-redesign .card-tags .tag.sun{
+  background:#fff4df!important;
+  color:#b87908!important;
+}
+
+/* CTA goes up and creates room for trust line below. */
+.swipe-card.ux-redesign .ux-cta{
+  margin:0 18px 10px!important;
+  height:54px!important;
+  border-radius:17px!important;
+  background:linear-gradient(135deg,#ff3f6f,#ff8754)!important;
+  box-shadow:0 16px 30px rgba(255,91,91,.24)!important;
+}
+.swipe-card.ux-redesign .ux-cta::before{
+  content:'▢';
+  font-size:20px;
+  opacity:.95;
+  margin-right:2px;
+}
+.swipe-card.ux-redesign .ux-trust{
+  display:flex!important;
+  margin:0 18px 12px!important;
+  height:18px!important;
+  font-size:11px!important;
+  color:#777783!important;
+}
+.swipe-card.ux-redesign .ux-trust::before{
+  content:'♢';
+  color:#777783;
+}
+.swipe-card.ux-redesign .card-foot{
+  padding-top:12px!important;
+  padding-bottom:14px!important;
+}
+
+@media(max-height:760px){
+  .swipe-card.ux-redesign .card-hero{height:41%!important;min-height:218px!important}
+  .swipe-card.ux-redesign .ux-benefits{display:grid!important;padding-bottom:8px!important;margin-bottom:10px!important}
+  .swipe-card.ux-redesign .ux-benefit:nth-child(3){display:none!important}
+  .swipe-card.ux-redesign .ux-benefits{grid-template-columns:1fr 1fr!important}
+  .swipe-card.ux-redesign .card-tags .tag{min-height:52px!important}
+  .swipe-card.ux-redesign .ux-cta{height:50px!important}
+}
