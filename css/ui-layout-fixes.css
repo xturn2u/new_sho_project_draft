@@ -1,6 +1,6 @@
-/* Fix 12 — mobile layout and scroll corrections
+/* Fix 13 — mobile layout, admin scroll and refined feed watermark
    1) Admin scroll only as far as real content exists.
-   2) Feed watermark appears once, centered in the upper third.
+   2) Feed watermark appears once, exact Admin app name, smaller with even outline/shadow.
    3) Home screen uses the vertical space more evenly on iPhone/Safari. */
 
 /* --- Admin scroll: remove artificial bottom overscroll from previous repair --- */
@@ -34,14 +34,15 @@
   }
 }
 
-/* --- Feed watermark: no repeated diagonal wall of text --- */
+/* --- Feed watermark: exact app name, one time, centered, slightly detached --- */
 .page-watermark{
   inset:0 !important;
   align-items:flex-start !important;
   justify-content:center !important;
-  padding-top:18% !important;
+  padding-top:20% !important;
   flex-wrap:nowrap !important;
   z-index:0 !important;
+  overflow:hidden !important;
 }
 
 .page-watermark span{
@@ -51,11 +52,34 @@
 .page-watermark span:first-child{
   display:block !important;
   transform:none !important;
-  font-size:clamp(34px,12vw,56px) !important;
-  letter-spacing:.02em !important;
-  opacity:.055 !important;
+  font-size:clamp(24px,8.6vw,42px) !important;
+  line-height:1 !important;
+  letter-spacing:.01em !important;
+  font-weight:900 !important;
+  opacity:.135 !important;
   text-align:center !important;
   white-space:nowrap !important;
+  color:rgba(26,26,26,.28) !important;
+  -webkit-text-stroke:.65px rgba(255,255,255,.72) !important;
+  text-shadow:
+    0 1px 0 rgba(255,255,255,.72),
+    1px 0 0 rgba(255,255,255,.62),
+    0 -1px 0 rgba(255,255,255,.52),
+    -1px 0 0 rgba(255,255,255,.62),
+    0 8px 18px rgba(26,26,26,.10) !important;
+  filter:drop-shadow(0 2px 2px rgba(255,255,255,.55));
+}
+
+.dark .page-watermark span:first-child,
+.auto-dark .page-watermark span:first-child{
+  color:rgba(255,255,255,.18) !important;
+  -webkit-text-stroke:.65px rgba(0,0,0,.5) !important;
+  text-shadow:
+    0 1px 0 rgba(0,0,0,.45),
+    1px 0 0 rgba(0,0,0,.35),
+    0 -1px 0 rgba(0,0,0,.35),
+    -1px 0 0 rgba(0,0,0,.35),
+    0 8px 18px rgba(0,0,0,.22) !important;
 }
 
 /* --- Mobile home balance --- */
