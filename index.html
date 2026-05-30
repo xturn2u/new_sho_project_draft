@@ -497,6 +497,38 @@ const LS={
   del(k){localStorage.removeItem('as_'+k)}
 };
 
+// ============ DATA HARDENING / MIGRATION HELPERS ============
+function asArray(v,d=[]){return Array.isArray(v)?v:d;}
+function asObject(v,d={}){return v&&typeof v==='object'&&!Array.isArray(v)?v:d;}
+function uniqueStrings(v){return [...new Set(asArray(v).map(x=>String(x||'').trim()).filter(Boolean))];}
+function clampNumber(v,min,max,fallback){const n=Number(v);return Number.isFinite(n)?Math.max(min,Math.min(max,n)):fallback;}
+function normalizeFooterLinks(v){
+  const fallback=[{label:'Datenschutz',url:'#',type:'privacy'},{label:'Impressum',url:'#',type:'imprint'},{label:'AGB',url:'#',type:'terms'},{label:'Kontakt',url:'#',type:'contact'}];
+  let links=v;
+  if(typeof links==='string'){
+    links=links.split(',').map(x=>{const [label,url]=x.split('|');const l=String(label||'').trim();return {label:l,url:String(url||'#').trim(),type:l.toLowerCase().includes('datenschutz')?'privacy':(l.toLowerCase().includes('impressum')?'imprint':(l.toLowerCase().includes('agb')?'terms':(l.toLowerCase().includes('kontakt')?'contact':'link')))};});
+  }
+  links=asArray(links,fallback).map(l=>({label:String(l.label||'').trim(),url:String(l.url||'#').trim()||'#',type:String(l.type||'link').trim()||'link'})).filter(l=>l.label);
+  return links.length?links:fallback;
+}
+function normalizeSettings(raw={}){
+  const saved=asObject(raw,{});
+  const d=DEFAULT_SETTINGS;
+  const merged={...d,...saved};
+  merged.legal={...asObject(d.legal),...asObject(saved.legal)};
+  merged.socials={...asObject(d.socials),...asObject(saved.socials)};
+  merged.smtp={...asObject(d.smtp),...asObject(saved.smtp)};
+  merged.db_config={...asObject(d.db_config),...asObject(saved.db_config)};
+  merged.aff_providers={...asObject(d.aff_providers),...asObject(saved.aff_providers)};
+  merged.footer_links=normalizeFooterLinks(saved.footer_links ?? d.footer_links);
+  merged.max_sponsored_pct=clampNumber(merged.max_sponsored_pct,0,80,15);
+  merged.footer_show=merged.footer_show!==false;
+  merged.db_mode=(merged.db_mode==='mysql')?'mysql':'json';
+  return merged;
+}
+function normalizeCategory(c){c=asObject(c);const name=String(c.name||'Kategorie').trim();let id=String(c.id||name.toLowerCase().replace(/[^a-z0-9]/g,'')||('cat_'+Date.now())).trim();return {id,name,icon:String(c.icon||'📦').trim()||'📦'};}
+function normalizeUser(u){u=asObject(u);return {id:String(u.id||('u_'+Date.now())),name:String(u.name||'Nutzer'),email:String(u.email||''),pass:String(u.pass||''),provider:String(u.provider||'email'),photo:String(u.photo||''),created:u.created||new Date().toISOString(),interestProfile:u.interestProfile||null};}
+
 // ============ CATEGORIES ============
 const CATS_DEFAULT=[
   {id:'smarthome',name:'Smart Home',icon:'🏠'},{id:'homeoffice',name:'Homeoffice',icon:'💼'},
@@ -506,8 +538,8 @@ const CATS_DEFAULT=[
   {id:'familie',name:'Familie',icon:'👨‍👩‍👧'},{id:'geschenk',name:'Geschenke',icon:'🎁'},
   {id:'haushalt',name:'Haushalt',icon:'🧹'},{id:'tech',name:'Technik',icon:'📱'},
 ];
-let CATS = (function(){ const stored = LS.get('categories'); return (stored && stored.length) ? stored : [...CATS_DEFAULT]; })();
-function saveCategories(){ LS.set('categories', CATS); }
+let CATS = (function(){ const stored = LS.get('categories'); return (Array.isArray(stored) && stored.length) ? stored.map(normalizeCategory) : [...CATS_DEFAULT]; })();
+function saveCategories(){ LS.set('categories', CATS.map(normalizeCategory)); }
 
 // ============ STATE ============
 const S={
@@ -518,18 +550,14 @@ const S={
   adminTab:'dashboard',aiResult:''
 };
 
-function ideas(){return LS.get('ideas',IDEAS_DEFAULT)}
+function ideas(){
+  const stored=LS.get('ideas',null);
+  const list=Array.isArray(stored)?stored:IDEAS_DEFAULT;
+  return list.map(normalizeProduct).filter(p=>p.title);
+}
 function settings(){
   const saved=LS.get('settings',{})||{};
-  return {
-    ...DEFAULT_SETTINGS,
-    ...saved,
-    legal:{...DEFAULT_SETTINGS.legal,...(saved.legal||{})},
-    socials:{...DEFAULT_SETTINGS.socials,...(saved.socials||{})},
-    smtp:{...DEFAULT_SETTINGS.smtp,...(saved.smtp||{})},
-    db_config:{...DEFAULT_SETTINGS.db_config,...(saved.db_config||{})},
-    aff_providers:{...DEFAULT_SETTINGS.aff_providers,...(saved.aff_providers||{})}
-  };
+  return normalizeSettings(saved);
 }
 function catName(id){return CATS.find(c=>c.id===id)?.name||id}
 function catIcon(id){return CATS.find(c=>c.id===id)?.icon||'📦'}
@@ -1261,13 +1289,18 @@ function saveQuickLearn(){
 let toastTimer;
 function toast(msg){
   const t=document.getElementById('toast');
+  if(!t){console.log('[AIshopr]',msg);return;}
   t.textContent=msg;t.classList.add('show');
   clearTimeout(toastTimer);
   toastTimer=setTimeout(()=>t.classList.remove('show'),1800);
 }
 
 // ============ NAVIGATION ============
-function showView(name){S.view=name;render();}
+function showView(name){
+  const allowed=['home','feed','saved','profile','login','register','admin-login','admin'];
+  S.view=allowed.includes(name)?name:'home';
+  render();
+}
 
 // ============ CHATBOT ============
 let chatHistory = [{role:'system', content:'Du bist der AIshopr Support-Bot. Beantworte NUR Fragen rund um AIshopr, das Swipen von Produkten, die App-Funktionen, Affiliate-Links und den Einkauf. Wenn jemand nach etwas anderem fragt (z.B. Pizza-Rezepte, Wetter, Politik, Mathe), antworte freundlich aber bestimmt: "Sorry, ich bin nur der AIshopr-Bot und kenne mich nur mit unserer App aus. Frag mich gerne etwas über Swipen oder Produkte!"'}];
@@ -2189,7 +2222,7 @@ function saveFooter(){
 
 function collectBackup(){return {app_version:APP_VERSION,build_date:BUILD_DATE,data_schema_version:DATA_SCHEMA_VERSION,created_at:new Date().toISOString(),settings:settings(),products:ideas(),users:LS.get('users',[]),swipe_events:LS.get('swipeLog',[]),saved_products:S.saved,impressions:LS.get('impressions',{}),buy_clicks:LS.get('buyClicks',{}),categories:CATS,affiliate_providers:settings().aff_providers||{}};}
 function exportBackup(){downloadFile(`aishopr-backup-${APP_VERSION}-${Date.now()}.json`,JSON.stringify(collectBackup(),null,2),'application/json');}
-function importBackupFile(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const b=JSON.parse(r.result);if(!b.products&&!b.settings)throw new Error('Invalid');createSnapshot('before_backup_import');if(b.products)LS.set('ideas',b.products);if(b.settings)LS.set('settings',b.settings);if(b.users)LS.set('users',b.users);if(b.swipe_events)LS.set('swipeLog',b.swipe_events);if(b.saved_products){S.saved=b.saved_products;LS.set('saved',S.saved);}if(b.impressions)LS.set('impressions',b.impressions);if(b.buy_clicks)LS.set('buyClicks',b.buy_clicks);toast('Backup importiert');render();}catch{toast('Backup ungültig');}};r.readAsText(f);}
+function importBackupFile(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const b=JSON.parse(r.result);if(!b.products&&!b.settings)throw new Error('Invalid');createSnapshot('before_backup_import');if(b.products)LS.set('ideas',asArray(b.products).map(normalizeProduct).filter(p=>p.title));if(b.settings)LS.set('settings',normalizeSettings(b.settings));if(b.users)LS.set('users',asArray(b.users).map(normalizeUser));if(b.swipe_events)LS.set('swipeLog',asArray(b.swipe_events));if(b.saved_products){S.saved=uniqueStrings(b.saved_products);LS.set('saved',S.saved);}if(b.impressions)LS.set('impressions',asObject(b.impressions));if(b.buy_clicks)LS.set('buyClicks',Array.isArray(b.buy_clicks)?b.buy_clicks:asObject(b.buy_clicks));if(b.categories){CATS=asArray(b.categories).map(normalizeCategory);saveCategories();}toast('Backup importiert');render();}catch{toast('Backup ungültig');}};r.readAsText(f);}
 function snapshotKey(label='manual'){return `aishopr_snapshot_${APP_VERSION.replace(/\./g,'_')}_${new Date().toISOString().slice(0,16).replace(/[-:T]/g,'_')}_${label}`;}
 function createSnapshot(label='manual'){const key=snapshotKey(label);LS.set(key,collectBackup());return key;}
 function listSnapshots(){return Object.keys(localStorage).filter(k=>k.startsWith('as_aishopr_snapshot_')).map(k=>k.replace(/^as_/,''));}
@@ -2406,15 +2439,18 @@ function handleImport(event){
   reader.onload=(e)=>{
     try{
       const data=JSON.parse(e.target.result);
-      if(data.users)LS.set('users',data.users);
-      if(data.swipeLog)LS.set('swipeLog',data.swipeLog);
-      if(data.settings)LS.set('settings',data.settings);
-      if(data.ideas)LS.set('ideas',data.ideas);
+      createSnapshot('before_json_import');
+      if(data.users)LS.set('users',asArray(data.users).map(normalizeUser));
+      if(data.swipeLog)LS.set('swipeLog',asArray(data.swipeLog));
+      if(data.settings)LS.set('settings',normalizeSettings(data.settings));
+      if(data.ideas)LS.set('ideas',asArray(data.ideas).map(normalizeProduct).filter(p=>p.title));
+      if(data.categories){CATS=asArray(data.categories).map(normalizeCategory);saveCategories();}
+      migrateLocalData();
       toast('Import erfolgreich');render();
     }catch{toast('Ungültige JSON-Datei');}
   };reader.readAsText(file);
 }
-function resetEverything(){if(!confirm('Wirklich alles löschen?'))return;LS.del('users');LS.del('swipeLog');LS.del('settings');LS.del('ideas');LS.del('adminLogged');S.adminLogged=false;S.view='home';toast('Alles zurückgesetzt');render();}
+function resetEverything(){if(!confirm('Wirklich alles löschen?'))return;createSnapshot('before_full_reset');['users','swipeLog','settings','ideas','adminLogged','saved','likes','rejects','interests','buyClicks','impressions','categories','swipesCount'].forEach(k=>LS.del(k));S.adminLogged=false;S.saved=[];S.likes=[];S.rejects=[];S.interests=[];S.swipes=0;CATS=[...CATS_DEFAULT];S.view='home';toast('Alles zurückgesetzt');render();}
 
 // ============ AI IDEA GENERATION ============
 async function generateAIIdeas(){
@@ -2705,7 +2741,31 @@ function applyTheme(){
   // else 'light' = no class
 }
 
+function migrateLocalData(){
+  try{
+    const st=LS.get('settings',null);
+    if(st)LS.set('settings',normalizeSettings(st));
+    const storedIdeas=LS.get('ideas',null);
+    if(Array.isArray(storedIdeas))LS.set('ideas',storedIdeas.map(normalizeProduct).filter(p=>p.title));
+    const storedCats=LS.get('categories',null);
+    if(Array.isArray(storedCats)){CATS=storedCats.map(normalizeCategory);saveCategories();}
+    const users=LS.get('users',null);
+    if(Array.isArray(users))LS.set('users',users.map(normalizeUser));
+    ['saved','likes','rejects','interests'].forEach(k=>LS.set(k,uniqueStrings(LS.get(k,[]))));
+    S.saved=LS.get('saved',[]);S.likes=LS.get('likes',[]);S.rejects=LS.get('rejects',[]);S.interests=LS.get('interests',[]);
+    S.swipes=clampNumber(LS.get('swipesCount',0),0,1000000,0);LS.set('swipesCount',S.swipes);
+    const clicks=LS.get('buyClicks',null);
+    if(clicks && !Array.isArray(clicks)){
+      const migrated=[];
+      Object.entries(asObject(clicks)).forEach(([pid,count])=>{for(let i=0;i<Math.min(Number(count)||0,1000);i++)migrated.push({pid,type:'buy',ts:Date.now(),legacy:true});});
+      LS.set('buyClicks',migrated);
+    }
+    LS.set('dataSchemaVersion',DATA_SCHEMA_VERSION);
+  }catch(e){console.warn('Migration übersprungen',e);}
+}
+
 // ============ START ============
+migrateLocalData();
 applyTheme();
 showCookieBanner();
 render();
