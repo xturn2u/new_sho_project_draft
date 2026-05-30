@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aishopr.local/schema.product-source.json",
+  "title": "AIshopr Product Source",
+  "type": "object",
+  "required": ["id", "name", "provider", "mode", "status"],
+  "properties": {
+    "id": {"type": "string", "pattern": "^[a-zA-Z0-9_-]+$"},
+    "name": {"type": "string", "minLength": 2},
+    "provider": {"type": "string", "enum": ["amazon", "awin", "ebay", "impact", "cj", "manual_json", "manual_csv", "custom", "demo"]},
+    "mode": {"type": "string", "enum": ["manual", "feed", "api", "mock"]},
+    "status": {"type": "string", "enum": ["planned", "draft", "active", "paused", "disabled"]},
+    "requires_backend": {"type": "boolean"},
+    "requires_secret": {"type": "boolean"},
+    "public_fields": {"type": "array", "items": {"type": "string"}},
+    "secret_fields": {"type": "array", "items": {"type": "string"}},
+    "notes": {"type": "string"}
+  },
+  "additionalProperties": true
+}
