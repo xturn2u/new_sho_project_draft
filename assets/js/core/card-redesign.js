@@ -1,6 +1,6 @@
 /* Mega-Fix 23 — Card UX Redesign renderer override */
 (function(){
-  const VERSION='2.3.0';
+  const VERSION='2.3.4';
 
   function safeLog(source, err, extra){
     try{
@@ -36,12 +36,20 @@
     arr.push(pros[2]||'Mehr Nutzen, weniger Stress');
     return arr.slice(0,3);
   }
+  function svgIcon(type){
+    const attrs='viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"';
+    if(type==='bag')return `<svg ${attrs}><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8a3 3 0 0 1 6 0"/></svg>`;
+    if(type==='trust')return `<svg ${attrs}><path d="M12 3l7 3v5c0 5-3.5 8.5-7 10-3.5-1.5-7-5-7-10V6l7-3z"/><path d="M9 12l2 2 4-5"/></svg>`;
+    if(type==='fit')return `<svg ${attrs}><path d="M12 2l2.7 6.3 6.8.6-5.1 4.4 1.5 6.7-5.9-3.5L6.1 20l1.5-6.7-5.1-4.4 6.8-.6L12 2z"/></svg>`;
+    if(type==='protect')return `<svg ${attrs}><path d="M12 3l7 4v5c0 4.4-3 7.4-7 9-4-1.6-7-4.6-7-9V7l7-4z"/></svg>`;
+    return `<svg ${attrs}><path d="M12 5v14"/><path d="M5 12h14"/></svg>`;
+  }
   function heroHtml(p,mode){
     const img=imageOf(p);
     const top=mode==='deal'?'Deal Pick':mode==='packshot'?'Top Pick':'Top Pick';
-    const base=`<div class="ux-top-badge">★ ${top}</div><div class="ux-swipes">${S.swipes||0} Swipes</div>`;
-    if(img)return `${base}<img src="${escSafe(img)}" alt="${escSafe(p.title)}"><div class="ux-image-claim">✓ ${claimText(p)}</div>`;
-    return `${base}<div class="grad ${escSafe(p.grad||'grad-2')}"></div><div class="emoji">${escSafe(p.emoji||'📦')}</div><div class="ux-image-claim">✓ ${claimText(p)}</div>`;
+    const base=`<div class="ux-top-badge"><span class="ux-pill-star">★</span>${top}</div><div class="ux-swipes">${S.swipes||0} Swipes</div>`;
+    if(img)return `${base}<img src="${escSafe(img)}" alt="${escSafe(p.title)}"><div class="ux-image-claim"><span class="ux-claim-check">✓</span>${claimText(p)}</div>`;
+    return `${base}<div class="grad ${escSafe(p.grad||'grad-2')}"></div><div class="emoji">${escSafe(p.emoji||'📦')}</div><div class="ux-image-claim"><span class="ux-claim-check">✓</span>${claimText(p)}</div>`;
   }
   function renderPremiumCard(){
     const stage=document.getElementById('feedStage');if(!stage)return;
@@ -59,16 +67,15 @@
       <div class="swipe-card-overlay save" id="overlaySave"><div class="ov-icon"><svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg></div></div>
       <div class="swipe-card-overlay red" id="overlayReject"><div class="ov-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="8" y1="8" x2="16" y2="16"/><line x1="16" y1="8" x2="8" y2="16"/></svg></div></div>
       <div class="card-hero">${heroHtml(p,mode)}${p.sponsored?'<div class="card-ribbon">Gesponsert</div>':''}<span class="swipe-counter card-counter" id="swipeCounter">${S.swipes||0} Swipes</span></div>
-      <div class="ux-dots"><span></span><span></span><span></span><span></span><span></span></div>
       <div class="card-body">
         <div class="card-hook">${escSafe(p.hook)}</div>
         <div class="card-title">${escSafe(p.title)}</div>
-        <div class="ux-benefits"><div class="ux-benefit"><span class="ux-benefit-icon">▣</span><span>${escSafe(ben[0])}</span></div><div class="ux-benefit"><span class="ux-benefit-icon">◇</span><span>${escSafe(ben[1])}</span></div><div class="ux-benefit"><span class="ux-benefit-icon">✦</span><span>${escSafe(ben[2])}</span></div></div>
+        <div class="ux-benefits"><div class="ux-benefit"><span class="ux-benefit-icon">${svgIcon('bag')}</span><span>${escSafe(ben[0])}</span></div><div class="ux-benefit"><span class="ux-benefit-icon">${svgIcon('protect')}</span><span>${escSafe(ben[1])}</span></div><div class="ux-benefit"><span class="ux-benefit-icon">${svgIcon('fit')}</span><span>${escSafe(ben[2])}</span></div></div>
         <div class="card-problem">${escSafe(p.problem)}</div>
         <div class="card-tags"><span class="tag mint" data-label="Preis">${escSafe(p.price)}</span><span class="tag" data-label="Kategorie">${catIcon(p.cat)} ${catName(p.cat)}</span><span class="tag sun" data-label="Fit-Score">${p.fit}%</span></div>
       </div>
-      <div class="ux-cta" onclick="openSheet&&openSheet('product')"><span>Jetzt ansehen</span><span class="ux-cta-arrow">›</span></div>
-      <div class="ux-trust">♢ Vertrauenswürdig. Fair. Transparent.</div>
+      <div class="ux-cta" onclick="openSheet&&openSheet('product')"><span class="ux-bag-icon">${svgIcon('bag')}</span><span>Jetzt ansehen</span><span class="ux-cta-arrow">›</span></div>
+      <div class="ux-trust"><span class="ux-trust-icon">${svgIcon('trust')}</span><span>Vertrauenswürdig. Fair. Transparent.</span></div>
       <div class="card-foot"><div class="fit"><div class="fit-ring" style="--p:${p.fit}"><span>${p.fit}</span></div><div class="fit-label">Fit-Score</div></div><div class="price">${escSafe(p.price)}</div></div>`;
     stage.appendChild(card);updateActionStates();enableDrag(card);
     const img=card.querySelector('.card-hero img');
