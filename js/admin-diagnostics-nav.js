@@ -1,6 +1,6 @@
-/* AIshopr Fix 8.2 — make diagnostics click render directly */
+/* AIshopr Fix 8.3 — robust diagnostics click, no window.S dependency */
 (function(){
-  const VERSION='0.9.7';
+  const VERSION='0.9.8';
 
   function safeLog(source, err, extra){
     try{
@@ -21,25 +21,25 @@
     const catalogStatus = catalog && typeof catalog.status==='function' ? catalog.status() : {localCount:'—'};
     return `<div class="admin-section"><div class="admin-section-title">🧪 Diagnose & Stabilität</div>
       <div class="kpi-grid">
-        <div class="kpi"><div class="kpi-val">${window.APP_VERSION||'0.9.x'}</div><div class="kpi-label">App-Version</div></div>
+        <div class="kpi"><div class="kpi-val">0.9.x</div><div class="kpi-label">App-Version</div></div>
         <div class="kpi"><div class="kpi-val">${errors.length}</div><div class="kpi-label">Fehler im Log</div></div>
         <div class="kpi"><div class="kpi-val">${storageKeys.length}</div><div class="kpi-label">Storage Keys</div></div>
         <div class="kpi"><div class="kpi-val">${catalogStatus.localCount??'—'}</div><div class="kpi-label">Lokale Produkte</div></div>
       </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
-        <button class="btn btn-primary" onclick="exportDiagnostics&&exportDiagnostics()">Diagnose exportieren</button>
-        <button class="btn btn-ghost" onclick="clearRuntimeErrors&&clearRuntimeErrors()">Fehlerlog leeren</button>
-        <button class="btn btn-ghost" onclick="migrateLocalData&&migrateLocalData();toast&&toast('Migration erneut ausgeführt');AIshoprDiagnosticsNav.openDiagnostics()">Daten reparieren</button>
+        <button class="btn btn-primary" onclick="typeof exportDiagnostics==='function'&&exportDiagnostics()">Diagnose exportieren</button>
+        <button class="btn btn-ghost" onclick="typeof clearRuntimeErrors==='function'&&clearRuntimeErrors()">Fehlerlog leeren</button>
+        <button class="btn btn-ghost" onclick="typeof migrateLocalData==='function'&&migrateLocalData();typeof toast==='function'&&toast('Migration erneut ausgeführt');AIshoprDiagnosticsNav.openDiagnostics()">Daten reparieren</button>
       </div>
     </div>
     <div class="admin-section"><div class="admin-section-title">📦 Produktkatalog</div>
       <p style="font-size:12px;color:var(--ink-2);line-height:1.5;margin-bottom:12px">Lade Produktdaten aus <code>/data/products.json</code>, ohne LocalStorage manuell zu löschen.</p>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn btn-primary" onclick="AIshoprAdminCatalog&&AIshoprAdminCatalog.reloadProductsFromJson('overwrite')">Katalog überschreiben</button>
-        <button class="btn btn-ghost" onclick="AIshoprAdminCatalog&&AIshoprAdminCatalog.reloadProductsFromJson('merge')">Katalog ergänzen</button>
-        <button class="btn btn-ghost" onclick="AIshoprAdminCatalog&&AIshoprAdminCatalog.validateProductsJson()">products.json prüfen</button>
-        <button class="btn btn-ghost" onclick="AIshoprAdminCatalog&&AIshoprAdminCatalog.exportLocalProducts()">Lokale Produkte exportieren</button>
-        <button class="btn btn-danger" onclick="AIshoprAdminCatalog&&AIshoprAdminCatalog.clearLocalProducts()">Lokale Produkte löschen</button>
+        <button class="btn btn-primary" onclick="window.AIshoprAdminCatalog&&AIshoprAdminCatalog.reloadProductsFromJson('overwrite')">Katalog überschreiben</button>
+        <button class="btn btn-ghost" onclick="window.AIshoprAdminCatalog&&AIshoprAdminCatalog.reloadProductsFromJson('merge')">Katalog ergänzen</button>
+        <button class="btn btn-ghost" onclick="window.AIshoprAdminCatalog&&AIshoprAdminCatalog.validateProductsJson()">products.json prüfen</button>
+        <button class="btn btn-ghost" onclick="window.AIshoprAdminCatalog&&AIshoprAdminCatalog.exportLocalProducts()">Lokale Produkte exportieren</button>
+        <button class="btn btn-danger" onclick="window.AIshoprAdminCatalog&&AIshoprAdminCatalog.clearLocalProducts()">Lokale Produkte löschen</button>
       </div>
     </div>
     <div class="admin-section"><div class="admin-section-title">Letzte Fehler</div>
@@ -55,15 +55,15 @@
 
   function openDiagnostics(){
     try{
-      if(window.S) S.adminTab='diagnostics';
+      try{ if(typeof S!=='undefined') S.adminTab='diagnostics'; }catch(e){}
       const sbar=document.querySelector('.admin-sidebar');
       if(sbar) sbar.classList.remove('open');
       setActiveNav();
 
       const content=document.getElementById('adminContent') || document.querySelector('.admin-main');
       if(!content){
-        if(typeof render==='function') render();
-        setTimeout(openDiagnostics,60);
+        try{ if(typeof render==='function') render(); }catch(e){}
+        setTimeout(openDiagnostics,80);
         return;
       }
 
@@ -86,13 +86,14 @@
       if(!item){
         const logoutItem=[...sidebar.querySelectorAll('.admin-nav-item')].find(el => /Logout/i.test(el.textContent||''));
         item=document.createElement('div');
-        item.className='admin-nav-item '+((window.S && S.adminTab==='diagnostics')?'active':'');
+        item.className='admin-nav-item';
         item.dataset.adminTab='diagnostics';
         item.innerHTML=icon()+' Diagnose';
         if(logoutItem && logoutItem.parentNode) logoutItem.parentNode.insertBefore(item, logoutItem);
         else sidebar.appendChild(item);
       }
       item.onclick=function(ev){ev.preventDefault();ev.stopPropagation();openDiagnostics();return false;};
+      if(typeof S!=='undefined' && S.adminTab==='diagnostics') item.classList.add('active');
     }catch(err){safeLog('admin-diagnostics-nav:ensureDiagnosticsNav', err);}
   }
 
