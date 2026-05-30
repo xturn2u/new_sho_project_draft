@@ -1,8 +1,8 @@
-/* Fix 17 — Amazon demo catalog import tools
+/* Fix 18 — Amazon demo catalog import and activation tools
    Imports clearly marked Amazon demo products from /data/products.amazon.demo.json.
    No real Amazon data, no copied images, no real ASIN claims. */
 (function(){
-  const VERSION='1.7.0';
+  const VERSION='1.8.0';
   const DEMO_URL='/new_sho_project_draft/data/products.amazon.demo.json';
 
   function safeLog(source, err, extra){
@@ -14,7 +14,7 @@
 
   function escSafe(v){
     try{if(typeof esc==='function')return esc(v);}catch(e){}
-    return String(v??'').replace(/[&<>\"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+    return String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
   }
 
   async function fetchDemo(){
@@ -31,13 +31,23 @@
       n.source='amazon_demo';
       n.affiliate_provider='amazon';
       n.merchant_name=n.merchant_name||'Amazon Demo';
-      n.status='draft';
+      n.status=n.status||'draft';
       n.sponsored=false;
       n.image_url='';
       return n;
     });
     if(!list.length)throw new Error('Keine gültigen Amazon-Demo-Produkte gefunden');
     return list;
+  }
+
+  function resetFeed(){
+    try{if(typeof S!=='undefined'){S.feedQueue=[];S.feedIdx=0;}}catch(e){}
+  }
+
+  function rerenderCatalog(){
+    resetFeed();
+    if(window.AIshoprCatalogNav&&typeof AIshoprCatalogNav.openCatalog==='function')AIshoprCatalogNav.openCatalog();
+    else if(typeof render==='function')render();
   }
 
   async function validateDemo(){
@@ -49,7 +59,7 @@
       report.source='amazon_demo';
       if(typeof LS!=='undefined')LS.set('amazonDemoValidationReport',report);
       if(typeof toast==='function')toast(report.ok?`Amazon Demo OK: ${report.count} Produkte`:`Amazon Demo fehlerhaft: ${report.errors.length} Fehler`);
-      if(window.AIshoprCatalogNav&&typeof AIshoprCatalogNav.openCatalog==='function')AIshoprCatalogNav.openCatalog();
+      rerenderCatalog();
       return report;
     }catch(err){
       safeLog('amazon-demo:validateDemo',err);
@@ -85,16 +95,56 @@
         LS.set('ideas',next);
         LS.set('amazonDemoLastImport',{mode:mergeMode,count:demo.length,total:next.length,ts:new Date().toISOString(),version:VERSION});
       }
-      try{if(typeof S!=='undefined'){S.feedQueue=[];S.feedIdx=0;}}catch(e){}
+      resetFeed();
       if(typeof toast==='function')toast(`${demo.length} Amazon-Demo-Produkte importiert`);
-      if(window.AIshoprCatalogNav&&typeof AIshoprCatalogNav.openCatalog==='function')AIshoprCatalogNav.openCatalog();
-      else if(typeof render==='function')render();
+      rerenderCatalog();
       return next;
     }catch(err){
       safeLog('amazon-demo:importDemo',err,{mode});
       if(typeof toast==='function')toast('Amazon-Demo-Import fehlgeschlagen');
       return null;
     }
+  }
+
+  async function importAndActivate(){
+    const next=await importDemo('overwrite_demo');
+    if(next) activateDemo();
+  }
+
+  function setDemoStatus(status){
+    try{
+      if(typeof createSnapshot==='function')createSnapshot('before_amazon_demo_status_'+status);
+      const current=typeof ideas==='function'?ideas():[];
+      let changed=0;
+      const next=current.map(p=>{
+        if(p.source==='amazon_demo'){
+          changed++;
+          return Object.assign({},p,{status});
+        }
+        return p;
+      });
+      if(typeof LS!=='undefined'){
+        LS.set('ideas',next);
+        LS.set('amazonDemoLastImport',{mode:'status_'+status,count:changed,total:next.length,ts:new Date().toISOString(),version:VERSION});
+      }
+      resetFeed();
+      if(typeof toast==='function')toast(`${changed} Amazon-Demo-Produkte auf ${status} gesetzt`);
+      rerenderCatalog();
+      return changed;
+    }catch(err){
+      safeLog('amazon-demo:setDemoStatus',err,{status});
+      if(typeof toast==='function')toast('Demo-Status konnte nicht geändert werden');
+      return 0;
+    }
+  }
+
+  function activateDemo(){return setDemoStatus('active');}
+  function draftDemo(){return setDemoStatus('draft');}
+
+  function showDemoInFeed(){
+    const changed=activateDemo();
+    try{if(typeof S!=='undefined')S.view='feed';}catch(e){}
+    if(changed && typeof render==='function')render();
   }
 
   function removeDemo(){
@@ -107,10 +157,9 @@
         LS.set('ideas',next);
         LS.set('amazonDemoLastImport',{mode:'remove',count:current.length-next.length,total:next.length,ts:new Date().toISOString(),version:VERSION});
       }
-      try{if(typeof S!=='undefined'){S.feedQueue=[];S.feedIdx=0;}}catch(e){}
+      resetFeed();
       if(typeof toast==='function')toast('Amazon-Demo-Produkte entfernt');
-      if(window.AIshoprCatalogNav&&typeof AIshoprCatalogNav.openCatalog==='function')AIshoprCatalogNav.openCatalog();
-      else if(typeof render==='function')render();
+      rerenderCatalog();
     }catch(err){safeLog('amazon-demo:removeDemo',err);}
   }
 
@@ -118,8 +167,11 @@
     let products=[];let last={};let validation={};
     try{products=typeof ideas==='function'?ideas():[];}catch(e){}
     try{if(typeof LS!=='undefined'){last=LS.get('amazonDemoLastImport',{});validation=LS.get('amazonDemoValidationReport',{});}}catch(e){}
-    const demoCount=products.filter(p=>p.source==='amazon_demo').length;
-    return {version:VERSION,demoCount,last,validation};
+    const demo=products.filter(p=>p.source==='amazon_demo');
+    const demoCount=demo.length;
+    const activeCount=demo.filter(p=>p.status==='active').length;
+    const draftCount=demo.filter(p=>p.status==='draft').length;
+    return {version:VERSION,demoCount,activeCount,draftCount,last,validation};
   }
 
   function panelHtml(){
@@ -127,10 +179,11 @@
     const last=s.last&&s.last.ts?`${s.last.mode||'-'} · ${s.last.count||0} · Gesamt ${s.last.total||0} · ${new Date(s.last.ts).toLocaleString('de-DE')}`:'Noch kein Import';
     const val=s.validation&&s.validation.ts?(s.validation.ok?`OK · ${s.validation.count||0} Produkte`:`Fehler · ${(s.validation.errors||[]).length}`):'Noch nicht geprüft';
     return `<div class="admin-section"><div class="admin-section-title">🛒 Amazon-Demo-Katalog</div>
-      <p style="font-size:12px;color:var(--ink-2);line-height:1.5;margin-bottom:12px">Demo-Daten für Amazon-Affiliate-Logik. Keine echten Amazon-Produktdaten, keine echten Bilder, alle Produkte bleiben <code>draft</code>.</p>
-      <div class="kpi-grid"><div class="kpi"><div class="kpi-val">${s.demoCount}</div><div class="kpi-label">Demo-Produkte lokal</div></div><div class="kpi"><div class="kpi-val">${s.validation&&s.validation.ok?'OK':(s.validation&&s.validation.ts?'Fehler':'—')}</div><div class="kpi-label">Demo-Prüfung</div></div></div>
+      <p style="font-size:12px;color:var(--ink-2);line-height:1.5;margin-bottom:12px">Demo-Daten für Amazon-Affiliate-Logik. Keine echten Amazon-Produktdaten, keine echten Bilder. Zum Testen kannst du die Demo-Produkte hier aktivieren.</p>
+      <div class="kpi-grid"><div class="kpi"><div class="kpi-val">${s.demoCount}</div><div class="kpi-label">Demo-Produkte lokal</div></div><div class="kpi"><div class="kpi-val">${s.activeCount}</div><div class="kpi-label">Aktiv im Feed</div></div><div class="kpi"><div class="kpi-val">${s.draftCount}</div><div class="kpi-label">Draft</div></div><div class="kpi"><div class="kpi-val">${s.validation&&s.validation.ok?'OK':(s.validation&&s.validation.ts?'Fehler':'—')}</div><div class="kpi-label">Demo-Prüfung</div></div></div>
       <div style="font-size:12px;color:var(--ink-3);line-height:1.5;margin:12px 0"><div><strong>Quelle:</strong> <code>/data/products.amazon.demo.json</code></div><div><strong>Letzte Prüfung:</strong> ${escSafe(val)}</div><div><strong>Letzter Import:</strong> ${escSafe(last)}</div></div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-primary" onclick="AIshoprAmazonDemo.importDemo('merge')">Amazon Demo importieren/aktualisieren</button><button class="btn btn-ghost" onclick="AIshoprAmazonDemo.importDemo('overwrite_demo')">Nur Demo ersetzen</button><button class="btn btn-ghost" onclick="AIshoprAmazonDemo.validateDemo()">Demo prüfen</button><button class="btn btn-danger" onclick="AIshoprAmazonDemo.removeDemo()">Demo entfernen</button></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-primary" onclick="AIshoprAmazonDemo.importAndActivate()">Demo importieren & aktivieren</button><button class="btn btn-ghost" onclick="AIshoprAmazonDemo.importDemo('merge')">Nur importieren</button><button class="btn btn-ghost" onclick="AIshoprAmazonDemo.activateDemo()">Demo aktivieren</button><button class="btn btn-ghost" onclick="AIshoprAmazonDemo.draftDemo()">Demo auf Draft setzen</button><button class="btn btn-ghost" onclick="AIshoprAmazonDemo.validateDemo()">Demo prüfen</button><button class="btn btn-primary" onclick="AIshoprAmazonDemo.showDemoInFeed()">Im Feed testen</button><button class="btn btn-danger" onclick="AIshoprAmazonDemo.removeDemo()">Demo entfernen</button></div>
+      <p style="font-size:11px;color:var(--ink-3);line-height:1.45;margin-top:10px"><b>So testest du:</b> Erst „Demo importieren & aktivieren“, danach „Im Feed testen“.</p>
     </div>`;
   }
 
@@ -145,6 +198,6 @@
     }catch(err){safeLog('amazon-demo:patchCatalogRender',err);return false;}
   }
 
-  window.AIshoprAmazonDemo={version:VERSION,fetchDemo,validateDemo,importDemo,removeDemo,status,panelHtml,patchCatalogRender};
+  window.AIshoprAmazonDemo={version:VERSION,fetchDemo,validateDemo,importDemo,importAndActivate,setDemoStatus,activateDemo,draftDemo,showDemoInFeed,removeDemo,status,panelHtml,patchCatalogRender};
   if(!patchCatalogRender())setTimeout(patchCatalogRender,150);
 })();
