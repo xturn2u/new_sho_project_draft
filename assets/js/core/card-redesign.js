@@ -1,6 +1,6 @@
 /* Mega-Fix 23 — Card UX Redesign renderer override */
 (function(){
-  const VERSION='2.3.7';
+  const VERSION='2.3.8';
 
   function safeLog(source, err, extra){
     try{
@@ -47,6 +47,28 @@
     const base=Math.max(18,Math.round(pulse*1.7));
     return base+((String(p.id||'').length*7)%41);
   }
+  function priceNumber(p){
+    if(Number.isFinite(Number(p.price_value)))return Number(p.price_value);
+    const raw=String(p.price||'').replace(',', '.');
+    const nums=(raw.match(/\d+(?:\.\d+)?/g)||[]).map(Number).filter(Number.isFinite);
+    if(!nums.length)return null;
+    return nums.reduce((a,b)=>a+b,0)/nums.length;
+  }
+  function priceCheck(p){
+    const n=priceNumber(p);
+    if(n===null)return 'Unklar';
+    const cat=String(p.cat||'').toLowerCase();
+    let cheap=15, fair=35, high=70;
+    if(cat.includes('tech')||cat.includes('smarthome')||cat.includes('energie')){cheap=25;fair=55;high=100;}
+    else if(cat.includes('fitness')){cheap=20;fair=45;high=90;}
+    else if(cat.includes('reise')){cheap=18;fair=40;high=80;}
+    else if(cat.includes('auto')){cheap=15;fair=35;high=75;}
+    else if(cat.includes('geschenk')){cheap=12;fair=30;high=60;}
+    if(n<=cheap)return 'Günstig';
+    if(n<=fair)return 'Fair';
+    if(n<=high)return 'Normal';
+    return 'Premium';
+  }
   function svgIcon(type){
     const attrs='viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"';
     if(type==='bag')return `<svg ${attrs}><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8a3 3 0 0 1 6 0"/></svg>`;
@@ -73,6 +95,7 @@
     const ben=benefits(p);
     const pulse=pulseValue(p);
     const saves=savesToday(p);
+    const priceIndex=priceCheck(p);
     const card=document.createElement('div');
     card.className=`swipe-card ux-redesign ux-${mode}`;
     card.innerHTML=`
@@ -86,7 +109,7 @@
         <div class="card-title">${escSafe(p.title)}</div>
         <div class="ux-benefits"><div class="ux-benefit"><span class="ux-benefit-icon">${svgIcon('bag')}</span><span>${escSafe(ben[0])}</span></div><div class="ux-benefit"><span class="ux-benefit-icon">${svgIcon('protect')}</span><span>${escSafe(ben[1])}</span></div><div class="ux-benefit"><span class="ux-benefit-icon">${svgIcon('fit')}</span><span>${escSafe(ben[2])}</span></div></div>
         <div class="card-problem">${escSafe(p.problem)}</div>
-        <div class="card-tags"><span class="tag mint" data-label="Preis">${escSafe(p.price)}</span><span class="tag save-tag" data-label="Saves heute">${saves}</span><span class="tag pulse-tag" data-label="AIshopr Pulse">${pulse}</span></div>
+        <div class="card-tags"><span class="tag price-check-tag" data-label="Preis-Check">${priceIndex}</span><span class="tag save-tag" data-label="Saves heute">${saves}</span><span class="tag pulse-tag" data-label="AIshopr Pulse">${pulse}</span></div>
       </div>
       <div class="ux-cta" onclick="openSheet&&openSheet('product')"><span class="ux-bag-icon">${svgIcon('bag')}</span><span>Jetzt ansehen</span><span class="ux-cta-arrow">›</span></div>
       <div class="ux-trust"><span class="ux-trust-icon">${svgIcon('trust')}</span><span>Vertrauenswürdig. Fair. Transparent.</span></div>
