@@ -1,0 +1,84 @@
+/* Mega-Fix 23.2 — Restore TikTok feel, full-bleed photos, remove fake slideshow dots */
+
+/* Wider again: slight overlap with the right action rail is intentional. */
+.swipe-card.ux-redesign{
+  left:10px!important;
+  right:auto!important;
+  margin:0!important;
+  width:calc(100% - 68px)!important;
+  max-width:372px!important;
+}
+
+/* Product/lifestyle photos must be full bleed, no white frame. */
+.swipe-card.ux-redesign .card-hero{
+  padding:0!important;
+  background:#fff5f0!important;
+}
+.swipe-card.ux-redesign .card-hero img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  padding:0!important;
+  margin:0!important;
+  border-radius:0!important;
+  transform:scale(1.012)!important;
+}
+
+/* Full-bleed also for Deal mode. Deal should not force a white product-box unless explicitly packshot. */
+.swipe-card.ux-redesign.ux-deal .card-hero{
+  padding:0!important;
+  background:#fff5f0!important;
+}
+.swipe-card.ux-redesign.ux-deal .card-hero img{
+  object-fit:cover!important;
+  transform:scale(1.012)!important;
+}
+
+/* Packshot remains the only mode with contain/white presentation. */
+.swipe-card.ux-redesign.ux-packshot .card-hero{
+  padding:18px!important;
+  background:radial-gradient(circle at 50% 45%,#fff 35%,#f7f7f8 100%)!important;
+}
+.swipe-card.ux-redesign.ux-packshot .card-hero img{
+  object-fit:contain!important;
+  transform:none!important;
+  border-radius:0!important;
+}
+
+/* Remove fake gallery dots. There is no real image carousel yet. */
+.swipe-card.ux-redesign .ux-dots{
+  display:none!important;
+}
+
+/* With dots removed, content may move up slightly. */
+.swipe-card.ux-redesign .card-body{
+  padding-top:16px!important;
+}
+
+/* Make the rail slightly overlay the card again for TikTok feeling. */
+.tiktok-nav{
+  right:2px!important;
+  gap:11px!important;
+  z-index:35!important;
+}
+.tk-btn{
+  width:44px!important;
+  height:44px!important;
+}
+
+@media(max-width:390px){
+  .swipe-card.ux-redesign{
+    left:8px!important;
+    width:calc(100% - 62px)!important;
+    max-width:368px!important;
+  }
+}
+
+@media(max-height:760px){
+  .swipe-card.ux-redesign{
+    width:calc(100% - 66px)!important;
+  }
+  .swipe-card.ux-redesign .card-body{
+    padding-top:12px!important;
+  }
+}
