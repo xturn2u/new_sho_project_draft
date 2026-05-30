@@ -1,7 +1,7 @@
-/* Mega-Fix 23.3 — Feed header markup override
-   Adds centered logo row above slimmer full-width tab bar, closer to approved mockup. */
+/* Fix 23.5 — Feed header shell override
+   User feed is not an admin surface: centered logo only, no admin/refresh controls. */
 (function(){
-  const VERSION='2.3.3';
+  const VERSION='2.3.5';
   function safeLog(source, err, extra){
     try{if(typeof logRuntimeError==='function')logRuntimeError(source,err,extra||{});else console.error('[AIshopr FeedHeader]',source,err,extra||{});}catch(e){}
   }
@@ -25,7 +25,7 @@
       const original=renderFeed;
       const patched=function(){
         let html=String(original());
-        html=html.replace('<div class="feed-head">',`<div class="feed-brandbar"><button class="feed-menu-btn" onclick="showView('admin')" aria-label="Menü">☰</button>${brandLogo()}<button class="feed-refresh-btn" onclick="loadFeed(true)" aria-label="Neu laden">↻</button></div><div class="feed-head">`);
+        html=html.replace('<div class="feed-head">',`<div class="feed-brandbar feed-brandbar-clean">${brandLogo()}</div><div class="feed-head">`);
         return html;
       };
       patched.__feedHeaderRedesignPatched=true;
