@@ -1,0 +1,139 @@
+/* Mega-Fix 22 — Product card & image system */
+
+.swipe-card.card-mode-lifestyle .card-hero{
+  height:48%;
+  background:#f7f7f8;
+}
+.swipe-card.card-mode-lifestyle .card-hero img{
+  object-fit:cover;
+}
+.swipe-card.card-mode-lifestyle .card-hero::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg,rgba(0,0,0,0) 58%,rgba(0,0,0,.18));
+  pointer-events:none;
+  z-index:1;
+}
+
+.swipe-card.card-mode-packshot .card-hero{
+  height:44%;
+  background:linear-gradient(180deg,#fff,#f6f6f7);
+  padding:18px;
+}
+.swipe-card.card-mode-packshot .card-hero img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  background:transparent;
+  filter:drop-shadow(0 18px 22px rgba(0,0,0,.12));
+}
+.swipe-card.card-mode-packshot .card-body{
+  padding-top:16px;
+}
+
+.swipe-card.card-mode-deal .card-hero{
+  height:40%;
+  background:#fff;
+  padding:10px;
+}
+.swipe-card.card-mode-deal .card-hero img{
+  object-fit:contain;
+  background:#fff;
+}
+.swipe-card.card-mode-deal .card-foot{
+  background:linear-gradient(90deg,rgba(255,107,90,.10),rgba(255,140,66,.10));
+}
+.swipe-card.card-mode-deal .price{
+  color:var(--primary);
+  font-size:18px;
+  font-weight:900;
+}
+.swipe-card.card-mode-deal .card-hook{
+  font-size:17px;
+}
+
+.swipe-card.image-fit-contain .card-hero img{object-fit:contain;background:#fff;padding:10px}
+.swipe-card.image-fit-cover .card-hero img{object-fit:cover;padding:0}
+
+.card-image-badge{
+  position:absolute;
+  left:12px;
+  top:12px;
+  z-index:3;
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  padding:4px 9px;
+  border-radius:999px;
+  font-size:10px;
+  font-weight:800;
+  color:#fff;
+  background:rgba(0,0,0,.54);
+  backdrop-filter:blur(8px);
+}
+
+.card-source-badge{
+  position:absolute;
+  left:12px;
+  bottom:12px;
+  z-index:3;
+  padding:4px 9px;
+  border-radius:999px;
+  font-size:10px;
+  font-weight:700;
+  color:#fff;
+  background:rgba(0,0,0,.48);
+  backdrop-filter:blur(8px);
+  max-width:calc(100% - 24px);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.swipe-card.no-image .card-hero{
+  background:linear-gradient(135deg,#fff5f0,#f7f2ff);
+}
+
+.image-error-note{
+  position:absolute;
+  right:12px;
+  bottom:12px;
+  z-index:3;
+  padding:4px 8px;
+  border-radius:999px;
+  font-size:10px;
+  font-weight:800;
+  background:rgba(255,255,255,.88);
+  color:var(--rose);
+  border:1px solid rgba(255,93,143,.25);
+}
+
+.card-layout-preview-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(86px,1fr));
+  gap:10px;
+}
+.card-layout-mini{
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:8px;
+  background:var(--bg-card);
+  cursor:pointer;
+}
+.card-layout-mini.active{
+  border-color:var(--primary);
+  box-shadow:0 0 0 3px rgba(255,107,90,.14);
+}
+.card-layout-mini-img{
+  height:62px;
+  border-radius:12px;
+  background:linear-gradient(135deg,#eee,#fff);
+  border:1px solid var(--border);
+  margin-bottom:8px;
+}
+.card-layout-mini.packshot .card-layout-mini-img{background:radial-gradient(circle at center,#fff 40%,#ececec)}
+.card-layout-mini.lifestyle .card-layout-mini-img{background:linear-gradient(135deg,#dbeafe,#fde68a)}
+.card-layout-mini.deal .card-layout-mini-img{background:linear-gradient(135deg,#fff,#ffe4dc)}
+.card-layout-mini-title{font-size:11px;font-weight:800}
+.card-layout-mini-sub{font-size:10px;color:var(--ink-3);margin-top:2px;line-height:1.25}
